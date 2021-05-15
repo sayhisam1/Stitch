@@ -1,0 +1,21 @@
+{
+        "name": "vendor",
+        "tree": {
+                "$className": "Folder",
+                "Roact": {
+                        "$path": "../submodules/roact"
+                },
+                "Rodux": {
+                        "$path": "../submodules/rodux"
+                },
+                "t": {
+                        "$path": "../submodules/t"
+                },
+                "Promise": {
+                        "$path": "../submodules/roblox-lua-promise/lib"
+                },
+                "TestEZ": {
+                        "$path": "../submodules/testez"
+                }
+        }
+}
