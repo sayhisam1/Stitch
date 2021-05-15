@@ -21,6 +21,9 @@ function Stitch.new(namespace)
 	return self
 end
 
+function Stitch:Destroy()
+	self._collection:Destroy()
+end
 function Stitch:registerPattern(patternDefinition)
 	return self._collection:register(patternDefinition)
 end
