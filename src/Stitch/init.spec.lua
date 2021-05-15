@@ -1,11 +1,17 @@
 local Stitch = require(script.Parent)
 
 return function()
+	local stitch
+	beforeEach(function()
+		stitch = Stitch.new("test")
+	end)
+	afterEach(function()
+		stitch:Destroy()
+		stitch = nil
+	end)
 	describe("Stitch.new", function()
 		it("should return a stitch", function()
-			local stitch = Stitch.new("the namespace")
-
-			expect(stitch.namespace).to.equal("the namespace")
+			expect(stitch.namespace).to.equal("test")
 		end)
 	end)
 
@@ -14,7 +20,6 @@ return function()
 			local patternDefinition = {
 				name = "Test",
 			}
-			local stitch = Stitch.new()
 
 			local eventCount = 0
 			local registered = nil
@@ -32,7 +37,6 @@ return function()
 			local patternDefinition = {
 				name = "Test",
 			}
-			local stitch = Stitch.new()
 
 			stitch:registerPattern(patternDefinition)
 
@@ -52,7 +56,6 @@ return function()
 			local patternDefinition = {
 				name = "Test",
 			}
-			local stitch = Stitch.new()
 
 			stitch:registerPattern(patternDefinition)
 
@@ -76,7 +79,6 @@ return function()
 			local patternDefinition2 = {
 				name = "Test2",
 			}
-			local stitch = Stitch.new()
 
 			stitch:registerPattern(patternDefinition)
 			stitch:registerPattern(patternDefinition2)
@@ -98,8 +100,6 @@ return function()
 
 	describe("Stitch:fire and Stitch:on", function()
 		it("should fire events", function()
-			local stitch = Stitch.new()
-
 			local callCount = 0
 			stitch:on("testEvent", function()
 				callCount += 1

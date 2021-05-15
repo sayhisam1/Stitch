@@ -6,6 +6,7 @@ local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Types = require(script.Parent.Types)
 local Reducers = require(script.Reducers)
 local DeferredCallback = require(script.Parent.Parent.Shared.DeferredCallback)
+local Maid = require(script.Parent.Parent.Shared.Maid)
 
 local callbackMiddleware = require(script.callbackMiddleware)
 
@@ -16,6 +17,7 @@ function PatternCollection.new(stitch)
 	local self = setmetatable({
 		stitch = stitch,
 		_reducers = {},
+		_maid = Maid.new(),
 	}, PatternCollection)
 
 	self:_setupReducers(self._reducers)
@@ -39,6 +41,16 @@ function PatternCollection.new(stitch)
 	return self
 end
 
+function PatternCollection:Destroy()
+	self._maid:Destroy()
+	self._store:destruct()
+	-- Remove all attributes and tags
+	for _, instance in pairs(CollectionService:GetTagged(self.stitch.instanceUUIDTag)) do
+		instance:SetAttribute(self.stitch.instanceUUIDAttributeString, nil)
+		CollectionService:RemoveTag(instance, self.stitch.instanceUUIDTag)
+	end
+end
+
 function PatternCollection:_setupReducers(reducerTable)
 	for reducerName, reducerCreator in pairs(Reducers) do
 		reducerTable[reducerName] = reducerCreator(self.stitch)
@@ -46,7 +58,9 @@ function PatternCollection:_setupReducers(reducerTable)
 end
 function PatternCollection:_setupInstanceListener()
 	local deferredAdd = DeferredCallback.new(self.stitch.Heartbeat)
-	CollectionService:GetInstanceAddedSignal(self.stitch.instanceUUIDTag):Connect(function(instance: Instance)
+	self._maid:GiveTask(deferredAdd)
+	local instanceAdded = CollectionService:GetInstanceAddedSignal(self.stitch.instanceUUIDTag)
+	self._maid:GiveTask(instanceAdded:Connect(function(instance: Instance)
 		deferredAdd:defer(function()
 			print("instanceadded", instance)
 			self._store:dispatch({
@@ -57,9 +71,12 @@ function PatternCollection:_setupInstanceListener()
 				end,
 			})
 		end)
-	end)
+	end))
 	local deferredRemove = DeferredCallback.new(self.stitch.Heartbeat)
-	CollectionService:GetInstanceRemovedSignal(self.stitch.instanceUUIDTag):Connect(function(instance: Instance)
+	self._maid:GiveTask(deferredRemove)
+	local instanceRemoved = CollectionService:GetInstanceRemovedSignal(self.stitch.instanceUUIDTag)
+	self._maid:GiveTask(instanceRemoved:Connect(function(instance: Instance)
+		print("deferring removal of", instance)
 		deferredRemove:defer(function()
 			self._store:dispatch({
 				type = "unregisterInstance",
@@ -69,7 +86,7 @@ function PatternCollection:_setupInstanceListener()
 				end,
 			})
 		end)
-	end)
+	end))
 end
 
 function PatternCollection:register(patternDefinition)
