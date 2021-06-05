@@ -13,14 +13,17 @@ local function shallowCopy(tbl)
 end
 
 function HashMappedTrie.get(tbl: table, key: string)
+	if not tbl then
+		error("table was nil!", 2)
+	end
 	local level = 1
 	local hash = string.sub(key, level, level)
-	while (tbl[_KEYS] and tbl[_KEYS][key] == nil) or tbl[hash] ~= nil do
+	while tbl ~= nil and ((tbl[_KEYS] and tbl[_KEYS][key] == nil) or tbl[hash] ~= nil) do
 		tbl = tbl[hash]
 		level += 1
 		hash = string.sub(key, level, level)
 	end
-	return (tbl[_KEYS] and tbl[_KEYS][key]) or nil
+	return (tbl and tbl[_KEYS] and tbl[_KEYS][key]) or nil
 end
 
 local function insert(tbl: table, key: string, value: any, level: int)
@@ -71,6 +74,9 @@ local function insert(tbl: table, key: string, value: any, level: int)
 end
 
 function HashMappedTrie.set(tbl: table, key: string, value: any)
+	if not tbl then
+		error("table was nil!", 2)
+	end
 	return insert(tbl, key, value, 1)
 end
 
