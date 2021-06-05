@@ -18,7 +18,7 @@ Types.PatternDefinition = t.interface({
 	stitch = t.none,
 	fire = t.none,
 	on = t.none,
-	refUUID = t.none,
+	refuuid = t.none,
 	isInstanceRef = t.none,
 	get = t.none,
 

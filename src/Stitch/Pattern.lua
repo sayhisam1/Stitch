@@ -4,7 +4,7 @@ local Pattern = {}
 Pattern.__index = Pattern
 
 function Pattern:getRef()
-	return self.stitch._collection:resolveByUUID(self.refUUID)
+	return self.stitch:lookupInstanceByUuid(self.refuuid) or self.stitch:lookupPatternByUuid(self.refuuid)
 end
 
 function Pattern:getData()
@@ -32,6 +32,10 @@ function Pattern:setData(data: table)
 		uuid = self.uuid,
 		data = data,
 	})
+end
+
+function Pattern:getAttachedPatterns()
+	return self["attached"]
 end
 
 return Pattern
