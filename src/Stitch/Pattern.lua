@@ -1,31 +1,37 @@
+local Util = require(script.Parent.Parent.Shared.Util)
+
 local Pattern = {}
 Pattern.__index = Pattern
 
 function Pattern:getRef()
-	return self.ref or self.stitch._collection:resolveByUUID(self.refUUID)
+	return self.stitch._collection:resolveByUUID(self.refUUID)
 end
 
-function Pattern:GetAttribute(attribute_name: string)
-	return self.data[attribute_name]
+function Pattern:getData()
+	local state = self.stitch._store:getState()
+	return state[self.uuid].data
 end
 
-function Pattern:SetAttribute(attribute_name: string, value: any)
-	self.data[attribute_name] = value
-	if self.isInstanceRef then
-		local ref = self:getRef()
-		if ref then
-			ref:SetAttribute(attribute_name, value)
-		end
-	end
-end
--- Aliases SetAttribute
-function Pattern:set(attribute_name: string, value: any)
-	return self:SetAttribute(attribute_name, value)
-end
-
--- Aliases GetAttribute
 function Pattern:get(attribute_name: string)
-	return Pattern:GetAttribute(attribute_name)
+	return self:getData()[attribute_name]
+end
+
+function Pattern:set(attribute_name: string, value: any)
+	local data = self:getData()
+	local newData = Util.shallowCopy(data)
+	if value == self.stitch.None then
+		value = nil
+	end
+	newData[attribute_name] = value
+	self:setData(newData)
+end
+
+function Pattern:setData(data: table)
+	self.stitch._store:dispatch({
+		type = "updateData",
+		uuid = self.uuid,
+		data = data,
+	})
 end
 
 return Pattern

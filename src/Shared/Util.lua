@@ -7,4 +7,5 @@ function Util.shallowCopy(tbl)
 	end
 	return newtbl
 end
+
 return Util

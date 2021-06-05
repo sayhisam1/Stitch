@@ -10,11 +10,18 @@ function DeferredCallback.new(event)
 		if deferralList == nil then
 			deferralList = {}
 
-			connection = event:Connect(function()
-				connection:Disconnect()
+			connection = event:connect(function()
+				connection:disconnect()
 				connection = nil
+
 				for _, cb in ipairs(deferralList) do
-					cb()
+					local ok, msg = pcall(cb)
+					if not ok then
+						local err = Instance.new("BindableEvent")
+						local errConnection = err.Event:Connect(error)
+						err:Fire(msg)
+						errConnection:Disconnect()
+					end
 				end
 
 				deferralList = nil
@@ -25,7 +32,7 @@ function DeferredCallback.new(event)
 
 	function deferredCallback:Destroy()
 		if connection then
-			connection:Disconnect()
+			connection:disconnect()
 		end
 		deferralList = nil
 	end

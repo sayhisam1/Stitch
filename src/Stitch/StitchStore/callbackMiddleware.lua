@@ -1,5 +1,3 @@
-local callbackMiddleware = {}
-
 function callbackMiddleware(nextDispatch, store)
 	return function(action)
 		local result = nextDispatch(action)
