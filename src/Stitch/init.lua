@@ -19,9 +19,10 @@ function Stitch.new(namespace)
 	local self = setmetatable({
 		namespace = namespace,
 		_listeners = {},
-		errorPrefix = ("[Stitch:%s]"):format(namespace),
+		logPrefix = ("[Stitch:%s]"):format(namespace),
 		Heartbeat = RunService.Heartbeat,
 		None = Symbol.named("None"),
+		debug = true,
 	}, Stitch)
 
 	self._store = StitchStore.new(self)
@@ -52,8 +53,12 @@ function Stitch:registerInstance(instance: Instance)
 	return instanceUuid
 end
 
-function Stitch:lookupUuid(uuid: string)
-	return self._instanceRegistry:lookup(uuid) or self._store:lookup(uuid)
+function Stitch:lookupInstanceByUuid(uuid: string)
+	return self._instanceRegistry:lookup(uuid)
+end
+
+function Stitch:lookupPatternByUuid(uuid: string)
+	return self._store:lookup(uuid)
 end
 
 function Stitch:getUuid(ref)
@@ -72,19 +77,21 @@ end
 
 function Stitch:getPatternByRef(patternResolvable, ref)
 	local patternName = self._collection:getPatternName(patternResolvable)
+
 	local refuuid = self:getUuid(ref)
 	if not refuuid then
 		return nil
 	end
+
 	local refdata = self._store:lookup(refuuid)
-	local attached_uuid = refdata["attached"][patternName]
+	local attached_uuid = refdata and refdata["attached"][patternName]
 
 	return attached_uuid and self._store:lookup(attached_uuid) or nil
 end
 
 function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 	-- for convenience, if the ref is an instance, we register the instance
-	if t.Instance(ref) and not self._instanceRegistry:getInstanceUuid(ref) then
+	if t.Instance(ref) and not self._instanceRegistry:isRegistered(ref) then
 		ref = self:registerInstance(ref)
 	end
 
@@ -122,9 +129,21 @@ function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
 	return self:getPatternByRef(patternResolvable, uuid)
 end
 
--- function Stitch:removeAllWorkingsWithRef(ref)
--- 	return self._collection:removeAllWorkingsWithRef(ref)
--- end
+function Stitch:deconstructPattern(pattern)
+	local uuid = self:getUuid(pattern)
+	self._store:dispatch({
+		type = "deconstructPattern",
+		uuid = uuid,
+	})
+end
+
+function Stitch:deconstructPatternsWithRef(ref)
+	local uuid = self:getUuid(ref)
+	self._store:dispatch({
+		type = "deconstructPattern",
+		uuid = uuid,
+	})
+end
 
 function Stitch:fire(eventName, ...)
 	if not self._listeners[eventName] then
@@ -155,7 +174,13 @@ function Stitch:on(eventName, callback)
 end
 
 function Stitch:error(message)
-	error(("%s %s"):format(self.errorPrefix, message), 2)
+	error(("%s %s"):format(self.logPrefix, message), 2)
+end
+
+function Stitch:pdebug(message)
+	if self.debug then
+		warn(("%s %s"):format(self.logPrefix, message))
+	end
 end
 
 return Stitch

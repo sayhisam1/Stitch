@@ -17,7 +17,12 @@ function StitchStore.new(stitch)
 		return state
 	end
 
-	self._store = Rodux.Store.new(reducer, {}, {})
+	local middlewares = {}
+	if stitch.debug then
+		table.insert(middlewares, Rodux.loggerMiddleware)
+	end
+
+	self._store = Rodux.Store.new(reducer, {}, middlewares)
 	self.deferredStoreChanged = DeferredCallback.new(self._store.changed)
 
 	return self

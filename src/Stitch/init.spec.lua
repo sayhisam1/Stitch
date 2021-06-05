@@ -22,10 +22,8 @@ return function()
 			}
 
 			local eventCount = 0
-			local registered = nil
-			stitch:on("patternRegistered", function(pattern)
+			stitch:on("patternRegistered", function()
 				eventCount += 1
-				registered = pattern
 			end)
 			stitch:registerPattern(patternDefinition)
 
@@ -61,13 +59,17 @@ return function()
 
 			local testRef = game.Workspace.Baseplate
 
-			expect(stitch:getWorkingByRef("Test", testRef)).to.never.be.ok()
+			expect(stitch:getPatternByRef("Test", testRef)).to.never.be.ok()
 
-			stitch:getOrCreateWorkingByRef(patternDefinition, testRef)
-			expect(stitch:getWorkingByRef("Test", testRef)).to.be.ok()
-			local instanceUUID = stitch._collection:getInstanceUUID(testRef)
-			expect(instanceUUID).to.be.ok()
-			expect(stitch._collection._store:getState()["UUIDToInstance"][instanceUUID]).to.be.ok()
+			local pattern = stitch:getOrCreatePatternByRef(patternDefinition, testRef)
+			expect(stitch:getPatternByRef("Test", testRef)).to.be.ok()
+			expect(stitch:getPatternByRef("Test", testRef)).to.equal(pattern)
+
+			local uuid = stitch:getUuid(testRef)
+			local patternData = stitch:lookupPatternByUuid(uuid)
+			expect(patternData).to.be.ok()
+			expect(stitch:getPatternByRef("Test", uuid)).to.be.ok()
+			expect(stitch:getPatternByRef("Test", uuid)).to.equal(pattern)
 		end)
 	end)
 
@@ -85,16 +87,16 @@ return function()
 
 			local testRef = game.Workspace.Baseplate
 
-			stitch:getOrCreateWorkingByRef(patternDefinition, testRef)
-			stitch:getOrCreateWorkingByRef(patternDefinition2, testRef)
+			stitch:getOrCreatePatternByRef(patternDefinition, testRef)
+			stitch:getOrCreatePatternByRef(patternDefinition2, testRef)
 
-			expect(stitch:getWorkingByRef("Test", testRef)).to.be.ok()
-			expect(stitch:getWorkingByRef("Test2", testRef)).to.be.ok()
+			expect(stitch:getPatternByRef("Test", testRef)).to.be.ok()
+			expect(stitch:getPatternByRef("Test2", testRef)).to.be.ok()
 
-			stitch:removeAllWorkingsWithRef(testRef)
+			stitch:deconstructPatternsWithRef(testRef)
 
-			expect(stitch:getWorkingByRef("Test", testRef)).to.never.be.ok()
-			expect(stitch:getWorkingByRef("Test2", testRef)).to.never.be.ok()
+			expect(stitch:getPatternByRef("Test", testRef)).to.never.be.ok()
+			expect(stitch:getPatternByRef("Test2", testRef)).to.never.be.ok()
 		end)
 	end)
 

@@ -23,6 +23,18 @@ function InstanceRegistry.new(stitch)
 	return self
 end
 
+function InstanceRegistry:setupInstanceListeners()
+	local instanceAdded = CollectionService:GetInstanceAddedSignal(self.instanceUuidTag)
+	self._instanceAdded = instanceAdded:Connect(function(instance: Instance)
+		self:registerInstance(instance)
+	end)
+
+	local instanceRemoved = CollectionService:GetInstanceRemovedSignal(self.instanceUuidTag)
+	self._instanceRemoved = instanceRemoved:Connect(function(instance: Instance)
+		self:unregisterInstance(instance)
+	end)
+end
+
 function InstanceRegistry:destroy()
 	self._instanceAdded:disconnect()
 	self._instanceRemoved:disconnect()
@@ -34,6 +46,10 @@ function InstanceRegistry:destroy()
 	end
 end
 
+function InstanceRegistry:isRegistered(instance: Instance)
+	local uuid = self:getInstanceUuid(instance)
+	return (uuid and self.uuidToInstance[uuid] and true) or false
+end
 function InstanceRegistry:getInstanceUuid(instance: Instance)
 	return instance:GetAttribute(self.instanceUuidAttribute)
 end
@@ -63,18 +79,6 @@ function InstanceRegistry:unregisterInstance(instance: Instance)
 	local uuid = instance:GetAttribute(self.instanceUuidAttribute)
 	self.uuidToInstance[uuid] = nil
 	self.stitch:fire("instanceUnregistered", instance)
-end
-
-function InstanceRegistry:setupInstanceListeners()
-	local instanceAdded = CollectionService:GetInstanceAddedSignal(self.instanceUuidTag)
-	self._instanceAdded = instanceAdded:Connect(function(instance: Instance)
-		self:registerInstance(instance)
-	end)
-
-	local instanceRemoved = CollectionService:GetInstanceRemovedSignal(self.instanceUuidTag)
-	self._instanceRemoved = instanceRemoved:Connect(function(instance: Instance)
-		self:unregisterInstance(instance)
-	end)
 end
 
 function InstanceRegistry:lookup(uuid: string)
