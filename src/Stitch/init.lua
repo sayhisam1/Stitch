@@ -73,6 +73,9 @@ end
 function Stitch:getPatternByRef(patternResolvable, ref)
 	local patternName = self._collection:getPatternName(patternResolvable)
 	local refuuid = self:getUuid(ref)
+	if not refuuid then
+		return nil
+	end
 	local refdata = self._store:lookup(refuuid)
 	local attached_uuid = refdata["attached"][patternName]
 
@@ -80,10 +83,16 @@ function Stitch:getPatternByRef(patternResolvable, ref)
 end
 
 function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
+	-- for convenience, if the ref is an instance, we register the instance
+	if t.Instance(ref) and not self._instanceRegistry:getInstanceUuid(ref) then
+		ref = self:registerInstance(ref)
+	end
+
 	local attached_pattern = self:getPatternByRef(patternResolvable, ref)
 	if not attached_pattern then
 		local pattern = self._collection:resolvePattern(patternResolvable)
 		local refuuid = self:getUuid(ref)
+
 		self._store:dispatch({
 			type = "constructPattern",
 			refuuid = refuuid,
@@ -91,14 +100,17 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 			data = data or {},
 			pattern = pattern,
 		})
+
 		attached_pattern = self:getPatternByRef(patternResolvable, ref)
 	end
+
 	return attached_pattern
 end
 
 function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
 	uuid = uuid or HttpService:GenerateGUID(false)
 	local pattern = self._collection:resolvePattern(patternResolvable)
+
 	self._store:dispatch({
 		type = "constructPattern",
 		refuuid = uuid,
@@ -106,6 +118,7 @@ function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
 		data = data or {},
 		pattern = pattern,
 	})
+
 	return self:getPatternByRef(patternResolvable, uuid)
 end
 
