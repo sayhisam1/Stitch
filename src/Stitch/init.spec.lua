@@ -118,4 +118,39 @@ return function()
 			expect(callCount).to.equal(1)
 		end)
 	end)
+
+	describe("stress test", function()
+		SKIP()
+		it("should be able to construct many patterns", function()
+			local patternDefinition = {
+				name = "Test",
+			}
+
+			stitch:registerPattern(patternDefinition)
+			local instances = {}
+			for i = 1, 8192, 1 do
+				local part = Instance.new("Part")
+				part.Anchored = true
+				part.Parent = workspace
+				table.insert(instances, part)
+			end
+
+			for i = 1, 1024, 1 do
+				stitch:getOrCreatePatternByRef(patternDefinition, instances[i])
+				stitch:deconstructPatternsWithRef(instances[i])
+			end
+			instances = {}
+			for i = 1, 8192, 1 do
+				local part = Instance.new("Part")
+				part.Anchored = true
+				part.Parent = workspace
+				table.insert(instances, part)
+			end
+
+			for i = 1, 1024, 1 do
+				stitch:getOrCreatePatternByRef(patternDefinition, instances[i])
+				debug.profileend()
+			end
+		end)
+	end)
 end
