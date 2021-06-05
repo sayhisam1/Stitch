@@ -1,6 +1,7 @@
 local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
 local DeferredCallback = require(script.Parent.Parent.Shared.DeferredCallback)
+local HashMappedTrie = require(script.Parent.Parent.Shared.HashMappedTrie)
 
 local StitchStore = {}
 StitchStore.__index = StitchStore
@@ -55,7 +56,7 @@ function StitchStore:deferUntilChanged(callback)
 end
 
 function StitchStore:lookup(uuid: string)
-	return self:getState()[uuid]
+	return HashMappedTrie.get(self:getState(), uuid)
 end
 
 return StitchStore
