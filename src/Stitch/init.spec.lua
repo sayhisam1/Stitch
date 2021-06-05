@@ -73,6 +73,41 @@ return function()
 		end)
 	end)
 
+	describe("Patterns", function()
+		it("should set default data on pattern", function()
+			local patternDefinition = {
+				name = "Test",
+			}
+
+			stitch:registerPattern(patternDefinition)
+
+			local testRef = game.Workspace.Baseplate
+			local pattern = stitch:getOrCreatePatternByRef(patternDefinition, testRef, {
+				variable = "1234",
+			})
+
+			expect(stitch:getPatternByRef("Test", testRef)).to.equal(pattern)
+			expect(pattern:get("variable")).to.equal("1234")
+		end)
+		it("should update data on pattern", function()
+			local patternDefinition = {
+				name = "Test",
+			}
+
+			stitch:registerPattern(patternDefinition)
+
+			local testRef = game.Workspace.Baseplate
+			local pattern = stitch:getOrCreatePatternByRef(patternDefinition, testRef, {
+				variable = "1234",
+			})
+
+			expect(stitch:getPatternByRef("Test", testRef)).to.equal(pattern)
+			expect(pattern:get("variable")).to.equal("1234")
+
+			pattern:set("variable", "spaghet")
+			expect(pattern:get("variable")).to.equal("spaghet")
+		end)
+	end)
 	describe("Stitch:removeAllPatternsWithRef", function()
 		it("should remove all patterns with a ref", function()
 			local patternDefinition = {
