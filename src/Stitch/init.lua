@@ -22,7 +22,7 @@ function Stitch.new(namespace)
 		logPrefix = ("[Stitch:%s]"):format(namespace),
 		Heartbeat = RunService.Heartbeat,
 		None = Symbol.named("None"),
-		debug = true,
+		debug = false,
 	}, Stitch)
 
 	self._store = StitchStore.new(self)
@@ -127,14 +127,6 @@ function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
 	})
 
 	return self:getPatternByRef(patternResolvable, uuid)
-end
-
-function Stitch:deconstructPattern(pattern)
-	local uuid = self:getUuid(pattern)
-	self._store:dispatch({
-		type = "deconstructPattern",
-		uuid = uuid,
-	})
 end
 
 function Stitch:deconstructPatternsWithRef(ref)
