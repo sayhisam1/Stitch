@@ -34,6 +34,9 @@ function PatternCollection:registerPattern(patternDefinition)
 		self.stitch:error(("tried to register duplicate Pattern %s!"):format(patternName))
 	end
 
+	patternDefinition.__index = patternDefinition
+	patternDefinition.stitch = self.stitch
+
 	setmetatable(patternDefinition, Pattern)
 
 	self.registeredPatterns[patternName] = patternDefinition

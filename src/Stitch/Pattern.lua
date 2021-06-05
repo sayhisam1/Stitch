@@ -8,8 +8,8 @@ function Pattern:getRef()
 end
 
 function Pattern:getData()
-	local state = self.stitch._store:getState()
-	return state[self.uuid].data
+	local state = self.stitch._store:lookup(self.uuid)
+	return state["data"]
 end
 
 function Pattern:get(attribute_name: string)
