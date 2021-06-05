@@ -59,6 +59,8 @@ function Maid:__newindex(index, newTask)
 			oldTask:Disconnect()
 		elseif oldTask.Destroy then
 			oldTask:Destroy()
+		elseif oldTask.destroy then
+			oldTask:destroy()
 		end
 	end
 end
@@ -66,7 +68,7 @@ end
 --- Same as indexing, but uses an incremented number as a key.
 -- @param task An item to clean
 -- @treturn number taskId
-function Maid:GiveTask(task)
+function Maid:giveTask(task)
 	if not task then
 		error("Task cannot be false or nil", 2)
 	end
@@ -74,20 +76,20 @@ function Maid:GiveTask(task)
 	local taskId = #self._tasks + 1
 	self[taskId] = task
 
-	if type(task) == "table" and not task.Destroy then
-		warn("[Maid.GiveTask] - Gave table task without .Destroy\n\n" .. debug.traceback())
+	if type(task) == "table" and not task.Destroy and not task.destroy then
+		warn("[Maid.giveTask] - Gave table task without .destroy\n\n" .. debug.traceback())
 	end
 
 	return taskId
 end
 
-function Maid:GivePromise(promise)
+function Maid:givePromise(promise)
 	if not promise:IsPending() then
 		return promise
 	end
 
 	local newPromise = promise.resolved(promise)
-	local id = self:GiveTask(newPromise)
+	local id = self:giveTask(newPromise)
 
 	-- Ensure GC
 	newPromise:Finally(function()
@@ -99,7 +101,7 @@ end
 
 --- Cleans up all tasks.
 -- @alias Destroy
-function Maid:DoCleaning()
+function Maid:doCleaning()
 	local tasks = self._tasks
 
 	-- Disconnect all events first as we know this is safe
@@ -120,6 +122,8 @@ function Maid:DoCleaning()
 			task:Disconnect()
 		elseif task.Destroy then
 			task:Destroy()
+		elseif task.destroy then
+			task:destroy()
 		end
 		index, task = next(tasks)
 	end
@@ -127,6 +131,6 @@ end
 
 --- Alias for DoCleaning()
 -- @function Destroy
-Maid.Destroy = Maid.DoCleaning
+Maid.destroy = Maid.doCleaning
 
 return Maid

@@ -1,44 +1,117 @@
+local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
 
 local DEFAULT_NAMESPACE = "game"
+local t = require(script.Parent.Parent.t)
 
 local PatternCollection = require(script.PatternCollection)
+local StitchStore = require(script.StitchStore)
+local InstanceRegistry = require(script.InstanceRegistry)
+local Symbol = require(script.Parent.Shared.Symbol)
+local InstancePattern = require(script.InstancePattern)
 
 local Stitch = {}
 Stitch.__index = Stitch
 
 function Stitch.new(namespace)
 	namespace = namespace or DEFAULT_NAMESPACE
+
 	local self = setmetatable({
 		namespace = namespace,
 		_listeners = {},
-		instanceUUIDTag = string.format("Stitch_%s_UUIDTagged", namespace),
-		instanceUUIDAttributeString = string.format("Stitch_%s_UUID", namespace),
-		errorPrefix = string.format("[Stitch:%s]", namespace),
+		errorPrefix = ("[Stitch:%s]"):format(namespace),
 		Heartbeat = RunService.Heartbeat,
+		None = Symbol.named("None"),
 	}, Stitch)
+
+	self._store = StitchStore.new(self)
 	self._collection = PatternCollection.new(self)
+	self._instanceRegistry = InstanceRegistry.new(self)
+
+	self:registerPattern(InstancePattern)
 	return self
 end
 
-function Stitch:Destroy()
-	self._collection:Destroy()
+function Stitch:destroy()
+	self._store:destroy()
+	self._collection:destroy()
+	self._instanceRegistry:destroy()
 end
+
 function Stitch:registerPattern(patternDefinition)
-	return self._collection:register(patternDefinition)
+	local registered = self._collection:registerPattern(patternDefinition)
+	self:fire("patternRegistered", registered)
+
+	return registered
 end
 
-function Stitch:getWorkingByRef(patternResolvable, ref)
-	return self._collection:getWorkingByRef(patternResolvable, ref)
+function Stitch:registerInstance(instance: Instance)
+	local instanceUuid = self._instanceRegistry:registerInstance(instance)
+	self:createRootPattern(InstancePattern, instanceUuid)
+
+	return instanceUuid
 end
 
-function Stitch:getOrCreateWorkingByRef(patternResolvable, ref)
-	return self._collection:getOrCreateWorkingByRef(patternResolvable, ref)
+function Stitch:lookupUuid(uuid: string)
+	return self._instanceRegistry:lookup(uuid) or self._store:lookup(uuid)
 end
 
-function Stitch:removeAllWorkingsWithRef(ref)
-	return self._collection:removeAllWorkingsWithRef(ref)
+function Stitch:getUuid(ref)
+	local uuid
+
+	if t.Instance(ref) then
+		uuid = self._instanceRegistry:getInstanceUuid(ref)
+	elseif t.table(ref) then
+		uuid = ref.uuid
+	elseif t.string(ref) then
+		uuid = ref
+	end
+
+	return uuid
 end
+
+function Stitch:getPatternByRef(patternResolvable, ref)
+	local patternName = self._collection:getPatternName(patternResolvable)
+	local refuuid = self:getUuid(ref)
+	local refdata = self._store:lookup(refuuid)
+	local attached_uuid = refdata["attached"][patternName]
+
+	return attached_uuid and self._store:lookup(attached_uuid) or nil
+end
+
+function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
+	local attached_pattern = self:getPatternByRef(patternResolvable, ref)
+	if not attached_pattern then
+		local pattern = self._collection:resolvePattern(patternResolvable)
+		local refuuid = self:getUuid(ref)
+		self._store:dispatch({
+			type = "constructPattern",
+			refuuid = refuuid,
+			uuid = HttpService:GenerateGUID(false),
+			data = data or {},
+			pattern = pattern,
+		})
+		attached_pattern = self:getPatternByRef(patternResolvable, ref)
+	end
+	return attached_pattern
+end
+
+function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
+	uuid = uuid or HttpService:GenerateGUID(false)
+	local pattern = self._collection:resolvePattern(patternResolvable)
+	self._store:dispatch({
+		type = "constructPattern",
+		refuuid = uuid,
+		uuid = uuid,
+		data = data or {},
+		pattern = pattern,
+	})
+	return self:getPatternByRef(patternResolvable, uuid)
+end
+
+-- function Stitch:removeAllWorkingsWithRef(ref)
+-- 	return self._collection:removeAllWorkingsWithRef(ref)
+-- end
 
 function Stitch:fire(eventName, ...)
 	if not self._listeners[eventName] then
@@ -66,6 +139,10 @@ function Stitch:on(eventName, callback)
 			end
 		end
 	end
+end
+
+function Stitch:error(message)
+	error(("%s %s"):format(self.errorPrefix, message), 2)
 end
 
 return Stitch

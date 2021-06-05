@@ -6,7 +6,7 @@ return function()
 		stitch = Stitch.new("test")
 	end)
 	afterEach(function()
-		stitch:Destroy()
+		stitch:destroy()
 		stitch = nil
 	end)
 	describe("Stitch.new", function()
@@ -30,7 +30,7 @@ return function()
 			stitch:registerPattern(patternDefinition)
 
 			expect(eventCount).to.equal(1)
-			expect(registered).to.equal(patternDefinition)
+			expect(stitch._collection:resolvePattern(patternDefinition)).to.be.ok()
 		end)
 
 		it("shouldn't register duplicate patterns", function()
