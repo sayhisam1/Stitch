@@ -1,5 +1,6 @@
 local t = require(script.Parent.Parent.Parent.Parent.Parent.t)
 local Util = require(script.Parent.Parent.Parent.Parent.Shared.Util)
+local HashMappedTrie = require(script.Parent.Parent.Parent.Parent.Shared.HashMappedTrie)
 
 return function(stitch)
 	local WorkingActionInterface = t.interface({
@@ -12,12 +13,15 @@ return function(stitch)
 		local data = action.data
 		local uuid = action.uuid
 
-		if not state[uuid] then
+		local pattern_state = HashMappedTrie.get(state, uuid)
+		if not pattern_state then
 			stitch:error(("tried to update data of non-existant working  with uuid %s!"):format(uuid))
 		end
 
-		state[uuid]["data"] = Util.shallowCopy(data)
+		local new_pattern_state = Util.shallowCopy(pattern_state)
+		new_pattern_state["data"] = Util.shallowCopy(data)
 
+		state = HashMappedTrie.set(state, uuid, new_pattern_state)
 		return state
 	end
 end
