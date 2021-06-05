@@ -23,7 +23,8 @@ function StitchStore.new(stitch)
 		table.insert(middlewares, Rodux.loggerMiddleware)
 	end
 
-	self._store = Rodux.Store.new(reducer, {}, middlewares)
+	self._store = Rodux.Store.new(reducer, HashMappedTrie.new(), middlewares)
+	self.changed = self._store.changed
 	self.deferredStoreChanged = DeferredCallback.new(self._store.changed)
 
 	return self
@@ -47,6 +48,9 @@ function StitchStore:dispatch(...)
 	return self._store:dispatch(...)
 end
 
+function StitchStore:flush()
+	self._store:flush()
+end
 function StitchStore:getState()
 	return self._store:getState()
 end
