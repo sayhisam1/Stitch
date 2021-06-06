@@ -1,6 +1,6 @@
 local _COUNT = {}
 local _KEYS = {}
-local DEFAULT_BUCKET_SIZE = 8
+local DEFAULT_BUCKET_SIZE = 4096
 local HashMappedTrie = {}
 HashMappedTrie.__index = HashMappedTrie
 
