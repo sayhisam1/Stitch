@@ -8,6 +8,7 @@ local PatternCollection = require(script.PatternCollection)
 local StitchStore = require(script.StitchStore)
 local InstanceRegistry = require(script.InstanceRegistry)
 local Symbol = require(script.Parent.Shared.Symbol)
+local Maid = require(script.Parent.Shared.Maid)
 local InstancePattern = require(script.InstancePattern)
 
 local Stitch = {}
@@ -28,12 +29,14 @@ function Stitch.new(namespace)
 	self._store = StitchStore.new(self)
 	self._collection = PatternCollection.new(self)
 	self._instanceRegistry = InstanceRegistry.new(self)
-
+	self._maid = Maid.new()
 	self:registerPattern(InstancePattern)
+
 	return self
 end
 
 function Stitch:destroy()
+	self._maid:destroy()
 	self._store:destroy()
 	self._collection:destroy()
 	self._instanceRegistry:destroy()
