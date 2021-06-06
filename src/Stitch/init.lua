@@ -107,6 +107,7 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 			data = data or {},
 			pattern = pattern,
 		})
+		self:flushActions()
 
 		attached_pattern = self:getPatternByRef(patternResolvable, ref)
 	end
@@ -125,7 +126,7 @@ function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
 		data = data or {},
 		pattern = pattern,
 	})
-
+	self:flushActions()
 	return self:getPatternByRef(patternResolvable, uuid)
 end
 
@@ -163,6 +164,10 @@ function Stitch:on(eventName, callback)
 			end
 		end
 	end
+end
+
+function Stitch:flushActions()
+	self._store:flush()
 end
 
 function Stitch:error(message)

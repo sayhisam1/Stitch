@@ -1,5 +1,3 @@
-local Util = require(script.Parent.Parent.Shared.Util)
-
 local Pattern = {}
 Pattern.__index = Pattern
 
@@ -17,25 +15,24 @@ function Pattern:get(attribute_name: string)
 end
 
 function Pattern:set(attribute_name: string, value: any)
-	local data = self:getData()
-	local newData = Util.shallowCopy(data)
-	if value == self.stitch.None then
-		value = nil
-	end
-	newData[attribute_name] = value
-	self:setData(newData)
+	self:updateData({
+		[attribute_name] = value,
+	})
 end
 
-function Pattern:setData(data: table)
+function Pattern:updateData(data: table)
+	debug.profilebegin("updateData")
 	self.stitch._store:dispatch({
 		type = "updateData",
 		uuid = self.uuid,
 		data = data,
 	})
+	debug.profileend()
 end
 
 function Pattern:getAttachedPatterns()
-	return self["attached"]
+	local state = self.stitch._store:lookup(self.uuid)
+	return state["attached"]
 end
 
 return Pattern

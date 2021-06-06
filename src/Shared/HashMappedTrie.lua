@@ -100,6 +100,69 @@ function HashMappedTrie:set(key: string, value: any)
 	return newMap
 end
 
+-- sets multiple key-values at once, reducing shallow copy overhead for bulk operations
+function HashMappedTrie:setAll(key_values)
+	debug.profilebegin("HashMappedTrie:setAll")
+	local newMap = HashMappedTrie.new(self.bucketSize)
+	newMap.data = shallowCopy(self.data)
+
+	-- track copied tables (don't need to shallowcopy more than once)
+	local copied = {}
+	for key, value in pairs(key_values) do
+		local data = newMap.data
+		local depth = 1
+		local hash = HashMappedTrie.getHash(self, key, depth)
+
+		while not data[key] and data[hash] do
+			if copied[data[hash]] == nil then
+				copied[data[hash]] = true
+				data[hash] = shallowCopy(data[hash])
+			end
+			data = data[hash]
+			depth += 1
+			hash = HashMappedTrie.getHash(self, key, depth)
+		end
+
+		-- key already exists - just need to update value
+		if data[key] then
+			data[key] = value
+			if value == nil then
+				data[_COUNT] -= 1
+			end
+			continue
+		end
+
+		-- must rebalance in this case
+		if data[_COUNT] + 1 > newMap.bucketSize then
+			local newData = table.create(newMap.bucketSize)
+			for i = 1, newMap.bucketSize do
+				newData[i] = {
+					[_COUNT] = 0,
+				}
+			end
+			for k, v in pairs(data) do
+				if k ~= _COUNT then
+					local k_hash = HashMappedTrie.getHash(newMap, k, depth)
+					newData[k_hash][k] = v
+					newData[k_hash][_COUNT] += 1
+				end
+			end
+			for k, _ in pairs(data) do
+				data[k] = nil
+			end
+			for k, v in pairs(newData) do
+				data[k] = v
+			end
+			data = data[hash]
+		end
+
+		data[key] = value
+		data[_COUNT] += 1
+	end
+	debug.profileend()
+	return newMap
+end
+
 function HashMappedTrie:getAllKeyValues(map: table)
 	map = map or {}
 

@@ -105,6 +105,7 @@ return function()
 			expect(pattern:get("variable")).to.equal("1234")
 
 			pattern:set("variable", "spaghet")
+			stitch:flushActions()
 			expect(pattern:get("variable")).to.equal("spaghet")
 		end)
 	end)
@@ -129,7 +130,7 @@ return function()
 			expect(stitch:getPatternByRef("Test2", testRef)).to.be.ok()
 
 			stitch:deconstructPatternsWithRef(testRef)
-
+			stitch:flushActions()
 			expect(stitch:getPatternByRef("Test", testRef)).to.never.be.ok()
 			expect(stitch:getPatternByRef("Test2", testRef)).to.never.be.ok()
 		end)

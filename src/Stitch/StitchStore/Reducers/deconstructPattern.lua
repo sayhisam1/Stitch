@@ -17,15 +17,14 @@ return function(stitch)
 		local patternName = pattern_state.patternName
 
 		-- remove from parent
-		if uuid ~= refuuid then
-			local ref_state = HashMappedTrie.get(state, refuuid)
-			ref_state = Util.shallowCopy(ref_state)
-			ref_state["attached"] = Util.shallowCopy(ref_state["attached"])
-			ref_state["attached"][patternName] = nil
-			state = HashMappedTrie.set(state, refuuid, ref_state)
-		end
+		local ref_state = HashMappedTrie.get(state, refuuid)
+		ref_state = Util.shallowCopy(ref_state)
+		ref_state["attached"] = Util.shallowCopy(ref_state["attached"])
+		ref_state["attached"][patternName] = nil
+		state = HashMappedTrie.set(state, refuuid, ref_state)
 
 		-- deconstruct all children
+		pattern_state = HashMappedTrie.get(state, uuid)
 		for attachedPattern, attachedUuid in pairs(pattern_state["attached"]) do
 			state = deconstruct(state, attachedUuid)
 		end

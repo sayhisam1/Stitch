@@ -25,23 +25,6 @@ return function(stitch)
 			stitch:error(("tried to create Pattern %s with duplicate uuid %s!"):format(tostring(pattern), uuid))
 		end
 
-		if uuid ~= refuuid then
-			local ref_state = HashMappedTrie.get(state, refuuid)
-			if not ref_state then
-				stitch:error(("tried to attach to unknown ref %s!"):format(refuuid))
-			end
-			if ref_state["attached"][pattern.name] then
-				stitch:error(("tried to attach duplicate Pattern %s to %s!"):format(tostring(pattern), refuuid))
-			end
-
-			local new_ref_state = Util.shallowCopy(ref_state)
-			new_ref_state["attached"] = Util.shallowCopy(new_ref_state["attached"])
-			new_ref_state["attached"][pattern.name] = uuid
-			setmetatable(new_ref_state, getmetatable(ref_state))
-
-			state = HashMappedTrie.set(state, refuuid, new_ref_state)
-		end
-
 		state = HashMappedTrie.set(
 			state,
 			uuid,
@@ -53,6 +36,22 @@ return function(stitch)
 				refuuid = refuuid,
 			}, pattern)
 		)
+
+		local ref_state = HashMappedTrie.get(state, refuuid)
+		if not ref_state then
+			stitch:error(("tried to attach to unknown ref %s!"):format(refuuid))
+		end
+		if ref_state["attached"][pattern.name] then
+			stitch:error(("tried to attach duplicate Pattern %s to %s!"):format(tostring(pattern), refuuid))
+		end
+
+		local new_ref_state = Util.shallowCopy(ref_state)
+		new_ref_state["attached"] = Util.shallowCopy(new_ref_state["attached"])
+		new_ref_state["attached"][pattern.name] = uuid
+		setmetatable(new_ref_state, getmetatable(ref_state))
+
+		state = HashMappedTrie.set(state, refuuid, new_ref_state)
+
 		debug.profileend()
 		return state
 	end
