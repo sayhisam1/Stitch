@@ -76,7 +76,13 @@ function Maid:giveTask(task)
 	local taskId = #self._tasks + 1
 	self[taskId] = task
 
-	if type(task) == "table" and not task.Destroy and not task.destroy then
+	if
+		type(task) == "table"
+		and not task.Destroy
+		and not task.destroy
+		and not task.disconnect
+		and not task.Disconnect
+	then
 		warn("[Maid.giveTask] - Gave table task without .destroy\n\n" .. debug.traceback())
 	end
 
@@ -118,12 +124,14 @@ function Maid:doCleaning()
 		tasks[index] = nil
 		if type(task) == "function" then
 			task()
-		elseif typeof(task) == "RBXScriptConnection" then
+		elseif typeof(task) == "RBXScriptConnection" or task.Disconnect then
 			task:Disconnect()
 		elseif task.Destroy then
 			task:Destroy()
 		elseif task.destroy then
 			task:destroy()
+		elseif task.disconnect then
+			task:disconnect()
 		end
 		index, task = next(tasks)
 	end
