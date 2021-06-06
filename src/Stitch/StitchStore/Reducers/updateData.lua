@@ -10,6 +10,7 @@ return function(stitch)
 
 	return function(state, action)
 		t.strict(WorkingActionInterface)(action)
+		debug.profilebegin("update data")
 		local data = action.data
 		local uuid = action.uuid
 
@@ -19,9 +20,16 @@ return function(stitch)
 		end
 
 		local new_pattern_state = Util.shallowCopy(pattern_state)
-		new_pattern_state["data"] = Util.shallowCopy(data)
-
+		setmetatable(new_pattern_state, getmetatable(pattern_state))
+		new_pattern_state["data"] = Util.shallowCopy(pattern_state["data"])
+		for k, v in pairs(data) do
+			if v == stitch.None then
+				v = nil
+			end
+			new_pattern_state["data"][k] = v
+		end
 		state = HashMappedTrie.set(state, uuid, new_pattern_state)
+		debug.profileend()
 		return state
 	end
 end
