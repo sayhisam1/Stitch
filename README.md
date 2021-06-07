@@ -9,6 +9,7 @@ Stitch was heavily inspired by [Fabric](https://github.com/evaera/Fabric), and d
 - Stitch defers all actions until the end of the frame. This allows for better optimization and clearer semantics, and also better fits with Roblox's upcoming changes to deferred events.
 
 
-**Stitch is still highly experimental, and should not be considered stable for production use**I
+**Stitch is still highly experimental, and should not be considered stable for production use!**
+
 Issues and Pull Requests are appreciated :)
 
