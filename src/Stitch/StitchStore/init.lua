@@ -32,8 +32,6 @@ function StitchStore.new(stitch)
 
 	self._store = Rodux.Store.new(reducer, HashMappedTrie.new(math.huge), middlewares)
 
-	self.changed = self._store.changed
-
 	return self
 end
 
