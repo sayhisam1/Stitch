@@ -8,6 +8,7 @@ local PatternCollection = require(script.PatternCollection)
 local StitchStore = require(script.StitchStore)
 local InstanceRegistry = require(script.InstanceRegistry)
 local Symbol = require(script.Parent.Shared.Symbol)
+local Util = require(script.Parent.Shared.Util)
 local InstancePattern = require(script.InstancePattern)
 
 local Stitch = {}
@@ -157,12 +158,13 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 	if not attached_pattern then
 		local pattern = self._collection:resolvePattern(patternResolvable)
 		local refuuid = self:getUuid(ref)
+		local constructionData = Util.mergeTable(pattern.data or {}, data or {})
 
 		self._store:dispatch({
 			type = "constructPattern",
 			refuuid = refuuid,
 			uuid = HttpService:GenerateGUID(false),
-			data = data or {},
+			data = constructionData,
 			patternName = pattern.name,
 		})
 		self:flushActions()
