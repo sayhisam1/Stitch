@@ -3,7 +3,7 @@ Stitch is an Entity Component System (https://en.wikipedia.org/wiki/Entity_compo
 
 
 Stitch was heavily inspired by [Fabric](https://github.com/evaera/Fabric), and differs in several key ways:
-- Stitch is built on top of [Rodux](https://github.com/Roblox/Rodux), which means it benefits from immutability
+- Stitch is built on top of [Rodux](https://github.com/Roblox/Rodux), which means it benefits from immutability. For performance reasons, immutability is only guaranteed in between flushes (which happen once per frame by default, but can happen more often and on user specification if needed).
 - Stitch has native support for Roblox Instance Attributes - this makes it easier to handle behavior like streaming
 - Stitch has real Systems, which means data flows "top-down". this makes it easy to use libraries like [Roact](https://github.com/Roblox/Roact) to render state, and also opens the door to optimizations and complex interactions.
 - Stitch has clear semantics - there are no black magic getters that have strange side-effects.
