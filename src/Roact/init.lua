@@ -16,7 +16,7 @@ return function(stitch, roact)
 	stitch:on("patternConstructed", function(uuid)
 		local pattern = stitch:lookupPatternByUuid(uuid)
 		if pattern.render then
-			dirty[uuid] = false
+			dirty[uuid] = true
 		end
 	end)
 	stitch:on("patternDeconstructed", function(uuid)
@@ -27,6 +27,7 @@ return function(stitch, roact)
 	-- isolate render to make sure it only happens once per frame
 	local heartbeatListener = stitch.Heartbeat:connect(function()
 		debug.profilebegin("StitchRoactRenderLoop")
+		print("heartbeat")
 		for uuid, isDirty in pairs(dirty) do
 			if isDirty then
 				local pattern = stitch:lookupPatternByUuid(uuid)
