@@ -1,0 +1,36 @@
+{
+    "name": "Stitch",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "tetris": {
+                "$className": "Folder",
+                "shared": {
+                    "$path": "./shared"
+                }
+            }
+        },
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+            "tetris": {
+                "$className": "Folder",
+                "server": {
+                    "$path": "./server"
+                }
+            }
+        },
+        "StarterPlayer": {
+            "$className": "StarterPlayer",
+            "StarterPlayerScripts": {
+                "$className": "StarterPlayerScripts",
+                "tetris": {
+                    "$className": "Folder",
+                    "client": {
+                        "$path": "./client"
+                    }
+                }
+            }
+        }
+    }
+}
