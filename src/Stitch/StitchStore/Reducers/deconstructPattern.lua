@@ -3,14 +3,25 @@ local HashMappedTrie = require(script.Parent.Parent.Parent.Parent.Shared.HashMap
 local Util = require(script.Parent.Parent.Parent.Parent.Shared.Util)
 
 return function(stitch)
-	local deconstructPatternTypes = t.interface({
-		uuid = t.string,
-	})
+	return function(state, action)
+		debug.profilebegin("deconstructPattern")
 
-	local function deconstruct(state, uuid)
+		local uuid = action.uuid
+		local copied = action.copied
+
 		local pattern_state = HashMappedTrie.get(state, uuid)
 		if not pattern_state then
+			debug.profileend()
 			stitch:error(("tried to decontruct non-existent pattern with uuid %s!"):format(uuid))
+		end
+
+		for patternName, attached_uuid in pairs(pattern_state["attached"]) do
+			debug.profileend()
+			stitch:error(("tried to deconstruct %s, but has attached child %s of pattern %s!"):format(
+				uuid,
+				attached_uuid,
+				patternName
+			))
 		end
 
 		local refuuid = pattern_state.refuuid
@@ -18,28 +29,18 @@ return function(stitch)
 
 		-- remove from parent
 		local ref_state = HashMappedTrie.get(state, refuuid)
-		ref_state = Util.shallowCopy(ref_state)
-		ref_state["attached"] = Util.shallowCopy(ref_state["attached"])
-		ref_state["attached"][patternName] = nil
-		state = HashMappedTrie.set(state, refuuid, ref_state)
-
-		-- deconstruct all children
-		pattern_state = HashMappedTrie.get(state, uuid)
-		for attachedPattern, attachedUuid in pairs(pattern_state["attached"]) do
-			state = deconstruct(state, attachedUuid)
+		if not ref_state then
+			debug.profileend()
+			stitch:error(("tried to deconstruct %s, but could not reference parent %s!"):format(uuid, refuuid))
 		end
 
-		state = HashMappedTrie.set(state, uuid, nil)
+		ref_state = Util.shallowCopy(ref_state, copied)
+		ref_state["attached"] = Util.shallowCopy(ref_state["attached"], copied)
+		ref_state["attached"][patternName] = nil
 
-		return state
-	end
+		state = HashMappedTrie.set(state, refuuid, ref_state, copied)
+		state = HashMappedTrie.set(state, uuid, nil, copied)
 
-	return function(state, action)
-		t.strict(deconstructPatternTypes)(action)
-		debug.profilebegin("deconstructPattern")
-		local uuid = action.uuid
-
-		state = deconstruct(state, uuid)
 		debug.profileend()
 		return state
 	end

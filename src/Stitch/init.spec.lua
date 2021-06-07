@@ -10,6 +10,7 @@ return function()
 		stitch = nil
 	end)
 	describe("Stitch.new", function()
+		FOCUS()
 		it("should return a stitch", function()
 			expect(stitch.namespace).to.equal("test")
 		end)

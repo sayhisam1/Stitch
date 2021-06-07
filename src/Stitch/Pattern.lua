@@ -15,11 +15,11 @@ function Pattern:get(attribute_name: string)
 end
 
 function Pattern:set(attribute_name: string, value: any)
-	if value == nil then
-		value = self.stitch.None
-	end
-	self:updateData({
-		[attribute_name] = value,
+	self.stitch._store:dispatch({
+		type = "updateData",
+		uuid = self.uuid,
+		key = attribute_name,
+		value = value,
 	})
 end
 

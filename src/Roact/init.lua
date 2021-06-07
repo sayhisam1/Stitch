@@ -1,5 +1,3 @@
-local HashMappedTrie = require(script.Parent.Shared.HashMappedTrie)
-
 return function(stitch, roact)
 	stitch.Roact = roact
 	local roactTree = roact.mount(roact.createFragment({}))
@@ -11,11 +9,15 @@ return function(stitch, roact)
 	local dirty = {}
 	local roactElements = {}
 	stitch:on("patternUpdated", function(uuid)
-		dirty[uuid] = true
+		if dirty[uuid] ~= nil then
+			dirty[uuid] = true
+		end
 	end)
 	stitch:on("patternConstructed", function(uuid)
 		local pattern = stitch:lookupPatternByUuid(uuid)
-		dirty[uuid] = (pattern.render ~= nil)
+		if pattern.render then
+			dirty[uuid] = false
+		end
 	end)
 	stitch:on("patternDeconstructed", function(uuid)
 		dirty[uuid] = nil

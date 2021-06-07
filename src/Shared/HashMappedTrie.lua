@@ -1,6 +1,6 @@
 local _COUNT = {}
 local _KEYS = {}
-local DEFAULT_BUCKET_SIZE = 4096
+local DEFAULT_BUCKET_SIZE = 32
 local HashMappedTrie = {}
 HashMappedTrie.__index = HashMappedTrie
 HashMappedTrie.None = {}
@@ -16,13 +16,9 @@ local function shallowCopy(tbl)
 end
 
 function HashMappedTrie.new(bucketSize: int)
-	local self = setmetatable({
-		bucketSize = bucketSize or DEFAULT_BUCKET_SIZE,
-		data = {
-			[_COUNT] = 0,
-		},
-	}, HashMappedTrie)
-	return self
+	return {
+		data = {},
+	}
 end
 
 function HashMappedTrie:getHash(key: string, depth: int)
@@ -31,138 +27,25 @@ end
 
 function HashMappedTrie:get(key: string)
 	debug.profilebegin("HashMappedTrie:get")
-	local depth = 1
-	local hash = HashMappedTrie.getHash(self, key, depth)
-	local data = self.data
-	while not data[key] and data[hash] do
-		data = data[hash]
-		depth += 1
-		hash = HashMappedTrie.getHash(self, key, depth)
-	end
-	local returnValue = data[key]
+	local returnValue = self.data[key]
 	debug.profileend()
 	return returnValue
 end
 
-function HashMappedTrie:set(key: string, value: any)
-	debug.profilebegin("HashMappedTrie:set")
-	local newMap = HashMappedTrie.new(self.bucketSize)
-	newMap.data = shallowCopy(self.data)
-
-	local data = newMap.data
-	local depth = 1
-	local hash = HashMappedTrie.getHash(self, key, depth)
-
-	while not data[key] and data[hash] do
-		data[hash] = shallowCopy(data[hash])
-		data = data[hash]
-		depth += 1
-		hash = HashMappedTrie.getHash(self, key, depth)
+local function shallowCopyOnce(table: table, copied: table)
+	if copied[table] then
+		return table
 	end
-
-	-- key already exists - just need to update value
-	if data[key] then
-		data[key] = value
-		if value == nil then
-			data[_COUNT] -= 1
-		end
-		debug.profileend()
-		return newMap
-	end
-
-	-- must rebalance in this case
-	if data[_COUNT] + 1 > newMap.bucketSize then
-		local newData = table.create(newMap.bucketSize)
-		for i = 1, newMap.bucketSize do
-			newData[i] = {
-				[_COUNT] = 0,
-			}
-		end
-		for k, v in pairs(data) do
-			if k ~= _COUNT then
-				local k_hash = HashMappedTrie.getHash(newMap, k, depth)
-				newData[k_hash][k] = v
-				newData[k_hash][_COUNT] += 1
-			end
-		end
-		for k, _ in pairs(data) do
-			data[k] = nil
-		end
-		for k, v in pairs(newData) do
-			data[k] = v
-		end
-		data = data[hash]
-	end
-
-	data[key] = value
-	data[_COUNT] += 1
-
-	debug.profileend()
-	return newMap
+	local ret = shallowCopy(table)
+	copied[ret] = true
+	return ret
 end
 
--- sets multiple key-values at once, reducing shallow copy overhead for bulk operations
-function HashMappedTrie:setAll(key_values)
-	debug.profilebegin("HashMappedTrie:setAll")
+function HashMappedTrie:set(key: string, value: any, copied: table)
+	debug.profilebegin("HashMappedTrie:set")
 	local newMap = HashMappedTrie.new(self.bucketSize)
-	newMap.data = shallowCopy(self.data)
-
-	-- track copied tables (don't need to shallowcopy more than once)
-	local copied = {}
-	for key, value in pairs(key_values) do
-		if value == HashMappedTrie.None then
-			value = nil
-		end
-		local data = newMap.data
-		local depth = 1
-		local hash = HashMappedTrie.getHash(self, key, depth)
-
-		while not data[key] and data[hash] do
-			if copied[data[hash]] == nil then
-				data[hash] = shallowCopy(data[hash])
-				copied[data[hash]] = true
-			end
-			data = data[hash]
-			depth += 1
-			hash = HashMappedTrie.getHash(self, key, depth)
-		end
-
-		-- key already exists - just need to update value
-		if data[key] then
-			data[key] = value
-			if value == nil then
-				data[_COUNT] -= 1
-			end
-			continue
-		end
-
-		-- must rebalance in this case
-		if data[_COUNT] + 1 > newMap.bucketSize then
-			local newData = table.create(newMap.bucketSize)
-			for i = 1, newMap.bucketSize do
-				newData[i] = {
-					[_COUNT] = 0,
-				}
-			end
-			for k, v in pairs(data) do
-				if k ~= _COUNT then
-					local k_hash = HashMappedTrie.getHash(newMap, k, depth)
-					newData[k_hash][k] = v
-					newData[k_hash][_COUNT] += 1
-				end
-			end
-			for k, _ in pairs(data) do
-				data[k] = nil
-			end
-			for k, v in pairs(newData) do
-				data[k] = v
-			end
-			data = data[hash]
-		end
-
-		data[key] = value
-		data[_COUNT] += 1
-	end
+	newMap.data = shallowCopyOnce(self.data, copied)
+	newMap.data[key] = value
 	debug.profileend()
 	return newMap
 end

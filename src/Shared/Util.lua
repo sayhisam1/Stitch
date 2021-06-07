@@ -6,9 +6,17 @@ function Util.shallowCopy(tbl)
 	for k, v in pairs(tbl) do
 		newtbl[k] = v
 	end
-	setmetatable(newtbl, getmetatable(tbl))
 	debug.profileend()
 	return newtbl
 end
-
+function Util.shallowCopyOnce(table: table, copied: table)
+	debug.profilebegin("shallowCopyOnce")
+	if copied[table] then
+		return table
+	end
+	local ret = Util.shallowCopy(table)
+	copied[ret] = true
+	debug.profileend()
+	return ret
+end
 return Util
