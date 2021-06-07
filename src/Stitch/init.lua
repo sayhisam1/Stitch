@@ -8,7 +8,6 @@ local PatternCollection = require(script.PatternCollection)
 local StitchStore = require(script.StitchStore)
 local InstanceRegistry = require(script.InstanceRegistry)
 local Symbol = require(script.Parent.Shared.Symbol)
-local Maid = require(script.Parent.Shared.Maid)
 local InstancePattern = require(script.InstancePattern)
 
 local Stitch = {}
@@ -29,14 +28,27 @@ function Stitch.new(namespace)
 	self._store = StitchStore.new(self)
 	self._collection = PatternCollection.new(self)
 	self._instanceRegistry = InstanceRegistry.new(self)
-	self._maid = Maid.new()
+
+	self._store:on("patternDeconstructed", function(...)
+		self:fire("patternDeconstructed", ...)
+	end)
+
+	self._store:on("patternConstructed", function(...)
+		self:fire("patternConstructed", ...)
+	end)
+
+	self._store:on("patternUpdated", function(...)
+		self:fire("patternUpdated", ...)
+	end)
+
 	self:registerPattern(InstancePattern)
 
 	return self
 end
 
 function Stitch:destroy()
-	self._maid:destroy()
+	self:fire("destroyed")
+	self._listeners = nil
 	self._store:destroy()
 	self._collection:destroy()
 	self._instanceRegistry:destroy()
@@ -52,16 +64,37 @@ end
 function Stitch:registerInstance(instance: Instance)
 	local instanceUuid = self._instanceRegistry:registerInstance(instance)
 	self:createRootPattern(InstancePattern, instanceUuid)
-
+	self:fire("instanceRegistered", instance)
 	return instanceUuid
 end
 
+function Stitch:unregisterInstance(instance: Instance)
+	local uuid = self:getUuid(instance)
+	if not uuid then
+		self:error(("failed to get uuid for instance %s!"):format(instance.Name))
+	end
+	local listener
+	listener = self.Heartbeat:connect(function()
+		pcall(function()
+			self:deconstructPatternsWithRef(instance)
+			self._store:flush()
+			self._instanceRegistry:uregisterInstance(instance)
+			self:fire("instanceUnregistered", instance)
+		end)
+		listener:disconnect()
+	end)
+end
 function Stitch:lookupInstanceByUuid(uuid: string)
 	return self._instanceRegistry:lookup(uuid)
 end
 
 function Stitch:lookupPatternByUuid(uuid: string)
-	return self._store:lookup(uuid)
+	local patternData = self._store:lookup(uuid)
+	if not patternData then
+		return
+	end
+	local pattern = self._collection:resolveOrErrorPattern(patternData.patternName)
+	return setmetatable(patternData, pattern)
 end
 
 function Stitch:getUuid(ref)
@@ -89,7 +122,11 @@ function Stitch:getPatternByRef(patternResolvable, ref)
 	local refdata = self._store:lookup(refuuid)
 	local attached_uuid = refdata and refdata["attached"][patternName]
 
-	return attached_uuid and self._store:lookup(attached_uuid) or nil
+	if attached_uuid then
+		local data = self._store:lookup(attached_uuid)
+		local pattern = self._collection:resolveOrErrorPattern(data.patternName)
+		return setmetatable(data, pattern)
+	end
 end
 
 function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
@@ -108,7 +145,7 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 			refuuid = refuuid,
 			uuid = HttpService:GenerateGUID(false),
 			data = data or {},
-			pattern = pattern,
+			patternName = pattern.name,
 		})
 		self:flushActions()
 
@@ -120,17 +157,19 @@ end
 
 function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
 	uuid = uuid or HttpService:GenerateGUID(false)
-	local pattern = self._collection:resolvePattern(patternResolvable)
+	local patternName = self._collection:getPatternName(patternResolvable)
 
 	self._store:dispatch({
 		type = "constructPattern",
 		refuuid = uuid,
 		uuid = uuid,
 		data = data or {},
-		pattern = pattern,
+		patternName = patternName,
 	})
 	self:flushActions()
-	return self:getPatternByRef(patternResolvable, uuid)
+	local attached_pattern = self:getPatternByRef(patternResolvable, uuid)
+
+	return attached_pattern
 end
 
 function Stitch:deconstructPatternsWithRef(ref)

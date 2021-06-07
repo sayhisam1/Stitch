@@ -3,6 +3,7 @@ local _KEYS = {}
 local DEFAULT_BUCKET_SIZE = 4096
 local HashMappedTrie = {}
 HashMappedTrie.__index = HashMappedTrie
+HashMappedTrie.None = {}
 
 local function shallowCopy(tbl)
 	local newtbl = table.move(tbl, 1, #tbl, 1, {})
@@ -109,14 +110,17 @@ function HashMappedTrie:setAll(key_values)
 	-- track copied tables (don't need to shallowcopy more than once)
 	local copied = {}
 	for key, value in pairs(key_values) do
+		if value == HashMappedTrie.None then
+			value = nil
+		end
 		local data = newMap.data
 		local depth = 1
 		local hash = HashMappedTrie.getHash(self, key, depth)
 
 		while not data[key] and data[hash] do
 			if copied[data[hash]] == nil then
-				copied[data[hash]] = true
 				data[hash] = shallowCopy(data[hash])
+				copied[data[hash]] = true
 			end
 			data = data[hash]
 			depth += 1

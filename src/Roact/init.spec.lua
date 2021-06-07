@@ -1,3 +1,5 @@
+local RunService = game:GetService("RunService")
+
 local Stitch = require(script.Parent.Parent.Stitch)
 local StitchRoact = require(script.Parent)
 local Roact = require(script.Parent.Parent.Parent.Roact)
@@ -41,7 +43,7 @@ return function()
 		end)
 	end)
 	describe("stress test", function()
-		SKIP()
+		FOCUS()
 		it("should render multiple things efficiently", function()
 			StitchRoact(stitch, Roact)
 			local targetFolder = Instance.new("Folder")
@@ -67,7 +69,7 @@ return function()
 			stitch:registerPattern(PatternDefinition)
 
 			local patterns = {}
-			for i = 1, 500 do
+			for i = 1, 1000 do
 				table.insert(
 					patterns,
 					stitch:createRootPattern(PatternDefinition, nil, {
@@ -81,8 +83,9 @@ return function()
 				for _, p in pairs(patterns) do
 					p:set("cframe", p:get("cframe") * CFrame.new(math.random(), 0, math.random()))
 				end
-				stitch:flushActions()
+				heartbeat:Fire()
 				debug.profileend()
+				RunService.Heartbeat:Wait()
 			end
 		end)
 	end)

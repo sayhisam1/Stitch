@@ -20,7 +20,6 @@ return function(stitch)
 		end
 
 		local new_pattern_state = Util.shallowCopy(pattern_state)
-		setmetatable(new_pattern_state, getmetatable(pattern_state))
 		new_pattern_state["data"] = Util.shallowCopy(pattern_state["data"])
 		for k, v in pairs(data) do
 			if v == stitch.None then
