@@ -1,0 +1,33 @@
+{
+    "name": "Stitch",
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "$className": "ReplicatedStorage",
+            "Packages": {
+                "$path": "./vendor",
+                "Stitch": {
+                    "$path": "./src"
+                }
+            }
+        },
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+            "StitchTest": {
+                "Stitch": {
+                    "$path": "./src"
+                },
+                "$path": "./test/server"
+            }
+        },
+        "StarterPlayer": {
+            "$className": "StarterPlayer",
+            "StarterPlayerScripts": {
+                "$className": "StarterPlayerScripts",
+                "StitchTest": {
+                    "$path": "./test/client"
+                }
+            }
+        }
+    }
+}
