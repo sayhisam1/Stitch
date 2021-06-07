@@ -7,8 +7,7 @@ StitchStore.__index = StitchStore
 
 function StitchStore.new(stitch)
 	local self = setmetatable({
-		_updateQueue = {},
-		_deconstructQueue = {},
+		_actionQueue = {},
 		_listeners = {},
 	}, StitchStore)
 
@@ -21,7 +20,10 @@ function StitchStore.new(stitch)
 		return state
 	end
 
-	local middlewares = {}
+	local middlewares = {
+		Rodux.thunkMiddleware,
+	}
+
 	if stitch.debug then
 		table.insert(middlewares, Rodux.loggerMiddleware)
 	end
@@ -51,64 +53,68 @@ function StitchStore:destroy()
 end
 
 function StitchStore:dispatch(action)
-	if action.type == "updateData" then
-		table.insert(self._updateQueue, action)
-	elseif action.type == "deconstructPattern" then
-		table.insert(self._deconstructQueue, action)
-	elseif action.type == "constructPattern" then
-		self._store:dispatch(action)
-		self:fire("patternConstructed", action.uuid)
-	end
+	table.insert(self._actionQueue, action)
 end
 
-function StitchStore:flush()
-	if #self._updateQueue > 0 then
-		local batchedAction = {
-			type = "batchedUpdateData",
-			actions = self._updateQueue,
-		}
-		self._store:dispatch(batchedAction)
-		for _, action in ipairs(self._updateQueue) do
-			self:fire("patternUpdated", action.uuid)
+function StitchStore:expandDeconstructAction(action: table, successfulActions: table)
+	local function deconstruct(uuid, tbl: table)
+		local pattern = self:lookup(uuid)
+		for patternName, attached_uuid in pairs(pattern.attached) do
+			if attached_uuid ~= uuid then
+				deconstruct(attached_uuid, tbl)
+			end
 		end
-		table.clear(self._updateQueue)
+		table.insert(tbl, {
+			type = "deconstructPattern",
+			uuid = uuid,
+		})
+		return tbl
 	end
 
-	if #self._deconstructQueue > 0 then
-		local deconstructActions = {}
-
-		local function deconstruct(uuid)
-			local pattern = self:lookup(uuid)
-			for patternName, attached_uuid in pairs(pattern.attached) do
-				if attached_uuid ~= uuid then
-					deconstruct(attached_uuid)
+	local actions = deconstruct(action.uuid, {})
+	return function(store)
+		local copied = {}
+		for _, deconstructAction in ipairs(actions) do
+			deconstructAction.copied = copied
+			store:dispatch(deconstructAction)
+		end
+		for _, deconstructAction in ipairs(actions) do
+			table.insert(successfulActions, deconstructAction)
+		end
+	end
+end
+function StitchStore:flush()
+	local successfulActions = table.create(#self._actionQueue)
+	local function atomicThunk(store)
+		debug.profilebegin("StitchStoreFlush")
+		local copied = {}
+		for _, action in ipairs(self._actionQueue) do
+			action.copied = copied
+			if action.type == "deconstructPattern" then
+				action = self:expandDeconstructAction(action, successfulActions)
+			end
+			local success, msg = pcall(store.dispatch, store, action)
+			if success then
+				if action.type == "deconstructPattern" then
+					copied = copied
+				else
+					table.insert(successfulActions, action)
 				end
 			end
-			table.insert(deconstructActions, {
-				type = "deconstructPattern",
-				uuid = uuid,
-			})
 		end
-
-		for _, action in ipairs(self._deconstructQueue) do
-			deconstruct(action.uuid)
-		end
-
-		local batchedAction = {
-			type = "batchedDeconstructPattern",
-			actions = deconstructActions,
-		}
-
-		self._store:dispatch(batchedAction)
-
-		for _, action in ipairs(deconstructActions) do
+		debug.profileend()
+	end
+	self._store:dispatch(atomicThunk)
+	table.clear(self._actionQueue)
+	for _, action in ipairs(successfulActions) do
+		if action.type == "constructPattern" then
+			self:fire("patternConstructed", action.uuid)
+		elseif action.type == "updateData" then
+			self:fire("patternUpdated", action.uuid)
+		elseif action.type == "deconstructPattern" then
 			self:fire("patternDeconstructed", action.uuid)
 		end
-
-		table.clear(self._deconstructQueue)
 	end
-
-	table.clear(self._deconstructQueue)
 	self._store:flush()
 end
 
@@ -146,6 +152,10 @@ function StitchStore:on(eventName, callback)
 			end
 		end
 	end
+end
+
+function StitchStore:getAll()
+	return self._store:getState().data
 end
 
 return StitchStore

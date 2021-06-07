@@ -1,5 +1,6 @@
 local CollectionService = game:GetService("CollectionService")
 local HttpService = game:GetService("HttpService")
+local RunService = game:GetService("RunService")
 
 local InstanceRegistry = {}
 InstanceRegistry.__index = InstanceRegistry
@@ -12,34 +13,12 @@ function InstanceRegistry.new(stitch)
 		_listeners = {},
 	}, InstanceRegistry)
 
-	self.uuidToInstance = setmetatable({}, {
-		__mode = "v",
-	})
-
-	self:setupInstanceListeners()
-	for _, instance in ipairs(CollectionService:GetTagged(self.instanceUuidTag)) do
-		self:registerInstance(instance)
-	end
+	self.uuidToInstance = {}
 
 	return self
 end
 
-function InstanceRegistry:setupInstanceListeners()
-	local instanceAdded = CollectionService:GetInstanceAddedSignal(self.instanceUuidTag)
-	self._instanceAdded = instanceAdded:Connect(function(instance: Instance)
-		self:registerInstance(instance)
-	end)
-
-	local instanceRemoved = CollectionService:GetInstanceRemovedSignal(self.instanceUuidTag)
-	self._instanceRemoved = instanceRemoved:Connect(function(instance: Instance)
-		self:unregisterInstance(instance)
-	end)
-end
-
 function InstanceRegistry:destroy()
-	self._instanceAdded:disconnect()
-	self._instanceRemoved:disconnect()
-
 	-- Remove all attributes and tags
 	for _, instance in pairs(CollectionService:GetTagged(self.instanceUuidTag)) do
 		instance:SetAttribute(self.instanceUuidAttribute, nil)
@@ -57,9 +36,20 @@ end
 
 function InstanceRegistry:registerInstance(instance: Instance)
 	local uuid = instance:GetAttribute(self.instanceUuidAttribute)
+	-- if already registered, we can bail
+	if self.uuidToInstance[uuid] == instance then
+		return uuid
+	end
 	if not uuid then
-		uuid = HttpService:GenerateGUID(false)
-		instance:SetAttribute(self.instanceUuidAttribute, uuid)
+		if RunService:IsServer() then
+			uuid = HttpService:GenerateGUID(false)
+			instance:SetAttribute(self.instanceUuidAttribute, uuid)
+		else
+			-- on clients, we let server be authoritative
+			local event = instance:GetAttributeChangedSignal(self.instanceUuidAttribute)
+			event:Wait()
+			uuid = instance:GetAttribute(self.instanceUuidAttribute)
+		end
 	end
 
 	if self.uuidToInstance[uuid] then
@@ -71,15 +61,13 @@ function InstanceRegistry:registerInstance(instance: Instance)
 	end
 
 	self.uuidToInstance[uuid] = instance
-	self:fire("instanceRegistered", instance)
-
+	CollectionService:AddTag(instance, self.instanceUuidTag)
 	return uuid
 end
 
 function InstanceRegistry:unregisterInstance(instance: Instance)
 	local uuid = instance:GetAttribute(self.instanceUuidAttribute)
 	self.uuidToInstance[uuid] = nil
-	self:fire("instanceUnregistered", instance)
 end
 
 function InstanceRegistry:lookup(uuid: string)

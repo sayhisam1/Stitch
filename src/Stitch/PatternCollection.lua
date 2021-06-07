@@ -45,7 +45,8 @@ function PatternCollection:registerPattern(patternDefinition)
 end
 
 function PatternCollection:resolvePattern(patternResolvable)
-	if not t.union(t.string, t.interface({ name = t.string }))(patternResolvable) then
+	local patternResolvableType = typeof(patternResolvable)
+	if not patternResolvableType == "string" and not patternResolvableType == "table" then
 		self.stitch:error(("invalid PatternResolvable %s of type %s"):format(
 			tostring(patternResolvable),
 			typeof(patternResolvable)
@@ -53,7 +54,7 @@ function PatternCollection:resolvePattern(patternResolvable)
 	end
 
 	local patternName = patternResolvable
-	if t.table(patternResolvable) then
+	if patternResolvableType == "table" then
 		patternName = patternResolvable.name
 	end
 
@@ -66,10 +67,14 @@ function PatternCollection:resolveOrErrorPattern(patternResolvable)
 end
 
 function PatternCollection:getPatternName(patternResolvable)
-	if t.string(patternResolvable) then
+	if typeof(patternResolvable) == "string" then
 		return patternResolvable
 	end
 	return patternResolvable.name
+end
+
+function PatternCollection:getAll()
+	return self.registeredPatterns
 end
 
 return PatternCollection

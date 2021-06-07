@@ -3,6 +3,7 @@ local HttpService = game:GetService("HttpService")
 local HashMappedTrie = require(script.Parent.HashMappedTrie)
 return function()
 	describe("insertion", function()
+		SKIP()
 		it("should insert a single value", function()
 			local trie = HashMappedTrie.new()
 			local val = {}
