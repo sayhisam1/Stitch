@@ -13,7 +13,6 @@ Types.PatternDefinition = t.interface({
 	shouldUpdate = t.optional(t.callback),
 
 	-- Reserved Properties
-	data = t.none,
 	lastData = t.none,
 	stitch = t.none,
 	fire = t.none,

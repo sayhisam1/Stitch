@@ -156,7 +156,7 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 
 	local attached_pattern = self:getPatternByRef(patternResolvable, ref)
 	if not attached_pattern then
-		local pattern = self._collection:resolvePattern(patternResolvable)
+		local pattern = self._collection:resolveOrErrorPattern(patternResolvable)
 		local refuuid = self:getUuid(ref)
 		local constructionData = Util.mergeTable(pattern.data or {}, data or {})
 

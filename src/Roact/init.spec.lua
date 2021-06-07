@@ -26,7 +26,7 @@ return function()
 			local PatternDefinition = {
 				name = "test",
 				render = function(self, e)
-					return e(self.stitch.Roact.Portal, {
+					return e(self.stitch.roact.Portal, {
 						target = workspace,
 					}, {
 						TestPart = e("Part", {
@@ -53,7 +53,7 @@ return function()
 				name = "test",
 				render = function(self, e)
 					debug.profilebegin("TestRender")
-					local ret = e(self.stitch.Roact.Portal, {
+					local ret = e(self.stitch.roact.Portal, {
 						target = targetFolder,
 					}, {
 						TestPart = e("Part", {
