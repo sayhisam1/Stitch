@@ -10,6 +10,7 @@ local InstanceRegistry = require(script.InstanceRegistry)
 local Symbol = require(script.Parent.Shared.Symbol)
 local Util = require(script.Parent.Shared.Util)
 local InstancePattern = require(script.InstancePattern)
+local HotReloader = require(script.HotReloader)
 
 local Stitch = {}
 Stitch.__index = Stitch
@@ -29,6 +30,7 @@ function Stitch.new(namespace)
 	self._store = StitchStore.new(self)
 	self._collection = PatternCollection.new(self)
 	self._instanceRegistry = InstanceRegistry.new(self)
+	self._hotReloader = HotReloader.new(self)
 
 	self._store:on("patternDeconstructed", function(...)
 		self:fire("patternDeconstructed", ...)
@@ -54,6 +56,7 @@ function Stitch:destroy()
 	self._store:destroy()
 	self._collection:destroy()
 	self._instanceRegistry:destroy()
+	self._hotReloader:destroy()
 end
 
 function Stitch:setupInstanceListeners()
@@ -72,6 +75,16 @@ function Stitch:setupInstanceListeners()
 end
 
 function Stitch:registerPattern(patternDefinition)
+	if typeof(patternDefinition) == "Instance" and patternDefinition:IsA("ModuleScript") then
+		self._hotReloader:listen(patternDefinition, function(loaded)
+			if self._collection:resolvePattern(loaded) then
+				self._collection:unregisterPattern(loaded)
+			end
+			self:registerPattern(loaded)
+		end)
+		return
+	end
+
 	local registered = self._collection:registerPattern(patternDefinition)
 	self:fire("patternRegistered", registered)
 

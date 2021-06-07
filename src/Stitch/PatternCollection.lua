@@ -44,6 +44,11 @@ function PatternCollection:registerPattern(patternDefinition)
 	return patternDefinition
 end
 
+function PatternCollection:unregisterPattern(patternResolvable)
+	local resolvedPattern = self:resolveOrErrorPattern(patternResolvable)
+	self.registeredPatterns[resolvedPattern.name] = nil
+end
+
 function PatternCollection:resolvePattern(patternResolvable)
 	local patternResolvableType = typeof(patternResolvable)
 	if not patternResolvableType == "string" and not patternResolvableType == "table" then
