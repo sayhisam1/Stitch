@@ -17,4 +17,6 @@ return function(stitch)
 		remoteEvent:destroy()
 		remoteEvent = nil
 	end)
+
+	stitch.remoteEvent = remoteEvent
 end
