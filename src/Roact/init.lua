@@ -3,36 +3,42 @@ local HashMappedTrie = require(script.Parent.Shared.HashMappedTrie)
 return function(stitch, roact)
 	stitch.Roact = roact
 	local roactTree = roact.mount(roact.createFragment({}))
-	stitch._maid:giveTask(function()
+
+	stitch:on("destroyed", function()
 		roact.unmount(roactTree)
 	end)
-	local dirty = false
 
-	local storeChanged = stitch._store.changed:connect(function()
-		dirty = true
+	local dirty = {}
+	local roactElements = {}
+	stitch:on("patternUpdated", function(uuid)
+		dirty[uuid] = true
 	end)
-	stitch._maid:giveTask(storeChanged)
-	local StitchComponent = roact.Component:extend("Stitch")
-
-	function StitchComponent:render()
-		local patternRenders = {}
-		for k, v in pairs(self.props) do
-			patternRenders[k] = (v.render and v:render(roact.createElement)) or nil
-		end
-		return roact.createFragment(patternRenders)
-	end
+	stitch:on("patternConstructed", function(uuid)
+		local pattern = stitch:lookupPatternByUuid(uuid)
+		dirty[uuid] = (pattern.render ~= nil)
+	end)
+	stitch:on("patternDeconstructed", function(uuid)
+		dirty[uuid] = nil
+		roactElements[uuid] = nil
+	end)
 
 	-- isolate render to make sure it only happens once per frame
 	local heartbeatListener = stitch.Heartbeat:connect(function()
-		if dirty then
-			debug.profilebegin("StitchRoactRenderLoop")
-			roact.update(
-				roactTree,
-				roact.createElement(StitchComponent, HashMappedTrie.getAllKeyValues(stitch._store:getState()))
-			)
-			debug.profileend()
+		debug.profilebegin("StitchRoactRenderLoop")
+		for uuid, isDirty in pairs(dirty) do
+			if isDirty then
+				local pattern = stitch:lookupPatternByUuid(uuid)
+				dirty[uuid] = false
+				roactElements[uuid] = pattern:render(roact.createElement)
+			end
 		end
-		dirty = false
+		roact.update(roactTree, roact.createFragment(roactElements))
+		debug.profileend()
 	end)
-	stitch._maid:giveTask(heartbeatListener)
+
+	stitch:on("destroyed", function()
+		heartbeatListener:disconnect()
+		dirty = nil
+		roactElements = nil
+	end)
 end

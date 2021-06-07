@@ -9,6 +9,7 @@ function InstanceRegistry.new(stitch)
 		instanceUuidTag = ("Stitch_%s_UUID_Tag"):format(stitch.namespace),
 		instanceUuidAttribute = ("Stitch_%s_UUID"):format(stitch.namespace),
 		stitch = stitch,
+		_listeners = {},
 	}, InstanceRegistry)
 
 	self.uuidToInstance = setmetatable({}, {
@@ -70,7 +71,7 @@ function InstanceRegistry:registerInstance(instance: Instance)
 	end
 
 	self.uuidToInstance[uuid] = instance
-	self.stitch:fire("instanceRegistered", instance)
+	self:fire("instanceRegistered", instance)
 
 	return uuid
 end
@@ -78,11 +79,38 @@ end
 function InstanceRegistry:unregisterInstance(instance: Instance)
 	local uuid = instance:GetAttribute(self.instanceUuidAttribute)
 	self.uuidToInstance[uuid] = nil
-	self.stitch:fire("instanceUnregistered", instance)
+	self:fire("instanceUnregistered", instance)
 end
 
 function InstanceRegistry:lookup(uuid: string)
 	return self.uuidToInstance[uuid]
+end
+function InstanceRegistry:fire(eventName, ...)
+	if not self._listeners[eventName] then
+		return -- Do nothing if no listeners registered
+	end
+
+	for _, callback in ipairs(self._listeners[eventName]) do
+		local success, errorValue = coroutine.resume(coroutine.create(callback), ...)
+
+		if not success then
+			warn(("Event listener for %s encountered an error: %s"):format(tostring(eventName), tostring(errorValue)))
+		end
+	end
+end
+
+function InstanceRegistry:on(eventName, callback)
+	self._listeners[eventName] = self._listeners[eventName] or {}
+	table.insert(self._listeners[eventName], callback)
+
+	return function()
+		for i, listCallback in ipairs(self._listeners[eventName]) do
+			if listCallback == callback then
+				table.remove(self._listeners[eventName], i)
+				break
+			end
+		end
+	end
 end
 
 return InstanceRegistry
