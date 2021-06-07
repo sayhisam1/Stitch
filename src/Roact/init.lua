@@ -1,5 +1,5 @@
 return function(stitch, roact)
-	stitch.Roact = roact
+	stitch.roact = roact
 	local roactTree = roact.mount(roact.createFragment({}))
 
 	stitch:on("destroyed", function()
