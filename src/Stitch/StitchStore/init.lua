@@ -52,14 +52,31 @@ function StitchStore:destroy()
 	self._store:destruct()
 end
 
-function StitchStore:dispatch(action)
+function StitchStore:_dispatch(action)
 	table.insert(self._actionQueue, action)
 end
+function StitchStore:dispatch(action)
+	if action.type == "deconstructPattern" then
+		local deconstructActions = self:_expandDeconstructAction(action)
+		self:runWithAtomicDispatch(function()
+			for _, deconstruct in ipairs(deconstructActions) do
+				self:_dispatch(deconstruct)
+			end
+		end)
+	else
+		table.insert(self._actionQueue, action)
+	end
+end
 
-function StitchStore:expandDeconstructAction(action: table, successfulActions: table)
-	local function deconstruct(uuid, tbl: table)
+function StitchStore:_expandDeconstructAction(action: table)
+	-- deconstructs must be atomic, since we deconstruct the entire "tree" of patterns attached to
+	-- the root.
+	-- we unpack deconstructs into actions starting at the leaf nodes
+	-- each action needs to be separate to ensure all corresponding deconstruction events are fired
+	local function deconstruct(uuid: string, tbl: table)
 		local pattern = self:lookup(uuid)
 		for patternName, attached_uuid in pairs(pattern.attached) do
+			-- special case for root patterns: we skip these
 			if attached_uuid ~= uuid then
 				deconstruct(attached_uuid, tbl)
 			end
@@ -72,39 +89,61 @@ function StitchStore:expandDeconstructAction(action: table, successfulActions: t
 	end
 
 	local actions = deconstruct(action.uuid, {})
-	return function(store)
-		local copied = {}
-		for _, deconstructAction in ipairs(actions) do
-			deconstructAction.copied = copied
-			store:dispatch(deconstructAction)
-		end
-		for _, deconstructAction in ipairs(actions) do
-			table.insert(successfulActions, deconstructAction)
-		end
-	end
+	return actions
 end
-function StitchStore:flush()
-	local successfulActions = table.create(#self._actionQueue)
-	local function atomicThunk(store)
-		debug.profilebegin("StitchStoreFlush")
+
+function StitchStore:_createThunk(actionQueue: table, successfulActions: table, enforceAtomicity: bool)
+	local function thunk(store)
 		local copied = {}
-		for _, action in ipairs(self._actionQueue) do
-			action.copied = copied
-			if action.type == "deconstructPattern" then
-				action = self:expandDeconstructAction(action, successfulActions)
+		for _, action in ipairs(actionQueue) do
+			local newSuccessfulActions
+			if action.type == "atomic" then
+				-- we enforce atomicity only for depth > 1 thunks, since these are
+				-- only creatable by explicitly entering an atomic context
+				-- the top-level action queue doesn't need to follow this, however,
+				-- as that would cause any failure to discard all pending actions for the flush
+				newSuccessfulActions = {}
+				action = self:_createThunk(action.actions, newSuccessfulActions, true)
+			else
+				-- to reduce the overhead of shallow copies, we pass down the currently copied arrays
+				-- to the action
+				newSuccessfulActions = { action }
+				action.copied = copied
 			end
+			-- TODO: Call error without breaking current thread
 			local success, msg = pcall(store.dispatch, store, action)
 			if success then
-				if action.type == "deconstructPattern" then
-					copied = copied
-				else
-					table.insert(successfulActions, action)
-				end
+				table.move(newSuccessfulActions, 1, #newSuccessfulActions, #successfulActions + 1, successfulActions)
+			elseif enforceAtomicity then
+				self.stitch:error(msg)
 			end
 		end
-		debug.profileend()
 	end
-	self._store:dispatch(atomicThunk)
+	return thunk
+end
+
+function StitchStore:runWithAtomicDispatch(callback: callback)
+	local oldActionQueue = self._actionQueue
+	local newActionQueue = {}
+
+	self._actionQueue = newActionQueue
+	local status, msg = pcall(callback)
+	self._actionQueue = oldActionQueue
+
+	if status then
+		table.insert(oldActionQueue, {
+			type = "atomic",
+			actions = newActionQueue,
+		})
+	else
+		self.stitch:error(msg)
+	end
+end
+
+function StitchStore:flush()
+	local successfulActions = table.create(#self._actionQueue)
+	local thunk = self:_createThunk(self._actionQueue, successfulActions, false)
+	self._store:dispatch(thunk)
 	table.clear(self._actionQueue)
 	for _, action in ipairs(successfulActions) do
 		if action.type == "constructPattern" then

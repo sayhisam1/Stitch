@@ -245,6 +245,13 @@ function Stitch:flushActions()
 	self._store:flush()
 end
 
+-- Accepts a callback, and executes in immediately.
+-- All actions (e.g. sets, construction, destruction, etc) will be guaranteed to happen
+-- atomically within this callback
+function Stitch:doAtomicTask(callback: callback)
+	self._store:runWithAtomicDispatch(callback)
+end
+
 function Stitch:error(message)
 	error(("%s %s"):format(self.logPrefix, message), 2)
 end
