@@ -9,6 +9,7 @@ function StitchStore.new(stitch)
 	local self = setmetatable({
 		_actionQueue = {},
 		_listeners = {},
+		_isAtomicMode = false,
 	}, StitchStore)
 
 	local reducers = self:initializeReducers(Reducers, stitch)
@@ -124,10 +125,15 @@ end
 
 function StitchStore:runWithAtomicDispatch(callback: callback)
 	local oldActionQueue = self._actionQueue
+	local oldAtomicState = self._isAtomicMode
 	local newActionQueue = {}
 
 	self._actionQueue = newActionQueue
+	self._isAtomicMode = true
+
 	local status, msg = pcall(callback)
+
+	self._isAtomicMode = oldAtomicState
 	self._actionQueue = oldActionQueue
 
 	if status then
@@ -141,6 +147,9 @@ function StitchStore:runWithAtomicDispatch(callback: callback)
 end
 
 function StitchStore:flush()
+	if self._isAtomicMode then
+		self.stitch:error("tried to flush stitch store while within atomic mode. This is not allowed!")
+	end
 	local successfulActions = table.create(#self._actionQueue)
 	local thunk = self:_createThunk(self._actionQueue, successfulActions, false)
 	self._store:dispatch(thunk)
