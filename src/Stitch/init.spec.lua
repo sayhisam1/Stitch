@@ -123,16 +123,31 @@ return function()
 
 			local testRef = game.Workspace.Baseplate
 
-			stitch:getOrCreatePatternByRef(patternDefinition, testRef)
-			stitch:getOrCreatePatternByRef(patternDefinition2, testRef)
+			local test1 = stitch:getOrCreatePatternByRef(patternDefinition, testRef)
+			local test2 = stitch:getOrCreatePatternByRef(patternDefinition2, testRef)
+			local test2_child = stitch:getOrCreatePatternByRef(patternDefinition, test2)
 
 			expect(stitch:getPatternByRef("Test", testRef)).to.be.ok()
 			expect(stitch:getPatternByRef("Test2", testRef)).to.be.ok()
+			expect(stitch:getPatternByRef("Test", test2)).to.be.ok()
+
+			local deconstructedUuids = {}
+			stitch:on("patternDeconstructed", function(uuid)
+				table.insert(deconstructedUuids, uuid)
+			end)
 
 			stitch:deconstructPatternsWithRef(testRef)
 			stitch:flushActions()
+
+			expect(#deconstructedUuids).to.equal(4)
+
+			for _, data in ipairs({ test1, test2, test2_child }) do
+				expect(table.find(deconstructedUuids, data.uuid)).to.be.ok()
+			end
+
 			expect(stitch:getPatternByRef("Test", testRef)).to.never.be.ok()
 			expect(stitch:getPatternByRef("Test2", testRef)).to.never.be.ok()
+			expect(stitch:getPatternByRef("Test", test2)).to.never.be.ok()
 		end)
 	end)
 
