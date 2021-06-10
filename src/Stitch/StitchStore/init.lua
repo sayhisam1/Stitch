@@ -1,6 +1,7 @@
 local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
 local HashMappedTrie = require(script.Parent.Parent.Shared.HashMappedTrie)
+local NoYield = require(script.Parent.Parent.Shared.NoYield)
 
 local StitchStore = {}
 StitchStore.__index = StitchStore
@@ -131,7 +132,7 @@ function StitchStore:runWithAtomicDispatch(callback: callback)
 	self._actionQueue = newActionQueue
 	self._isAtomicMode = true
 
-	local status, msg = pcall(callback)
+	local status, msg = pcall(NoYield, callback)
 
 	self._isAtomicMode = oldAtomicState
 	self._actionQueue = oldActionQueue
