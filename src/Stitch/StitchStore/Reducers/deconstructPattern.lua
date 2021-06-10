@@ -16,12 +16,15 @@ return function(stitch)
 		end
 
 		for patternName, attached_uuid in pairs(pattern_state["attached"]) do
-			debug.profileend()
-			stitch:error(("tried to deconstruct %s, but has attached child %s of pattern %s!"):format(
-				uuid,
-				attached_uuid,
-				patternName
-			))
+			-- skip root patterns
+			if attached_uuid ~= uuid then
+				debug.profileend()
+				stitch:error(("tried to deconstruct %s, but has attached child %s of pattern %s!"):format(
+					uuid,
+					attached_uuid,
+					patternName
+				))
+			end
 		end
 
 		local refuuid = pattern_state.refuuid
