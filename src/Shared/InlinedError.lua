@@ -7,8 +7,8 @@
 local bindable = Instance.new("BindableEvent")
 bindable.Event:Connect(error)
 
-local function InlinedError(msg)
-	bindable:Fire(msg)
+local function InlinedError(msg, level)
+	bindable:Fire(msg, level or 2)
 end
 
 return InlinedError

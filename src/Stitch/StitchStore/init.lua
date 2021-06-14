@@ -2,7 +2,6 @@ local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
 local HashMappedTrie = require(script.Parent.Parent.Shared.HashMappedTrie)
 local NoYield = require(script.Parent.Parent.Shared.NoYield)
-local InlinedError = require(script.Parent.Parent.Shared.InlinedError)
 
 local StitchStore = {}
 StitchStore.__index = StitchStore
@@ -36,7 +35,20 @@ function StitchStore.new(stitch)
 		self:flush()
 	end)
 
-	self._store = Rodux.Store.new(reducer, HashMappedTrie.new(math.huge), middlewares)
+	local storeErrorReporter = {
+		reportReducerError = function(prevState, action, errorResult)
+			local traceback = typeof(action) == "table" and action.traceback
+			if traceback then
+				error(("%s\n%s"):format(errorResult.thrownValue, traceback), 0)
+			end
+			error(errorResult.thrownValue, 0)
+		end,
+		reportUpdateError = function(prevState, currentState, lastActions, errorResult)
+			error(string.format("%s", errorResult.thrownValue), 0)
+		end,
+	}
+
+	self._store = Rodux.Store.new(reducer, HashMappedTrie.new(math.huge), middlewares, storeErrorReporter)
 
 	return self
 end
@@ -57,8 +69,11 @@ function StitchStore:destroy()
 end
 
 function StitchStore:_dispatch(action)
+	-- since stack traces are lost when we resolve the action, we keep it stored within the action itself as metadata
+	action.traceback = debug.traceback(nil, 2)
 	table.insert(self._actionQueue, action)
 end
+
 function StitchStore:dispatch(action)
 	if action.type == "deconstructPattern" then
 		local deconstructActions = self:_expandDeconstructAction(action)
@@ -68,7 +83,7 @@ function StitchStore:dispatch(action)
 			end
 		end)
 	else
-		table.insert(self._actionQueue, action)
+		self:_dispatch(action)
 	end
 end
 
@@ -130,9 +145,9 @@ function StitchStore:_createThunk(actionQueue: table, successfulActions: table, 
 					type = "setState",
 					state = originalState,
 				})
-				self.stitch:error(msg)
+				self.stitch:error(msg, 0)
 			else
-				InlinedError(("%s received error during dispatch: %s"):format(self.stitch.logPrefix, msg))
+				self.stitch:inlinedError(msg)
 			end
 		end
 	end

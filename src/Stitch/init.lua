@@ -11,6 +11,7 @@ local Symbol = require(script.Parent.Shared.Symbol)
 local Util = require(script.Parent.Shared.Util)
 local InstancePattern = require(script.InstancePattern)
 local HotReloader = require(script.HotReloader)
+local InlinedError = require(script.Parent.Shared.InlinedError)
 
 local Stitch = {}
 Stitch.__index = Stitch
@@ -254,13 +255,17 @@ function Stitch:doAtomicTask(callback: callback)
 	self._store:runWithAtomicDispatch(callback)
 end
 
-function Stitch:error(message)
-	error(("%s %s"):format(self.logPrefix, message), 2)
+function Stitch:error(message, level)
+	error(("%s %s"):format(self.logPrefix, message), level or 2)
 end
 
-function Stitch:pdebug(message)
+function Stitch:inlinedError(message: string, level: int)
+	InlinedError(("%s %s"):format(self.logPrefix, message), level or 3)
+end
+
+function Stitch:pdebug(...)
 	if self.debug then
-		warn(("%s %s"):format(self.logPrefix, message))
+		print(self.logPrefix, "(DEBUG)", ...)
 	end
 end
 
