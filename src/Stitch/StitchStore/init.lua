@@ -1,6 +1,7 @@
 local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
 local NoYield = require(script.Parent.Parent.Shared.NoYield)
+local thunkMiddlewareNoTraceback = require(script.thunkMiddlewareNoTraceback)
 
 local StitchStore = {}
 StitchStore.__index = StitchStore
@@ -23,7 +24,7 @@ function StitchStore.new(stitch)
 	end
 
 	local middlewares = {
-		Rodux.thunkMiddleware,
+		thunkMiddlewareNoTraceback,
 	}
 
 	if stitch.debug then
@@ -112,7 +113,12 @@ function StitchStore:_expandDeconstructAction(action: table)
 	return actions
 end
 
-function StitchStore:_createThunk(actionQueue: table, successfulActions: table, enforceAtomicity: bool)
+function StitchStore:_createThunk(
+	actionQueue: table,
+	successfulActions: table,
+	erroredActions: table,
+	enforceAtomicity: bool
+)
 	local function thunk(store)
 		local copied = {}
 		local originalState = store:getState()
@@ -124,7 +130,7 @@ function StitchStore:_createThunk(actionQueue: table, successfulActions: table, 
 				-- the top-level action queue doesn't need to follow this, however,
 				-- as that would cause any failure to discard all pending actions for the flush
 				newSuccessfulActions = {}
-				action = self:_createThunk(action.actions, newSuccessfulActions, true)
+				action = self:_createThunk(action.actions, newSuccessfulActions, erroredActions, true)
 			else
 				-- to reduce the overhead of shallow copies, we pass down the currently copied arrays
 				-- to the action
@@ -140,15 +146,22 @@ function StitchStore:_createThunk(actionQueue: table, successfulActions: table, 
 
 			if success then
 				table.move(newSuccessfulActions, 1, #newSuccessfulActions, #successfulActions + 1, successfulActions)
-			elseif enforceAtomicity then
-				-- in atomic thunks, we revert the state back to the original value and error
-				self._store:dispatch({
-					type = "setState",
-					state = originalState,
-				})
-				self.stitch:error(msg, 0)
 			else
-				self.stitch:inlinedError(msg)
+				if typeof(action) == "table" then
+					-- we don't have stack trace of thunk actions
+					table.insert(erroredActions, {
+						traceback = action.traceback,
+						msg = msg,
+					})
+				end
+				if enforceAtomicity then
+					-- in atomic thunks, we revert the state back to the original value and error
+					self._store:dispatch({
+						type = "setState",
+						state = originalState,
+					})
+					self.stitch:error(msg, 0)
+				end
 			end
 		end
 	end
@@ -183,8 +196,12 @@ function StitchStore:flush()
 		self.stitch:error("tried to flush stitch store while within atomic mode. This is not allowed!")
 	end
 	local successfulActions = table.create(#self._actionQueue)
-	local thunk = self:_createThunk(self._actionQueue, successfulActions, false)
-	self._store:dispatch(thunk)
+	local erroredActions = table.create(#self._actionQueue)
+	local thunk = self:_createThunk(self._actionQueue, successfulActions, erroredActions, false)
+	pcall(self._store.dispatch, self._store, thunk)
+	for _, errorState in ipairs(erroredActions) do
+		self.stitch:inlinedError(("%s\n%s"):format(errorState.msg, errorState.traceback))
+	end
 	table.clear(self._actionQueue)
 	for _, action in ipairs(successfulActions) do
 		if action.type == "constructPattern" then
