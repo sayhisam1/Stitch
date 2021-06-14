@@ -1,6 +1,3 @@
-local _COUNT = {}
-local _KEYS = {}
-local DEFAULT_BUCKET_SIZE = 32
 local HashMappedTrie = {}
 HashMappedTrie.__index = HashMappedTrie
 HashMappedTrie.None = {}
@@ -48,27 +45,6 @@ function HashMappedTrie:set(key: string, value: any, copied: table)
 	newMap.data[key] = value
 	debug.profileend()
 	return newMap
-end
-
-function HashMappedTrie:getAllKeyValues(map: table)
-	map = map or {}
-
-	local function populate(data)
-		if data[_COUNT] ~= nil then
-			for k, v in pairs(data) do
-				if k ~= _COUNT then
-					map[k] = v
-				end
-			end
-		else
-			for i = 1, self.bucketSize do
-				populate(data[i])
-			end
-		end
-	end
-
-	populate(self.data)
-	return map
 end
 
 return HashMappedTrie
