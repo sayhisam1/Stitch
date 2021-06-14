@@ -1,6 +1,5 @@
 local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
-local HashMappedTrie = require(script.Parent.Parent.Shared.HashMappedTrie)
 local NoYield = require(script.Parent.Parent.Shared.NoYield)
 
 local StitchStore = {}
@@ -48,7 +47,9 @@ function StitchStore.new(stitch)
 		end,
 	}
 
-	self._store = Rodux.Store.new(reducer, HashMappedTrie.new(math.huge), middlewares, storeErrorReporter)
+	self._store = Rodux.Store.new(reducer, {
+		data = {},
+	}, middlewares, storeErrorReporter)
 
 	return self
 end
@@ -202,7 +203,7 @@ function StitchStore:getState()
 end
 
 function StitchStore:lookup(uuid: string)
-	return HashMappedTrie.get(self:getState(), uuid)
+	return self:getState()["data"][uuid]
 end
 
 function StitchStore:fire(eventName, ...)

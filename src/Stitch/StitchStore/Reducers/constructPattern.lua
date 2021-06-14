@@ -1,4 +1,3 @@
-local HashMappedTrie = require(script.Parent.Parent.Parent.Parent.Shared.HashMappedTrie)
 local Util = require(script.Parent.Parent.Parent.Parent.Shared.Util)
 
 return function(stitch)
@@ -10,36 +9,39 @@ return function(stitch)
 		local patternName = action.patternName
 		local copied = action.copied
 
-		local pattern_state = HashMappedTrie.get(state, uuid)
-		if pattern_state then
+		local existing_pattern = state["data"][uuid]
+		if existing_pattern then
 			debug.profileend()
 			stitch:error(("tried to create Pattern %s with duplicate uuid %s!"):format(patternName, uuid))
 		end
 
-		state = HashMappedTrie.set(state, uuid, {
+		if refuuid ~= uuid then
+			local ref_state = state["data"][refuuid]
+			if not ref_state then
+				debug.profileend()
+				stitch:error(("tried to attach to unknown ref %s!"):format(refuuid))
+			end
+			if ref_state["attached"][patternName] then
+				debug.profileend()
+				stitch:error(("tried to attach duplicate Pattern %s to %s!"):format(patternName, refuuid))
+			end
+		end
+
+		state = Util.shallowCopyOnce(state, copied)
+		state["data"] = Util.shallowCopyOnce(state["data"], copied)
+		state["data"][uuid] = {
 			data = data,
 			attached = {},
 			patternName = patternName,
 			uuid = uuid,
 			refuuid = refuuid,
-		}, copied)
+		}
 
-		local ref_state = HashMappedTrie.get(state, refuuid)
-		if not ref_state then
-			debug.profileend()
-			stitch:error(("tried to attach to unknown ref %s!"):format(refuuid))
-		end
-		if ref_state["attached"][patternName] then
-			debug.profileend()
-			stitch:error(("tried to attach duplicate Pattern %s to %s!"):format(patternName, refuuid))
-		end
-
-		local new_ref_state = Util.shallowCopy(ref_state)
-		new_ref_state["attached"] = Util.shallowCopy(new_ref_state["attached"])
+		local new_ref_state = Util.shallowCopyOnce(state["data"][refuuid], copied)
+		new_ref_state["attached"] = Util.shallowCopyOnce(new_ref_state["attached"], copied)
 		new_ref_state["attached"][patternName] = uuid
 
-		state = HashMappedTrie.set(state, refuuid, new_ref_state, copied)
-
+		state["data"][refuuid] = new_ref_state
 		debug.profileend()
 		return state
 	end
