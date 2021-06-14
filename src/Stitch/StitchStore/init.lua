@@ -118,6 +118,8 @@ function StitchStore:_createThunk(actionQueue: table, successfulActions: table, 
 				table.move(newSuccessfulActions, 1, #newSuccessfulActions, #successfulActions + 1, successfulActions)
 			elseif enforceAtomicity then
 				self.stitch:error(msg)
+			else
+				InlinedError(("%s %s"):format(self.stitch.logPrefix, msg))
 			end
 		end
 	end
