@@ -1,4 +1,3 @@
-local HashMappedTrie = require(script.Parent.Parent.Parent.Parent.Shared.HashMappedTrie)
 local Util = require(script.Parent.Parent.Parent.Parent.Shared.Util)
 
 return function(stitch)
@@ -9,7 +8,7 @@ return function(stitch)
 		local value = action.value
 		local uuid = action.uuid
 		local copied = action.copied
-		local pattern_state = HashMappedTrie.get(state, uuid)
+		local pattern_state = state["data"][uuid]
 
 		if not pattern_state then
 			debug.profileend()
@@ -34,7 +33,10 @@ return function(stitch)
 			new_pattern_state["data"][key] = value
 		end
 
-		state = HashMappedTrie.set(state, uuid, new_pattern_state, copied)
+		state = Util.shallowCopyOnce(state, copied)
+		state["data"] = Util.shallowCopyOnce(state["data"], copied)
+		state["data"][uuid] = new_pattern_state
+
 		debug.profileend()
 		return state
 	end
