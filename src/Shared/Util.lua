@@ -9,6 +9,7 @@ function Util.shallowCopy(tbl)
 	debug.profileend()
 	return newtbl
 end
+
 function Util.shallowCopyOnce(table: table, copied: table)
 	debug.profilebegin("shallowCopyOnce")
 	if copied[table] then
@@ -19,6 +20,7 @@ function Util.shallowCopyOnce(table: table, copied: table)
 	debug.profileend()
 	return ret
 end
+
 function Util.mergeTable(a: table, b: table)
 	local new_table = Util.shallowCopy(a)
 	for k, v in pairs(b) do
