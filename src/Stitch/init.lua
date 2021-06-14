@@ -168,6 +168,7 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 	end
 
 	local attached_pattern = self:getPatternByRef(patternResolvable, ref)
+
 	if not attached_pattern then
 		local pattern = self._collection:resolveOrErrorPattern(patternResolvable)
 		local refuuid = self:getUuid(ref)
@@ -180,6 +181,7 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 			data = constructionData,
 			patternName = pattern.name,
 		})
+
 		self:flushActions()
 
 		attached_pattern = self:getPatternByRef(patternResolvable, ref)
