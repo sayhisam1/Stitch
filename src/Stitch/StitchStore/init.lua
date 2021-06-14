@@ -2,6 +2,7 @@ local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
 local HashMappedTrie = require(script.Parent.Parent.Shared.HashMappedTrie)
 local NoYield = require(script.Parent.Parent.Shared.NoYield)
+local InlinedError = require(script.Parent.Parent.Shared.InlinedError)
 
 local StitchStore = {}
 StitchStore.__index = StitchStore
@@ -11,6 +12,7 @@ function StitchStore.new(stitch)
 		_actionQueue = {},
 		_listeners = {},
 		_isAtomicMode = false,
+		stitch = stitch,
 	}, StitchStore)
 
 	local reducers = self:initializeReducers(Reducers, stitch)
@@ -97,6 +99,7 @@ end
 function StitchStore:_createThunk(actionQueue: table, successfulActions: table, enforceAtomicity: bool)
 	local function thunk(store)
 		local copied = {}
+		local originalState = store:getState()
 		for _, action in ipairs(actionQueue) do
 			local newSuccessfulActions
 			if action.type == "atomic" then
@@ -112,14 +115,24 @@ function StitchStore:_createThunk(actionQueue: table, successfulActions: table, 
 				newSuccessfulActions = { action }
 				action.copied = copied
 			end
-			-- TODO: Call error without breaking current thread
-			local success, msg = pcall(store.dispatch, store, action)
+
+			-- dispatches must be atomic, and must not yield!
+			-- yielding can cause strange side-effects like resetting state to weird intermediates
+			local success, msg = pcall(function(store, action)
+				return NoYield(store.dispatch, store, action)
+			end, store, action)
+
 			if success then
 				table.move(newSuccessfulActions, 1, #newSuccessfulActions, #successfulActions + 1, successfulActions)
 			elseif enforceAtomicity then
+				-- in atomic thunks, we revert the state back to the original value and error
+				self._store:dispatch({
+					type = "setState",
+					state = originalState,
+				})
 				self.stitch:error(msg)
 			else
-				InlinedError(("%s %s"):format(self.stitch.logPrefix, msg))
+				InlinedError(("%s received error during dispatch: %s"):format(self.stitch.logPrefix, msg))
 			end
 		end
 	end

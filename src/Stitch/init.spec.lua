@@ -170,6 +170,83 @@ return function()
 		end)
 	end)
 
+	describe("atomic dispatches", function()
+		it("should follow normal dispatch rules", function()
+			local patternDefinition = {
+				name = "Test",
+			}
+			stitch:registerPattern(patternDefinition)
+			local pattern = stitch:getOrCreatePatternByRef("Test", game.Workspace)
+			stitch:doAtomicTask(function()
+				pattern:set("testval", "foo")
+			end)
+			expect(pattern:get("testval")).to.never.be.ok()
+			stitch:flushActions()
+			expect(pattern:get("testval")).to.equal("foo")
+		end)
+		it("should do actions atomically", function()
+			local patternDefinition = {
+				name = "Test",
+			}
+			stitch:registerPattern(patternDefinition)
+			local pattern = stitch:getOrCreatePatternByRef("Test", game.Workspace)
+			pcall(stitch.doAtomicTask, stitch, function()
+				pattern:set("testval", "foo")
+				stitch:deconstructPatternsWithRef(game.Workspace)
+				error("somefailure")
+			end)
+			pattern = stitch:getPatternByRef("Test", game.Workspace)
+			expect(pattern).to.be.ok()
+			stitch:flushActions()
+			expect(pattern:get("testval")).to.never.be.ok()
+		end)
+		it("should do actions atomically between two patterns", function()
+			-- simulate a player trade
+			local playerPattern = {
+				name = "playerData",
+				data = {
+					items = {},
+				},
+			}
+			stitch:registerPattern(playerPattern)
+			local pattern1 = stitch:getOrCreatePatternByRef("playerData", game.Workspace)
+			local pattern2 = stitch:getOrCreatePatternByRef("playerData", game.Lighting)
+			pattern1:set("items", { "foo" })
+			pattern2:set("items", { "bar" })
+			stitch:flushActions()
+			stitch:doAtomicTask(function()
+				pattern1:set("items", { "bar" })
+				pattern2:set("items", { "foo" })
+			end)
+			stitch:flushActions()
+			expect(function()
+				local tbl = pattern1:get("items")
+				assert(#tbl == 1, "invalid count")
+				assert(tbl[1] == "bar", "invalid item")
+			end).to.never.throw()
+
+			expect(function()
+				local tbl = pattern2:get("items")
+				assert(#tbl == 1, "invalid count")
+				assert(tbl[1] == "foo", "invalid item")
+			end).to.never.throw()
+
+			stitch:doAtomicTask(function()
+				pattern1:set("items", { "foo" })
+				pattern2:set("items", { "bar" })
+				stitch:deconstructPatternsWithRef(game.Workspace)
+				stitch:deconstructPatternsWithRef(game.Lighting)
+			end)
+
+			stitch:flushActions()
+
+			local pattern1 = stitch:getPatternByRef("playerData", game.Workspace)
+			local pattern2 = stitch:getPatternByRef("playerData", game.Lighting)
+			expect(pattern1).to.never.be.ok()
+			expect(pattern2).to.never.be.ok()
+		end)
+	end)
+
 	describe("stress test", function()
 		SKIP()
 		it("should be able to construct many patterns", function()
