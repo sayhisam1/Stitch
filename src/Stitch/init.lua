@@ -13,6 +13,17 @@ local InstancePattern = require(script.InstancePattern)
 local HotReloader = require(script.HotReloader)
 local InlinedError = require(script.Parent.Shared.InlinedError)
 
+-- Maintain a list of created stitches so we can destroy on server close
+local createdStitches = {}
+
+game:BindToClose(function()
+	for _, v in ipairs(createdStitches) do
+		coroutine.wrap(function()
+			v:destroy()
+		end)()
+	end
+end)
+
 local Stitch = {}
 Stitch.__index = Stitch
 
@@ -47,6 +58,8 @@ function Stitch.new(namespace)
 
 	self:registerPattern(InstancePattern)
 	self:setupInstanceListeners()
+	table.insert(createdStitches, self)
+
 	return self
 end
 
@@ -58,6 +71,7 @@ function Stitch:destroy()
 	self._collection:destroy()
 	self._instanceRegistry:destroy()
 	self._hotReloader:destroy()
+	table.remove(createdStitches, table.find(createdStitches, self))
 end
 
 function Stitch:setupInstanceListeners()
