@@ -8,26 +8,25 @@
 	This function supports multiple return; all results returned from the
 	given function will be returned.
 
-	Shamelessly stolen from Rodux's source code
+	Shamelessly adapted from Rodux's source code
 ]]
 
 local function resultHandler(co, ok, ...)
-	if not ok then
-		local message = (...)
-		error(debug.traceback(co, message), 2)
-	end
-
+	local returns = { ... }
 	if coroutine.status(co) ~= "dead" then
-		error(debug.traceback(co, "Attempted to yield inside changed event!"), 2)
+		ok = false
+		returns = {
+			"Attempted yield in callback where it is prohibited! (Check for waits or yielding Roblox function calls?)",
+		}
 	end
 
-	return ...
+	return ok, unpack(returns)
 end
 
-local function NoYield(callback, ...)
+local function PcallNoYield(callback, ...)
 	local co = coroutine.create(callback)
 
 	return resultHandler(co, coroutine.resume(co, ...))
 end
 
-return NoYield
+return PcallNoYield

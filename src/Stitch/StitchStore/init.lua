@@ -1,7 +1,6 @@
 local Rodux = require(script.Parent.Parent.Parent.Rodux)
 local Reducers = require(script.Reducers)
-local NoYield = require(script.Parent.Parent.Shared.NoYield)
-local thunkMiddlewareNoTraceback = require(script.thunkMiddlewareNoTraceback)
+local PcallNoYield = require(script.Parent.Parent.Shared.PcallNoYield)
 
 local StitchStore = {}
 StitchStore.__index = StitchStore
@@ -24,7 +23,7 @@ function StitchStore.new(stitch)
 	end
 
 	local middlewares = {
-		thunkMiddlewareNoTraceback,
+		Rodux.thunkMiddleware,
 	}
 
 	if stitch.debug then
@@ -37,10 +36,6 @@ function StitchStore.new(stitch)
 
 	local storeErrorReporter = {
 		reportReducerError = function(prevState, action, errorResult)
-			local traceback = typeof(action) == "table" and action.traceback
-			if traceback then
-				error(("%s\n%s"):format(errorResult.thrownValue, traceback), 0)
-			end
 			error(errorResult.thrownValue, 0)
 		end,
 		reportUpdateError = function(prevState, currentState, lastActions, errorResult)
@@ -70,22 +65,23 @@ function StitchStore:destroy()
 	self._store:destruct()
 end
 
-function StitchStore:_dispatch(action)
+function StitchStore:_dispatch(action, traceback)
 	-- since stack traces are lost when we resolve the action, we keep it stored within the action itself as metadata
-	action.traceback = debug.traceback(nil, 2)
+	action.traceback = traceback
 	table.insert(self._actionQueue, action)
 end
 
 function StitchStore:dispatch(action)
+	local traceback = debug.traceback(nil, 1)
 	if action.type == "deconstructPattern" then
 		local deconstructActions = self:_expandDeconstructAction(action)
 		self:runWithAtomicDispatch(function()
 			for _, deconstruct in ipairs(deconstructActions) do
-				self:_dispatch(deconstruct)
+				self:_dispatch(deconstruct, traceback)
 			end
 		end)
 	else
-		self:_dispatch(action)
+		self:_dispatch(action, traceback)
 	end
 end
 
@@ -140,9 +136,7 @@ function StitchStore:_createThunk(
 
 			-- dispatches must be atomic, and must not yield!
 			-- yielding can cause strange side-effects like resetting state to weird intermediates
-			local success, msg = pcall(function(store, action)
-				return NoYield(store.dispatch, store, action)
-			end, store, action)
+			local success, msg = PcallNoYield(store.dispatch, store, action)
 
 			if success then
 				table.move(newSuccessfulActions, 1, #newSuccessfulActions, #successfulActions + 1, successfulActions)
@@ -176,7 +170,7 @@ function StitchStore:runWithAtomicDispatch(callback: callback)
 	self._actionQueue = newActionQueue
 	self._isAtomicMode = true
 
-	local status, msg = pcall(NoYield, callback)
+	local status, msg = PcallNoYield(callback)
 
 	self._isAtomicMode = oldAtomicState
 	self._actionQueue = oldActionQueue
@@ -200,7 +194,7 @@ function StitchStore:flush()
 	local thunk = self:_createThunk(self._actionQueue, successfulActions, erroredActions, false)
 	pcall(self._store.dispatch, self._store, thunk)
 	for _, errorState in ipairs(erroredActions) do
-		self.stitch:inlinedError(("%s\n%s"):format(errorState.msg, errorState.traceback))
+		self.stitch:inlinedError(("%s\n%s"):format(errorState.msg, errorState.traceback), 0)
 	end
 	table.clear(self._actionQueue)
 	for _, action in ipairs(successfulActions) do
