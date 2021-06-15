@@ -12,18 +12,18 @@ return function(stitch)
 		local existing_pattern = state["data"][uuid]
 		if existing_pattern then
 			debug.profileend()
-			stitch:error(("tried to create Pattern %s with duplicate uuid %s!"):format(patternName, uuid))
+			error(("tried to create Pattern %s with duplicate uuid %s!"):format(patternName, uuid), 0)
 		end
 
 		if refuuid ~= uuid then
 			local ref_state = state["data"][refuuid]
 			if not ref_state then
 				debug.profileend()
-				stitch:error(("tried to attach to unknown ref %s!"):format(refuuid))
+				error(("tried to attach to unknown ref %s!"):format(refuuid), 0)
 			end
 			if ref_state["attached"][patternName] then
 				debug.profileend()
-				stitch:error(("tried to attach duplicate Pattern %s to %s!"):format(patternName, refuuid))
+				error(("tried to attach duplicate Pattern %s to %s!"):format(patternName, refuuid), 0)
 			end
 		end
 

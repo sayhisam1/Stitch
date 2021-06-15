@@ -10,14 +10,14 @@ return function(stitch)
 		local pattern_state = state["data"][uuid]
 		if not pattern_state then
 			debug.profileend()
-			stitch:error(("tried to decontruct non-existent pattern with uuid %s!"):format(uuid))
+			error(("tried to decontruct non-existent pattern with uuid %s!"):format(uuid))
 		end
 
 		for patternName, attachedUuid in pairs(pattern_state["attached"]) do
 			-- skip root patterns
 			if attachedUuid ~= uuid then
 				debug.profileend()
-				stitch:error(("tried to deconstruct %s, but has attached child %s of pattern %s!"):format(
+				error(("tried to deconstruct %s, but has attached child %s of pattern %s!"):format(
 					uuid,
 					attachedUuid,
 					patternName
@@ -32,7 +32,7 @@ return function(stitch)
 		local ref_state = state["data"][refuuid]
 		if not ref_state then
 			debug.profileend()
-			stitch:error(("tried to deconstruct %s, but could not reference parent %s!"):format(uuid, refuuid))
+			error(("tried to deconstruct %s, but could not reference parent %s!"):format(uuid, refuuid))
 		end
 
 		state = Util.shallowCopyOnce(state, copied)

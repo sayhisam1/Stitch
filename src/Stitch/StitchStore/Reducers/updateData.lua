@@ -12,12 +12,12 @@ return function(stitch)
 
 		if not pattern_state then
 			debug.profileend()
-			stitch:error(("tried to update data of non-existant pattern with uuid %s!"):format(uuid))
+			error(("tried to update data of non-existant pattern with uuid %s!"):format(uuid), 0)
 		end
 
 		if not data and not key then
 			debug.profileend()
-			stitch:error(("tried to update data of %s, but no data was passed!"):format(uuid))
+			error(("tried to update data of %s, but no data was passed!"):format(uuid), 0)
 		end
 
 		local new_pattern_state = Util.shallowCopyOnce(pattern_state, copied)
