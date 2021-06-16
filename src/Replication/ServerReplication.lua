@@ -1,22 +1,22 @@
 local Queue = require(script.Parent.Parent.Shared.Queue)
 return function(stitch, remoteEvent: RemoteEvent)
-	local weak_table = {
+	local weakTable = {
 		__mode = "kv",
 	}
 	local subscribers = {}
 	local dirty = {}
 
-	stitch:on("patternConstructed", function(pattern_uuid)
-		local pattern = stitch:lookupPatternByUuid(pattern_uuid)
+	stitch:on("patternConstructed", function(patternUuid)
+		local pattern = stitch:lookupPatternByUuid(patternUuid)
 		if pattern.replicated then
-			subscribers[pattern.uuid] = setmetatable({}, weak_table)
+			subscribers[pattern.uuid] = setmetatable({}, weakTable)
 			dirty[pattern.uuid] = false
 			-- if we didn't do this, then subscribers would never know to subscribe to patterns attached to patterns!
 			if subscribers[pattern.refuuid] then
 				for _, player in pairs(subscribers[pattern.refuuid]) do
 					remoteEvent:FireClient(player, "dispatch", {
 						type = "constructPattern",
-						uuid = pattern_uuid,
+						uuid = patternUuid,
 						refuuid = pattern.refuuid,
 						data = pattern.data,
 						patternName = pattern.patternName,
@@ -26,21 +26,21 @@ return function(stitch, remoteEvent: RemoteEvent)
 		end
 	end)
 
-	stitch:on("patternUpdated", function(pattern_uuid)
-		dirty[pattern_uuid] = true
+	stitch:on("patternUpdated", function(patternUuid)
+		dirty[patternUuid] = true
 	end)
 
-	stitch:on("patternDeconstructed", function(pattern_uuid)
-		if not subscribers[pattern_uuid] then
+	stitch:on("patternDeconstructed", function(patternUuid)
+		if not subscribers[patternUuid] then
 			return
 		end
-		for _, player in pairs(subscribers[pattern_uuid]) do
+		for _, player in pairs(subscribers[patternUuid]) do
 			remoteEvent:FireClient(player, "dispatch", {
 				type = "deconstructPattern",
-				uuid = pattern_uuid,
+				uuid = patternUuid,
 			})
 		end
-		dirty[pattern_uuid] = nil
+		dirty[patternUuid] = nil
 	end)
 
 	local function subscribe(player: Player, pattern: table, construct: bool)
@@ -69,9 +69,9 @@ return function(stitch, remoteEvent: RemoteEvent)
 			local curr_uuid = queue:dequeue()
 			local pattern = stitch:lookupPatternByUuid(curr_uuid)
 			subscribe(player, pattern, construct)
-			for patternName, attached_uuid in pairs(pattern.attached) do
-				if attached_uuid ~= curr_uuid then
-					queue:enqueue(attached_uuid)
+			for patternName, attachedUuid in pairs(pattern.attached) do
+				if attachedUuid ~= curr_uuid then
+					queue:enqueue(attachedUuid)
 				end
 			end
 			construct = true
@@ -95,8 +95,8 @@ return function(stitch, remoteEvent: RemoteEvent)
 			local curr_uuid = queue:dequeue()
 			local pattern = stitch:lookupPatternByUuid(curr_uuid)
 			unsubscribe(player, pattern)
-			for patternName, attached_uuid in pairs(pattern.attached) do
-				queue:enqueue(attached_uuid)
+			for patternName, attachedUuid in pairs(pattern.attached) do
+				queue:enqueue(attachedUuid)
 			end
 		end
 	end
