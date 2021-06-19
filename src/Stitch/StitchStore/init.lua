@@ -136,7 +136,7 @@ function StitchStore:_createThunk(
 
 			-- dispatches must be atomic, and must not yield!
 			-- yielding can cause strange side-effects like resetting state to weird intermediates
-			local success, msg = PcallNoYield(store.dispatch, store, action)
+			local success, msg = pcall(store.dispatch, store, action)
 
 			if success then
 				table.move(newSuccessfulActions, 1, #newSuccessfulActions, #successfulActions + 1, successfulActions)
