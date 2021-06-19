@@ -10,15 +10,19 @@ function Util.shallowCopy(tbl)
 	return newtbl
 end
 
-function Util.shallowCopyOnce(table: table, copied: table)
+function Util.shallowCopyOnce(tbl: table, copied: table)
 	debug.profilebegin("shallowCopyOnce")
-	if copied[table] then
-		return table
+	if copied[tbl] then
+		debug.profileend()
+		return tbl
 	end
-	local ret = Util.shallowCopy(table)
-	copied[ret] = true
+	local newtbl = table.move(tbl, 1, #tbl, 1, {})
+	for k, v in pairs(tbl) do
+		newtbl[k] = v
+	end
+	copied[newtbl] = true
 	debug.profileend()
-	return ret
+	return newtbl
 end
 
 function Util.mergeTable(a: table, b: table)
