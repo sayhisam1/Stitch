@@ -6,7 +6,6 @@ local DEFAULT_NAMESPACE = "game"
 
 local PatternCollection = require(script.PatternCollection)
 local StitchStore = require(script.StitchStore)
-local InstanceRegistry = require(script.InstanceRegistry)
 local Symbol = require(script.Parent.Shared.Symbol)
 local Util = require(script.Parent.Shared.Util)
 local InstancePattern = require(script.InstancePattern)
@@ -34,6 +33,8 @@ function Stitch.new(namespace)
 		namespace = namespace,
 		_listeners = {},
 		logPrefix = ("[Stitch:%s]"):format(namespace),
+		instanceUuidTag = ("Stitch_%s_UUID_Tag"):format(namespace),
+		instanceUuidAttribute = ("Stitch_%s_UUID"):format(namespace),
 		Heartbeat = RunService.Heartbeat,
 		None = Symbol.named("None"),
 		debug = false,
@@ -41,23 +42,11 @@ function Stitch.new(namespace)
 
 	self._store = StitchStore.new(self)
 	self._collection = PatternCollection.new(self)
-	self._instanceRegistry = InstanceRegistry.new(self)
 	self._hotReloader = HotReloader.new(self)
-
-	self._store:on("patternDeconstructed", function(...)
-		self:fire("patternDeconstructed", ...)
-	end)
-
-	self._store:on("patternConstructed", function(...)
-		self:fire("patternConstructed", ...)
-	end)
-
-	self._store:on("patternUpdated", function(...)
-		self:fire("patternUpdated", ...)
-	end)
 
 	self:registerPattern(InstancePattern)
 	self:setupInstanceListeners()
+
 	table.insert(createdStitches, self)
 
 	return self
@@ -69,23 +58,23 @@ function Stitch:destroy()
 	self._instanceRemoved:disconnect()
 	self._store:destroy()
 	self._collection:destroy()
-	self._instanceRegistry:destroy()
 	self._hotReloader:destroy()
 	table.remove(createdStitches, table.find(createdStitches, self))
 end
 
 function Stitch:setupInstanceListeners()
-	local instanceAdded = CollectionService:GetInstanceAddedSignal(self._instanceRegistry.instanceUuidTag)
+	local instanceAdded = CollectionService:GetInstanceAddedSignal(self.instanceUuidTag)
 	self._instanceAdded = instanceAdded:Connect(function(instance: Instance)
 		self:registerInstance(instance)
 	end)
 
-	local instanceRemoved = CollectionService:GetInstanceRemovedSignal(self._instanceRegistry.instanceUuidTag)
+	local instanceRemoved = CollectionService:GetInstanceRemovedSignal(self.instanceUuidTag)
 	self._instanceRemoved = instanceRemoved:Connect(function(instance: Instance)
 		self:unregisterInstance(instance)
 	end)
-	for _, instance in ipairs(CollectionService:GetTagged(self._instanceRegistry.instanceUuidTag)) do
-		self:registerInstance(instance)
+
+	for _, entity in ipairs(CollectionService:GetTagged(self.instanceUuidTag)) do
+		self:registerInstance(entity)
 	end
 end
 
@@ -106,33 +95,51 @@ function Stitch:registerPattern(patternDefinition)
 	return registered
 end
 
+function Stitch:getInstanceUuid(entity: Instance)
+	return entity:GetAttribute(self.instanceUuidAttribute)
+end
+
 function Stitch:registerInstance(instance: Instance)
-	if not self._instanceRegistry:isRegistered(instance) then
-		local instanceUuid = self._instanceRegistry:registerInstance(instance)
-		self:createRootPattern(InstancePattern, instanceUuid)
-		self:fire("instanceRegistered", instance)
-		return instanceUuid
+	local uuid = self:getInstanceUuid(instance)
+	if not uuid then
+		uuid = HttpService:GenerateGUID(false)
+		instance:SetAttribute(self.instanceUuidAttribute, uuid)
 	end
+	if not CollectionService:HasTag(instance, self.instanceUuidTag) then
+		CollectionService:AddTag(instance, self.instanceUuidTag)
+	end
+	local existingPattern = self:lookupPatternByUuid(uuid)
+	if not existingPattern then
+		self._store:dispatch({
+			type = "constructInstancePattern",
+			refuuid = uuid,
+			uuid = uuid,
+			data = {},
+			patternName = InstancePattern.name,
+			instance = instance,
+		})
+		self:flushActions()
+		existingPattern = self:lookupPatternByUuid(uuid)
+	end
+	return existingPattern
 end
 
 function Stitch:unregisterInstance(instance: Instance)
-	local uuid = self:getUuid(instance)
-	if not uuid then
-		self:error(("failed to get uuid for instance %s!"):format(instance.Name))
+	if CollectionService:HasTag(instance, self.instanceUuidTag) then
+		CollectionService:RemoveTag(instance, self.instanceUuidTag)
+		-- return to let collectionservice listeners handle unregistration
+		return
 	end
-	local listener
-	listener = self.Heartbeat:connect(function()
-		pcall(function()
-			self:deconstructPatternsWithRef(instance)
-			self._store:flush()
-			self._instanceRegistry:uregisterInstance(instance)
-			self:fire("instanceUnregistered", instance)
-		end)
-		listener:disconnect()
-	end)
+	-- we leave the uuid on the instance, since removing the attribute seems kind of pointless
+	local uuid = self:getUuid(instance)
+	self:deconstructPatternsWithRef(uuid)
 end
+
 function Stitch:lookupInstanceByUuid(uuid: string)
-	return self._instanceRegistry:lookup(uuid)
+	local pattern = self._store:lookup(uuid)
+	if pattern then
+		return pattern:getInstance()
+	end
 end
 
 function Stitch:lookupPatternByUuid(uuid: string)
@@ -150,8 +157,8 @@ function Stitch:getUuid(ref: any)
 	if typeof(ref) == "string" then
 		uuid = ref
 	elseif typeof(ref) == "Instance" then
-		uuid = self._instanceRegistry:getInstanceUuid(ref)
-	elseif typeof(ref) == "table" then
+		return self:getInstanceUuid(ref)
+	elseif typeof(ref) == "table" and ref.uuid then
 		uuid = ref.uuid
 	end
 
@@ -177,17 +184,18 @@ function Stitch:getPatternByRef(patternResolvable, ref)
 end
 
 function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
-	-- for convenience, if the ref is an instance, we register the instance
-	if typeof(ref) == "Instance" and not self._instanceRegistry:isRegistered(ref) then
-		ref = self:registerInstance(ref)
-	end
-
 	local attached_pattern = self:getPatternByRef(patternResolvable, ref)
 
 	if not attached_pattern then
 		local pattern = self._collection:resolveOrErrorPattern(patternResolvable)
 		local refuuid = self:getUuid(ref)
 		local constructionData = Util.mergeTable(pattern.data or {}, data or {})
+
+		-- for convenience, if the ref is an instance, we register it
+		if typeof(ref) == "Instance" and not self:lookupPatternByUuid(refuuid) then
+			ref = self:registerInstance(ref)
+			refuuid = ref.uuid
+		end
 
 		self._store:dispatch({
 			type = "constructPattern",
@@ -201,23 +209,6 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 
 		attached_pattern = self:getPatternByRef(patternResolvable, ref)
 	end
-
-	return attached_pattern
-end
-
-function Stitch:createRootPattern(patternResolvable, uuid: string, data: table?)
-	uuid = uuid or HttpService:GenerateGUID(false)
-	local patternName = self._collection:getPatternName(patternResolvable)
-
-	self._store:dispatch({
-		type = "constructPattern",
-		refuuid = uuid,
-		uuid = uuid,
-		data = data or {},
-		patternName = patternName,
-	})
-	self:flushActions()
-	local attached_pattern = self:getPatternByRef(patternResolvable, uuid)
 
 	return attached_pattern
 end

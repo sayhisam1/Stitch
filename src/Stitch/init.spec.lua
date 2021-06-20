@@ -1,3 +1,6 @@
+local CollectionService = game:GetService("CollectionService")
+local Workspace = game:GetService("Workspace")
+local Promise = require(script.Parent.Parent.Parent.Promise)
 local Stitch = require(script.Parent)
 
 return function()
@@ -70,6 +73,63 @@ return function()
 			expect(patternData).to.be.ok()
 			expect(stitch:getPatternByRef("Test", uuid)).to.be.ok()
 			expect(stitch:getPatternByRef("Test", uuid)).to.equal(pattern)
+		end)
+	end)
+
+	describe("instances", function()
+		it("should properly register instances", function()
+			local testInstance = Instance.new("Part")
+			testInstance.Parent = Workspace
+
+			local instancePattern = stitch:registerInstance(testInstance)
+			expect(instancePattern).to.be.ok()
+			expect(instancePattern:getInstance()).to.equal(testInstance)
+			expect(CollectionService:HasTag(testInstance, stitch.instanceUuidTag)).to.equal(true)
+			testInstance:Destroy()
+		end)
+		it("should properly unregister instances", function()
+			local testInstance = Instance.new("Part")
+			testInstance.Parent = Workspace
+
+			local instancePattern = stitch:registerInstance(testInstance)
+			stitch:unregisterInstance(testInstance)
+			stitch:flushActions()
+			expect(stitch:lookupPatternByUuid(instancePattern.uuid)).to.never.be.ok()
+			testInstance:Destroy()
+		end)
+		it("should listen to CollectionService instance added signal", function()
+			local testInstance = Instance.new("Part")
+			testInstance.Parent = Workspace
+			local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal(stitch.instanceUuidTag)):andThen(
+				function()
+					local uuid = stitch:getUuid(testInstance)
+					expect(uuid).to.be.ok()
+					expect(stitch:lookupPatternByUuid(uuid)).to.be.ok()
+					expect(stitch:lookupPatternByUuid(uuid):getInstance()).to.equal(testInstance)
+				end
+			)
+			CollectionService:AddTag(testInstance, stitch.instanceUuidTag)
+			expect(CollectionService:HasTag(testInstance, stitch.instanceUuidTag)).to.equal(true)
+			promise:await()
+			testInstance:Destroy()
+		end)
+		it("should listen to CollectionService instance removed signal", function()
+			local testInstance = Instance.new("Part")
+			testInstance.Parent = Workspace
+			CollectionService:AddTag(testInstance, stitch.instanceUuidTag)
+			local instanceUuid = stitch:getUuid(testInstance)
+			local promise =
+				Promise.fromEvent(CollectionService:GetInstanceRemovedSignal(stitch.instanceUuidTag)):andThen(
+					function()
+						stitch:flushActions()
+						local uuid = stitch:getUuid(testInstance)
+						expect(uuid).to.never.be.ok()
+						expect(stitch:lookupPatternByUuid(instanceUuid)).to.never.be.ok()
+					end
+				)
+			CollectionService:RemoveTag(testInstance, stitch.instanceUuidTag)
+			promise:await()
+			testInstance:Destroy()
 		end)
 	end)
 
