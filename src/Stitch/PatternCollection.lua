@@ -70,13 +70,6 @@ function PatternCollection:resolveOrError(patternResolvable)
 	)
 end
 
-function PatternCollection:getPatternName(patternResolvable)
-	if typeof(patternResolvable) == "string" then
-		return patternResolvable
-	end
-	return patternResolvable.name
-end
-
 function PatternCollection:getAll()
 	return self.registeredPatterns
 end
