@@ -121,7 +121,7 @@ function Stitch:registerInstance(instance: Instance)
 		self:flushActions()
 		existingPattern = self:lookupPatternByUuid(uuid)
 	end
-	return existingPattern
+	return uuid
 end
 
 function Stitch:unregisterInstance(instance: Instance)
@@ -193,8 +193,7 @@ function Stitch:getOrCreatePatternByRef(patternResolvable, ref, data: table?)
 
 		-- for convenience, if the ref is an instance, we register it
 		if typeof(ref) == "Instance" and not self:lookupPatternByUuid(refuuid) then
-			ref = self:registerInstance(ref)
-			refuuid = ref.uuid
+			refuuid = self:registerInstance(ref)
 		end
 
 		self._store:dispatch({
