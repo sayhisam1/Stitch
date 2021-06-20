@@ -15,10 +15,9 @@ function PatternCollection.new(stitch)
 	return self
 end
 
-function PatternCollection:destroy()
-end
+function PatternCollection:destroy() end
 
-function PatternCollection:registerPattern(patternDefinition)
+function PatternCollection:register(patternDefinition)
 	t.strict(Types.PatternDefinition)(patternDefinition)
 	if getmetatable(patternDefinition) then
 		self.stitch:error(
@@ -44,18 +43,17 @@ function PatternCollection:registerPattern(patternDefinition)
 	return patternDefinition
 end
 
-function PatternCollection:unregisterPattern(patternResolvable)
+function PatternCollection:unregister(patternResolvable)
 	local resolvedPattern = self:resolveOrErrorPattern(patternResolvable)
 	self.registeredPatterns[resolvedPattern.name] = nil
 end
 
-function PatternCollection:resolvePattern(patternResolvable)
+function PatternCollection:resolve(patternResolvable)
 	local patternResolvableType = typeof(patternResolvable)
 	if not patternResolvableType == "string" and not patternResolvableType == "table" then
-		self.stitch:error(("invalid PatternResolvable %s of type %s"):format(
-			tostring(patternResolvable),
-			typeof(patternResolvable)
-		))
+		self.stitch:error(
+			("invalid PatternResolvable %s of type %s"):format(tostring(patternResolvable), typeof(patternResolvable))
+		)
 	end
 
 	local patternName = patternResolvable
@@ -66,9 +64,10 @@ function PatternCollection:resolvePattern(patternResolvable)
 	return self.registeredPatterns[patternName]
 end
 
-function PatternCollection:resolveOrErrorPattern(patternResolvable)
-	return self:resolvePattern(patternResolvable)
-		or self.stitch:error(("failed to resolve Pattern %s!"):format(tostring(patternResolvable)))
+function PatternCollection:resolveOrError(patternResolvable)
+	return self:resolve(patternResolvable) or self.stitch:error(
+		("failed to resolve Pattern %s!"):format(tostring(patternResolvable))
+	)
 end
 
 function PatternCollection:getPatternName(patternResolvable)
