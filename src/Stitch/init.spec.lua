@@ -262,6 +262,7 @@ return function()
 	describe("stress test", function()
 		SKIP()
 		it("should be able to construct many patterns", function()
+			debug.profilebegin("stress test")
 			local patternDefinition = {
 				name = "Test",
 			}
@@ -289,8 +290,8 @@ return function()
 
 			for i = 1, 1024, 1 do
 				stitch:getOrCreatePatternByRef(patternDefinition, instances[i])
-				debug.profileend()
 			end
+			debug.profileend()
 		end)
 	end)
 end
