@@ -199,11 +199,11 @@ function StitchStore:flush()
 	table.clear(self._actionQueue)
 	for _, action in ipairs(successfulActions) do
 		if action.type == "constructPattern" then
-			self:fire("patternConstructed", action.uuid)
+			self.stitch:fire("patternConstructed", action.uuid)
 		elseif action.type == "updateData" then
-			self:fire("patternUpdated", action.uuid)
+			self.stitch:fire("patternUpdated", action.uuid)
 		elseif action.type == "deconstructPattern" then
-			self:fire("patternDeconstructed", action.uuid)
+			self.stitch:fire("patternDeconstructed", action.uuid)
 		end
 	end
 	self._store:flush()
