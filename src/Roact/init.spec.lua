@@ -1,4 +1,5 @@
 local RunService = game:GetService("RunService")
+local Workspace = game:GetService("Workspace")
 
 local Stitch = require(script.Parent.Parent.Stitch)
 local StitchRoact = require(script.Parent)
@@ -59,39 +60,43 @@ return function()
 			local PatternDefinition = {
 				name = "test",
 				render = function(self, e)
-					debug.profilebegin("TestRender")
+					debug.profilebegin("get target")
+					local target = self:getRef():getInstance()
+					debug.profileend()
 					local ret = e(self.stitch.roact.Portal, {
-						target = targetFolder,
+						target = target,
 					}, {
 						TestPart = e("Part", {
 							Anchored = true,
 							CFrame = self:get("cframe"),
 						}),
 					})
-					debug.profileend()
 					return ret
 				end,
 			}
 
 			stitch:registerPattern(PatternDefinition)
-
+			local refs = {}
 			local patterns = {}
 			for i = 1, 1000 do
+				refs[i] = Instance.new("Folder")
+				refs[i].Parent = Workspace
 				table.insert(
 					patterns,
-					stitch:createRootPattern(PatternDefinition, nil, {
+					stitch:getOrCreatePatternByRef(PatternDefinition, refs[i], {
 						cframe = CFrame.new(),
 					})
 				)
 			end
 			stitch:flushActions()
 			for i = 1, 1000 do
-				debug.profilebegin("renderloop")
+				debug.profilebegin("stitch update loop")
 				for _, p in pairs(patterns) do
-					p:set("cframe", p:get("cframe") * CFrame.new(math.random(), 0, math.random()))
+					local newCf = p:get("cframe") * CFrame.new(math.random(), 0, math.random())
+					p:set("cframe", newCf)
 				end
-				heartbeat:Fire()
 				debug.profileend()
+				heartbeat:Fire()
 				RunService.Heartbeat:Wait()
 			end
 		end)
