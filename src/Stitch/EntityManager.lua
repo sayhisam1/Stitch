@@ -9,16 +9,17 @@ EntityManager.__index = EntityManager
 function EntityManager.new(namespace: string)
 	local self = setmetatable({
 		instanceTag = ("Stitch%sTag"):format(namespace),
+		_collection = ComponentCollection.new(),
+		entities = {},
+		_instanceRemovedSignal = nil,
 	}, EntityManager)
-
-	self._collection = ComponentCollection.new()
-	self.entities = {}
 
 	self._instanceRemovedSignal = CollectionService
 		:GetInstanceRemovedSignal(self.instanceTag)
 		:connect(function(instance: Instance)
 			self:_unregisterInstance(instance)
 		end)
+
 	return self
 end
 
