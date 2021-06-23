@@ -96,6 +96,7 @@ return function()
 			expect(data.baz).to.equal("qux")
 		end)
 	end)
+
 	describe("EntityManager:removeComponent", function()
 		it("should remove a component", function()
 			local component = {
