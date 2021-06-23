@@ -1,4 +1,5 @@
 local Component = require(script.Parent.Component)
+local HotReloader = require(script.Parent.HotReloader)
 local Util = require(script.Parent.Parent.Shared.Util)
 
 local ComponentCollection = {}
@@ -7,14 +8,24 @@ ComponentCollection.__index = ComponentCollection
 function ComponentCollection.new()
 	local self = setmetatable({
 		registeredComponents = {},
+		_hotReloader = HotReloader.new(),
 	}, ComponentCollection)
 
 	return self
 end
 
-function ComponentCollection:destroy() end
+function ComponentCollection:destroy()
+	self._hotReloader:destroy()
+end
 
-function ComponentCollection:register(componentDefinition: table)
+function ComponentCollection:register(componentDefinition: table | ModuleScript)
+	if typeof(componentDefinition) == "Instance" and componentDefinition:IsA("ModuleScript") then
+		self._hotReloader:listen(componentDefinition, function(component)
+			self:unregister(component)
+			self:register(component)
+		end)
+		return
+	end
 	if getmetatable(componentDefinition) then
 		error(
 			"Failed to register component %s: components should not have a metatable!",
@@ -36,7 +47,10 @@ function ComponentCollection:register(componentDefinition: table)
 end
 
 function ComponentCollection:unregister(componentResolvable)
-	local resolvedComponent = self:resolveOrError(componentResolvable)
+	local resolvedComponent = self:resolve(componentResolvable)
+	if not resolvedComponent then
+		return
+	end
 	self.registeredComponents[resolvedComponent.name] = nil
 end
 
