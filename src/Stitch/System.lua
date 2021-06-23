@@ -16,4 +16,8 @@ function System:destroy()
 	self:onDestroy()
 end
 
+function System:onUpdate() end
+
+function System:onDestroy() end
+
 return System
