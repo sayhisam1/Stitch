@@ -5,9 +5,8 @@ local RunService = game:GetService("RunService")
 local HotReloader = {}
 HotReloader.__index = HotReloader
 
-function HotReloader.new(stitch)
+function HotReloader.new()
 	local self = setmetatable({
-		stitch = stitch,
 		_listeners = {},
 		_clonedModules = {},
 	}, HotReloader)

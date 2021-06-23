@@ -4,6 +4,7 @@ local EntityManager = require(script.EntityManager)
 local SystemGroup = require(script.SystemGroup)
 local Util = require(script.Parent.Shared.Util)
 local System = require(script.System)
+local HotReloader = require(script.HotReloader)
 
 local Stitch = {}
 Stitch.__index = Stitch
@@ -15,6 +16,7 @@ function Stitch.new(namespace: string)
 		namespace = namespace,
 		entityManager = EntityManager.new(namespace),
 		systemGroups = {},
+		_hotReloader = HotReloader.new(),
 	}, Stitch)
 
 	return self
@@ -28,8 +30,12 @@ function Stitch:destroy()
 end
 
 function Stitch:addSystem(system: {} | ModuleScript)
-	if typeof(system) == "ModuleScript" then
-		system = require(system)
+	if typeof(system) == "Instance" and system:IsA("ModuleScript") then
+		self._hotReloader:listen(system, function(value)
+			self:removeSystem(value)
+			self:addSystem(value)
+		end)
+		return
 	end
 
 	if typeof(system.name) ~= "string" then
@@ -53,7 +59,12 @@ function Stitch:removeSystem(system: {} | ModuleScript)
 		system = require(system)
 	end
 
+	system = setmetatable(system, System)
 	local updateEvent = system.updateEvent
+	if not self.systemGroups[updateEvent] then
+		warn("no update event when removing system", system.name)
+		return
+	end
 	self.systemGroups[updateEvent]:removeSystem(system)
 end
 
