@@ -14,10 +14,17 @@ function EntityManager.new(namespace: string)
 	self._collection = ComponentCollection.new()
 	self.entities = {}
 
+	self._instanceRemovedSignal = CollectionService
+		:GetInstanceRemovedSignal(self.instanceTag)
+		:connect(function(instance: Instance)
+			self:_unregisterInstance(instance)
+		end)
 	return self
 end
 
 function EntityManager:destroy()
+	self._instanceRemovedSignal:disconnect()
+
 	for _, instance in ipairs(CollectionService:GetTagged(self.instanceTag)) do
 		self:unregisterInstance(instance)
 	end
@@ -34,6 +41,11 @@ end
 
 function EntityManager:unregisterInstance(instance: Instance)
 	CollectionService:RemoveTag(instance, self.instanceTag)
+	self:_unregisterInstance(instance)
+end
+
+-- need internal version to prevent double-calling due to tag removal
+function EntityManager:_unregisterInstance(instance: Instance)
 	for componentName, data in pairs(self.entities[instance] or {}) do
 		self:removeComponent(componentName, instance)
 	end
