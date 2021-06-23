@@ -10,7 +10,7 @@ function Stitch.new(namespace: string)
 
 	local self = setmetatable({
 		namespace = namespace,
-		EntityManager = EntityManager.new(namespace),
+		entityManager = EntityManager.new(namespace),
 	}, Stitch)
 
 	return self
