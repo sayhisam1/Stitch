@@ -1,4 +1,6 @@
 --!strict
+local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
+
 local SystemGroup = {}
 SystemGroup.__index = SystemGroup
 
@@ -21,14 +23,20 @@ end
 function SystemGroup:destroy()
 	self._listener:disconnect()
 	for i, system in ipairs(self.systems) do
-		system:destroy()
+		local stat, err = pcall(system.destroy, system)
+		if not stat then
+			inlinedError(err)
+		end
 		table.remove(self.systems, i)
 	end
 end
 
 function SystemGroup:updateSystems()
 	for _, system in ipairs(self.systems) do
-		system:update()
+		local stat, err = pcall(system.update, system)
+		if not stat then
+			inlinedError(err)
+		end
 	end
 end
 
@@ -49,7 +57,10 @@ end
 function SystemGroup:removeSystem(system: {})
 	for i, existing in ipairs(self.systems) do
 		if existing.name == system.name then
-			system:destroy()
+			local stat, err = pcall(system.destroy, system)
+			if not stat then
+				inlinedError(err)
+			end
 			table.remove(self.systems, i)
 			return
 		end
