@@ -32,4 +32,5 @@ function Util.mergeTable(a: table, b: table)
 	end
 	return new_table
 end
+
 return Util
