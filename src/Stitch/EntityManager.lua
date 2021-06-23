@@ -9,7 +9,7 @@ EntityManager.__index = EntityManager
 function EntityManager.new(namespace: string)
 	local self = setmetatable({
 		instanceTag = ("Stitch%sTag"):format(namespace),
-		_collection = ComponentCollection.new(),
+		collection = ComponentCollection.new(),
 		entities = {},
 		_instanceRemovedSignal = nil,
 	}, EntityManager)
@@ -32,7 +32,7 @@ function EntityManager:destroy()
 end
 
 function EntityManager:registerComponentTemplate(componentDefinition: table | ModuleScript)
-	self._collection:register(componentDefinition)
+	self.collection:register(componentDefinition)
 end
 
 function EntityManager:registerInstance(instance: Instance)
@@ -54,7 +54,7 @@ function EntityManager:_unregisterInstance(instance: Instance)
 end
 
 function EntityManager:addComponent(componentResolvable: string | table, entity: Instance, data: table?): table
-	local component = self._collection:resolveOrError(componentResolvable)
+	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] then
 		self:registerInstance(entity)
@@ -69,13 +69,13 @@ function EntityManager:addComponent(componentResolvable: string | table, entity:
 end
 
 function EntityManager:getComponent(componentResolvable: string | table, entity: Instance): table?
-	local component = self._collection:resolveOrError(componentResolvable)
+	local component = self.collection:resolveOrError(componentResolvable)
 
 	return self.entities[entity] and self.entities[entity][component.name] or nil
 end
 
 function EntityManager:setComponent(componentResolvable: string | table, entity: Instance, data: table): table
-	local component = self._collection:resolveOrError(componentResolvable)
+	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] or not self.entities[entity][component.name] then
 		error(("%s does not have a component of type %s!"):format(tostring(entity), component.name))
@@ -86,7 +86,7 @@ function EntityManager:setComponent(componentResolvable: string | table, entity:
 end
 
 function EntityManager:updateComponent(componentResolvable: string | table, entity: Instance, data: table): table
-	local component = self._collection:resolveOrError(componentResolvable)
+	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] or not self.entities[entity][component.name] then
 		error(("%s does not have a component of type %s!"):format(tostring(entity), component.name))
@@ -97,7 +97,7 @@ function EntityManager:updateComponent(componentResolvable: string | table, enti
 end
 
 function EntityManager:removeComponent(componentResolvable: string | table, entity: Instance)
-	local component = self._collection:resolveOrError(componentResolvable)
+	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] or not self.entities[entity][component.name] then
 		return
