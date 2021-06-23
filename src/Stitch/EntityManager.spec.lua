@@ -38,6 +38,18 @@ return function()
 			expect(CollectionService:HasTag(testInstance, entityManager.instanceTag)).to.equal(false)
 			expect(entityManager.entities[testInstance]).to.never.be.ok()
 		end)
+		it("should properly unregister instances on destruction", function()
+			local promise = Promise.fromEvent(CollectionService:GetInstanceRemovedSignal(entityManager.instanceTag))
+
+			local newInstance = Instance.new("Folder")
+			newInstance.Parent = Workspace
+			entityManager:registerInstance(newInstance)
+
+			newInstance:Destroy()
+			promise:await()
+
+			expect(entityManager.entities[newInstance]).to.never.be.ok()
+		end)
 	end)
 
 	describe("EntityManager:registerComponentTemplate", function()
