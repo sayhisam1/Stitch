@@ -22,3 +22,4 @@ Planned features:
 - Support for Roblox Actors for multithreading
 - Helper methods to enable distributing tasks over many frames (prevents lagspikes)
 - Complete docs
+- A plugin frontend to make Stitch incredibly easy to work with
