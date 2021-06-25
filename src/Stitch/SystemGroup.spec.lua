@@ -29,6 +29,21 @@ return function()
 			}
 			systemGroup:addSystem(system)
 		end)
+		it("should call system create", function()
+			local created = false
+			local system = {
+				priority = 10,
+				destroy = function() end,
+				create = function()
+					created = true
+				end,
+			}
+			systemGroup:addSystem(system)
+			local promise = Promise.fromEvent(bindableEvent.Event)
+			bindableEvent:Fire()
+			promise:await()
+			expect(created).to.equal(true)
+		end)
 		it("should respect priorities", function()
 			local systemct = nil
 			local system2ct = nil

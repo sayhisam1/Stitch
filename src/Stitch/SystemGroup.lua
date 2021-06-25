@@ -46,6 +46,7 @@ function SystemGroup:addSystem(system: {})
 	end
 
 	table.insert(self.systems, insertPos, system)
+	xpcall(system.create, inlinedError, system)
 end
 
 function SystemGroup:removeSystem(system: {})
