@@ -11,6 +11,7 @@ function EntityManager.new(namespace: string)
 		instanceTag = ("Stitch%sTag"):format(namespace),
 		collection = ComponentCollection.new(),
 		entities = {},
+		componentToEntity = {},
 		_instanceRemovedSignal = nil,
 	}, EntityManager)
 
@@ -70,6 +71,13 @@ function EntityManager:addComponent(componentResolvable: string | table, entity:
 	end
 
 	self.entities[entity][component.name] = component:createFromData(data)
+
+	if not self.componentToEntity[component.name] then
+		self.componentToEntity[component.name] = {}
+	end
+
+	self.componentToEntity[component.name][entity] = entity
+
 	return self.entities[entity][component.name]
 end
 
@@ -113,6 +121,8 @@ function EntityManager:removeComponent(componentResolvable: string | table, enti
 	end
 
 	self.entities[entity][component.name] = nil
+
+	self.componentToEntity[component.name][entity] = nil
 
 	if next(self.entities[entity]) == nil then
 		-- since the entity has no more components, we clear the ref to allow gc'ing
