@@ -2,6 +2,7 @@
 local CollectionService = game:GetService("CollectionService")
 
 local ComponentCollection = require(script.Parent.ComponentCollection)
+local Util = require(script.Parent.Parent.Shared.Util)
 
 local EntityManager = {}
 EntityManager.__index = EntityManager
@@ -85,6 +86,11 @@ function EntityManager:getComponent(componentResolvable: string | table, entity:
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	return self.entities[entity] and self.entities[entity][component.name] or nil
+end
+
+function EntityManager:getEntitiesWith(componentResolvable: string | table)
+	local component = self.collection:resolveOrError(componentResolvable)
+	return Util.shallowCopy(self.componentToEntity[component.name] or {})
 end
 
 function EntityManager:setComponent(componentResolvable: string | table, entity: Instance | table, data: table): table

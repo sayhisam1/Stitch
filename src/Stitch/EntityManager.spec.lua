@@ -232,6 +232,35 @@ return function()
 		end)
 	end)
 
+	describe("EntityManager:getEntitiesWith", function()
+		it("should get entities with a component", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+			local data = entityManager:addComponent("testComponent", testInstance)
+			local testEntity = {}
+			local data = entityManager:addComponent("testComponent", testEntity)
+			expect(entityManager:getEntitiesWith("testComponent")[testInstance]).to.equal(testInstance)
+			expect(entityManager:getEntitiesWith("testComponent")[testEntity]).to.equal(testEntity)
+		end)
+		it("should return nil for non-existing components", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+
+			expect(next(entityManager:getEntitiesWith("testComponent"))).to.never.be.ok()
+		end)
+	end)
 	describe("EntityManager:setComponent", function()
 		it("should set data on an existing component", function()
 			local component = {
