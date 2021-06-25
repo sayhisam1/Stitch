@@ -5,7 +5,7 @@ local RunService = game:GetService("RunService")
 local System = {}
 System.__index = System
 
-System.priority = math.huge
+System.priority = 1000
 System.updateEvent = RunService.Heartbeat
 
 function System:create()
