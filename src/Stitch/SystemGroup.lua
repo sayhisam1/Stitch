@@ -23,20 +23,14 @@ end
 function SystemGroup:destroy()
 	self._listener:disconnect()
 	for i, system in ipairs(self.systems) do
-		local stat, err = pcall(system.destroy, system)
-		if not stat then
-			inlinedError(err)
-		end
+		xpcall(system.destroy, inlinedError, system)
 		table.remove(self.systems, i)
 	end
 end
 
 function SystemGroup:updateSystems()
 	for _, system in ipairs(self.systems) do
-		local stat, err = pcall(system.update, system)
-		if not stat then
-			inlinedError(err)
-		end
+		xpcall(system.update, inlinedError, system)
 	end
 end
 
@@ -57,10 +51,7 @@ end
 function SystemGroup:removeSystem(system: {})
 	for i, existing in ipairs(self.systems) do
 		if existing.name == system.name then
-			local stat, err = pcall(system.destroy, system)
-			if not stat then
-				inlinedError(err)
-			end
+			xpcall(system.destroy, inlinedError, system)
 			table.remove(self.systems, i)
 			return
 		end
