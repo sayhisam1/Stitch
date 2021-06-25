@@ -89,6 +89,31 @@ return function()
 			expect(data.foo).to.equal("bar")
 			expect(data.baz).to.equal("qux")
 		end)
+		it("should fire entity added signal", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+
+			local addedEntity = nil
+			local addedData = nil
+			local promise = Promise.fromEvent(entityManager:getEntityAddedSignal("testComponent")):andThen(
+				function(entity, data)
+					addedEntity = entity
+					addedData = data
+				end
+			)
+			local data = entityManager:addComponent("testComponent", testInstance, {
+				baz = "qux",
+			})
+			promise:await()
+			expect(addedEntity).to.equal(testInstance)
+			expect(addedData).to.equal(data)
+		end)
 		it("should add a component to an unregistered table", function()
 			local component = {
 				name = "testComponent",
@@ -159,6 +184,32 @@ return function()
 			local data = entityManager:addComponent("testComponent", testInstance)
 			entityManager:removeComponent("testComponent", testInstance)
 			expect(entityManager.componentToEntity["testComponent"][testInstance]).to.never.be.ok()
+		end)
+		it("should fire entity removed signal", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+
+			local removedEntity = nil
+			local removedData = nil
+			local promise = Promise.fromEvent(entityManager:getEntityRemovedSignal("testComponent")):andThen(
+				function(entity, data)
+					removedEntity = entity
+					removedData = data
+				end
+			)
+			local data = entityManager:addComponent("testComponent", testInstance, {
+				baz = "qux",
+			})
+			entityManager:removeComponent("testComponent", testInstance)
+			promise:await()
+			expect(removedEntity).to.equal(testInstance)
+			expect(removedData).to.equal(data)
 		end)
 		it("should clear references to an entity when all components are removed", function()
 			local component = {
