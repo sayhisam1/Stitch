@@ -24,6 +24,7 @@ return function()
 	describe("SystemGroup:addSystem", function()
 		it("should add a system", function()
 			local system = {
+				name = "test",
 				priority = 10,
 				destroy = function() end,
 			}
@@ -32,6 +33,7 @@ return function()
 		it("should call system create", function()
 			local created = false
 			local system = {
+				name = "test",
 				priority = 10,
 				destroy = function() end,
 				create = function()
@@ -49,6 +51,7 @@ return function()
 			local system2ct = nil
 			local counter = 1
 			local system = {
+				name = "test",
 				priority = 10,
 				update = function()
 					systemct = counter
@@ -57,6 +60,7 @@ return function()
 				destroy = function() end,
 			}
 			local system2 = {
+				name = "test2",
 				priority = 9,
 				update = function()
 					system2ct = counter
@@ -75,6 +79,7 @@ return function()
 		it("should properly update all systems", function()
 			local updated = false
 			local system = {
+				name = "test",
 				priority = 10,
 				destroy = function() end,
 				update = function()
@@ -88,6 +93,7 @@ return function()
 		it("should update on event fire", function()
 			local updated = false
 			local system = {
+				name = "test",
 				priority = 10,
 				destroy = function() end,
 				update = function()

@@ -1,5 +1,7 @@
 --!strict
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
+local Util = require(script.Parent.Parent.Shared.Util)
+local System = require(script.Parent.System)
 
 local SystemGroup = {}
 SystemGroup.__index = SystemGroup
@@ -23,18 +25,28 @@ end
 function SystemGroup:destroy()
 	self._listener:disconnect()
 	for i, system in ipairs(self.systems) do
-		xpcall(system.destroy, inlinedError, system)
+		system:destroy()
 		table.remove(self.systems, i)
 	end
 end
 
 function SystemGroup:updateSystems()
 	for _, system in ipairs(self.systems) do
-		xpcall(system.update, inlinedError, system)
+		local ok, msg = pcall(system.update, system)
+		if not ok then
+			inlinedError(msg)
+		end
 	end
 end
 
-function SystemGroup:addSystem(system: {})
+function SystemGroup:addSystem(system: table, stitch: table?)
+	if typeof(system.name) ~= "string" then
+		error("Tried to add a system without a name!")
+	end
+	system = setmetatable(Util.shallowCopy(system), System)
+	-- inject stitch reference for convenience
+	system.stitch = stitch
+
 	local priority = system.priority
 	local insertPos = #self.systems + 1
 
@@ -45,14 +57,17 @@ function SystemGroup:addSystem(system: {})
 		end
 	end
 
+	system:create()
 	table.insert(self.systems, insertPos, system)
-	xpcall(system.create, inlinedError, system)
 end
 
 function SystemGroup:removeSystem(system: {})
 	for i, existing in ipairs(self.systems) do
 		if existing.name == system.name then
-			xpcall(system.destroy, inlinedError, system)
+			local ok, msg = pcall(system.destroy, system)
+			if not ok then
+				inlinedError(msg)
+			end
 			table.remove(self.systems, i)
 			return
 		end

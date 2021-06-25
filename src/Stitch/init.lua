@@ -2,7 +2,6 @@ local DEFAULT_NAMESPACE = "game"
 
 local EntityManager = require(script.EntityManager)
 local SystemGroup = require(script.SystemGroup)
-local Util = require(script.Parent.Shared.Util)
 local System = require(script.System)
 local HotReloader = require(script.HotReloader)
 
@@ -38,20 +37,13 @@ function Stitch:addSystem(system: {} | ModuleScript)
 		return
 	end
 
-	if typeof(system.name) ~= "string" then
-		error("Tried to add a system without a name!")
-	end
-
-	system = setmetatable(Util.shallowCopy(system), System)
-	system.stitch = self
-
-	local updateEvent = system.updateEvent
+	local updateEvent = system.updateEvent or System.updateEvent
 
 	if not self.systemGroups[updateEvent] then
 		self.systemGroups[updateEvent] = SystemGroup.new(updateEvent)
 	end
 
-	self.systemGroups[updateEvent]:addSystem(system)
+	self.systemGroups[updateEvent]:addSystem(system, self)
 end
 
 function Stitch:removeSystem(system: {} | ModuleScript)
@@ -61,7 +53,6 @@ function Stitch:removeSystem(system: {} | ModuleScript)
 
 	local updateEvent = system.updateEvent or System.updateEvent
 	if not self.systemGroups[updateEvent] then
-		warn("no update event when removing system", system.name)
 		return
 	end
 	self.systemGroups[updateEvent]:removeSystem(system)
