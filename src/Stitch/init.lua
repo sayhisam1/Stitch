@@ -59,8 +59,7 @@ function Stitch:removeSystem(system: {} | ModuleScript)
 		system = require(system)
 	end
 
-	system = setmetatable(system, System)
-	local updateEvent = system.updateEvent
+	local updateEvent = system.updateEvent or System.updateEvent
 	if not self.systemGroups[updateEvent] then
 		warn("no update event when removing system", system.name)
 		return
