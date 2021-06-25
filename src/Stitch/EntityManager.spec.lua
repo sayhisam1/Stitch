@@ -111,6 +111,32 @@ return function()
 			local data = entityManager:addComponent("testComponent", testInstance)
 			entityManager:removeComponent("testComponent", testInstance)
 		end)
+		it("should clear references to an entity when all components are removed", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+			local component2 = {
+				name = "testComponent2",
+				defaults = {
+					foo = "bar",
+				},
+			}
+			entityManager:registerComponentTemplate(component2)
+
+			entityManager:addComponent("testComponent", testInstance)
+			entityManager:addComponent("testComponent2", testInstance)
+			entityManager:removeComponent("testComponent", testInstance)
+			expect(entityManager.entities[testInstance]).to.be.ok()
+			entityManager:removeComponent("testComponent2", testInstance)
+			expect(entityManager.entities[testInstance]).to.never.be.ok()
+			entityManager:addComponent("testComponent", testInstance)
+			expect(entityManager.entities[testInstance]).to.be.ok()
+		end)
 		it("shouldn't error for non-existant components", function()
 			local component = {
 				name = "testComponent",

@@ -104,6 +104,11 @@ function EntityManager:removeComponent(componentResolvable: string | table, enti
 	end
 
 	self.entities[entity][component.name] = nil
+
+	if next(self.entities[entity]) == nil then
+		-- since the entity has no more components, we clear the ref to allow gc'ing
+		self.entities[entity] = nil
+	end
 end
 
 return EntityManager
