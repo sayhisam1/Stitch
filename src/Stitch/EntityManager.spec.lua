@@ -22,19 +22,30 @@ return function()
 		end)
 	end)
 
-	describe("EntityManager:registerInstance", function()
+	describe("EntityManager:registerEntity", function()
+		it("should register a table entity", function()
+			local testEntity = {}
+			entityManager:registerEntity(testEntity)
+			expect(entityManager.entities[testEntity]).to.be.ok()
+		end)
 		it("should add tags to an instance", function()
-			entityManager:registerInstance(testInstance)
+			entityManager:registerEntity(testInstance)
 			expect(CollectionService:HasTag(testInstance, entityManager.instanceTag)).to.be.ok()
 			expect(entityManager.entities[testInstance]).to.be.ok()
 		end)
 	end)
 
-	describe("EntityManager:unregisterInstance", function()
+	describe("EntityManager:unregisterEntity", function()
+		it("should properly unregister a table entity", function()
+			local testEntity = {}
+			entityManager:registerEntity(testEntity)
+			entityManager:unregisterEntity(testEntity)
+			expect(entityManager.entities[testEntity]).to.never.be.ok()
+		end)
 		it("should properly unregister an instance", function()
-			entityManager:registerInstance(testInstance)
+			entityManager:registerEntity(testInstance)
 			expect(CollectionService:HasTag(testInstance, entityManager.instanceTag)).to.equal(true)
-			entityManager:unregisterInstance(testInstance)
+			entityManager:unregisterEntity(testInstance)
 			expect(CollectionService:HasTag(testInstance, entityManager.instanceTag)).to.equal(false)
 			expect(entityManager.entities[testInstance]).to.never.be.ok()
 		end)
@@ -43,7 +54,7 @@ return function()
 
 			local newInstance = Instance.new("Folder")
 			newInstance.Parent = Workspace
-			entityManager:registerInstance(newInstance)
+			entityManager:registerEntity(newInstance)
 
 			newInstance:Destroy()
 			promise:await()
@@ -78,6 +89,23 @@ return function()
 			expect(data.foo).to.equal("bar")
 			expect(data.baz).to.equal("qux")
 		end)
+		it("should add a component to an unregistered table", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+
+			local testEntity = {}
+			local data = entityManager:addComponent("testComponent", testEntity, {
+				baz = "qux",
+			})
+			expect(data.foo).to.equal("bar")
+			expect(data.baz).to.equal("qux")
+		end)
 		it("should add a component to a registered instance", function()
 			local component = {
 				name = "testComponent",
@@ -86,10 +114,28 @@ return function()
 				},
 			}
 
-			entityManager:registerInstance(testInstance)
+			entityManager:registerEntity(testInstance)
 			entityManager:registerComponentTemplate(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance, {
+				baz = "qux",
+			})
+			expect(data.foo).to.equal("bar")
+			expect(data.baz).to.equal("qux")
+		end)
+		it("should add a component to a registered table", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+			entityManager:registerComponentTemplate(component)
+
+			local testEntity = {}
+			entityManager:registerEntity(testEntity)
+
+			local data = entityManager:addComponent("testComponent", testEntity, {
 				baz = "qux",
 			})
 			expect(data.foo).to.equal("bar")
