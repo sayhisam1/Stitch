@@ -25,8 +25,11 @@ end
 function SystemGroup:destroy()
 	self._listener:disconnect()
 	for i, system in ipairs(self.systems) do
-		system:destroy()
 		table.remove(self.systems, i)
+		local ok, msg = pcall(system.destroy, system)
+		if not ok then
+			inlinedError(msg)
+		end
 	end
 end
 
@@ -64,11 +67,11 @@ end
 function SystemGroup:removeSystem(system: {})
 	for i, existing in ipairs(self.systems) do
 		if existing.name == system.name then
-			local ok, msg = pcall(system.destroy, system)
+			table.remove(self.systems, i)
+			local ok, msg = pcall(existing.destroy, existing)
 			if not ok then
 				inlinedError(msg)
 			end
-			table.remove(self.systems, i)
 			return
 		end
 	end

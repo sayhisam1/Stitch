@@ -31,8 +31,9 @@ end
 function Stitch:addSystem(system: {} | ModuleScript)
 	if typeof(system) == "Instance" and system:IsA("ModuleScript") then
 		self._hotReloader:listen(system, function(value)
-			self:removeSystem(value)
 			self:addSystem(value)
+		end, function(value)
+			self:removeSystem(value)
 		end)
 		return
 	end

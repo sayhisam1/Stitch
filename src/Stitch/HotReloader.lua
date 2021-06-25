@@ -21,9 +21,11 @@ function HotReloader:destroy()
 	self._clonedModules = nil
 end
 
-function HotReloader:listen(module: ModuleScript, callback: callback)
+function HotReloader:listen(module: ModuleScript, callback: callback, cleanup: callback)
+	local lastUpdated = module
 	if RunService:IsStudio() then
 		local moduleChanged = module.Changed:connect(function()
+			cleanup(require(lastUpdated))
 			if self._clonedModules[module] then
 				self._clonedModules[module]:Destroy()
 			end
@@ -31,6 +33,7 @@ function HotReloader:listen(module: ModuleScript, callback: callback)
 			cloned.Name = cloned.Name .. "HotReloaded"
 			cloned.Parent = module.Parent
 			self._clonedModules[module] = cloned
+			lastUpdated = cloned
 			local loaded = require(cloned)
 			callback(loaded)
 		end)
