@@ -14,9 +14,6 @@
         "ServerScriptService": {
             "$className": "ServerScriptService",
             "StitchTest": {
-                "Stitch": {
-                    "$path": "./src"
-                },
                 "$path": "./test/server"
             }
         },
