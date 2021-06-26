@@ -1,5 +1,6 @@
 {
     "name": "Stitch",
+    "servePort": 34873,
     "tree": {
         "$className": "DataModel",
         "ReplicatedStorage": {
