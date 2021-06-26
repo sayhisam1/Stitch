@@ -344,6 +344,34 @@ return function()
 				})
 			end).to.throw()
 		end)
+		it("should fire entity changed signal", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+
+			local changedEntity = nil
+			local changedData = nil
+			local promise = Promise.fromEvent(entityManager:getEntityChangedSignal("testComponent")):andThen(
+				function(entity, data)
+					changedEntity = entity
+					changedData = data
+				end
+			)
+			local data = entityManager:addComponent("testComponent", testInstance, {
+				baz = "qux",
+			})
+			entityManager:setComponent("testComponent", testInstance, {
+				spaghet = "baguette",
+			})
+			promise:await()
+			expect(changedEntity).to.equal(testInstance)
+			expect(changedData.spaghet).to.equal("baguette")
+		end)
 	end)
 
 	describe("EntityManager:updateComponent", function()
@@ -378,6 +406,36 @@ return function()
 					foo = "baz",
 				})
 			end).to.throw()
+		end)
+		it("should fire entity changed signal", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			entityManager:registerComponentTemplate(component)
+
+			local changedEntity = nil
+			local changedData = nil
+			local promise = Promise.fromEvent(entityManager:getEntityChangedSignal("testComponent")):andThen(
+				function(entity, data)
+					changedEntity = entity
+					changedData = data
+				end
+			)
+			local data = entityManager:addComponent("testComponent", testInstance, {
+				baz = "qux",
+			})
+			entityManager:updateComponent("testComponent", testInstance, {
+				spaghet = "baguette",
+			})
+			promise:await()
+			expect(changedEntity).to.equal(testInstance)
+			expect(changedData.spaghet).to.equal("baguette")
+			expect(changedData.baz).to.equal("qux")
+			expect(changedData.foo).to.equal("bar")
 		end)
 	end)
 end

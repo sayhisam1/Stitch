@@ -18,6 +18,7 @@ function EntityManager.new(namespace: string)
 		_signals = {
 			entityAdded = {},
 			entityRemoved = {},
+			entityChanged = {},
 		},
 	}, EntityManager)
 
@@ -126,6 +127,11 @@ function EntityManager:setComponent(componentResolvable: string | table, entity:
 	end
 
 	self.entities[entity][component.name] = component:setFromData(data)
+
+	if self._signals["entityChanged"][component.name] then
+		self._signals["entityChanged"][component.name]:fire(entity, self.entities[entity][component.name])
+	end
+
 	return self.entities[entity][component.name]
 end
 
@@ -141,7 +147,22 @@ function EntityManager:updateComponent(
 	end
 
 	self.entities[entity][component.name] = component:updateFromData(self.entities[entity][component.name], data)
+
+	if self._signals["entityChanged"][component.name] then
+		self._signals["entityChanged"][component.name]:fire(entity, self.entities[entity][component.name])
+	end
+
 	return self.entities[entity][component.name]
+end
+
+function EntityManager:getEntityChangedSignal(componentResolvable: string | table)
+	local component = self.collection:resolveOrError(componentResolvable)
+
+	if not self._signals["entityChanged"][component.name] then
+		self._signals["entityChanged"][component.name] = Signal.new()
+	end
+
+	return self._signals["entityChanged"][component.name]
 end
 
 function EntityManager:removeComponent(componentResolvable: string | table, entity: Instance | table)
