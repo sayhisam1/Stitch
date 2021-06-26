@@ -1,6 +1,6 @@
 local RunService = game:GetService("RunService")
 local Observer = require(script.Parent.Observer)
---!strict
+local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 
 local System = {}
 System.__index = System
@@ -17,11 +17,11 @@ function System:createObserver(componentResolvable)
 	return observer
 end
 function System:create()
-	self:onCreate()
+	xpcall(self.onCreate, inlinedError, self)
 end
 
 function System:update()
-	self:onUpdate()
+	xpcall(self.onUpdate, inlinedError, self)
 	if self._observers then
 		for _, observer in ipairs(self._observers) do
 			observer:clear()
@@ -30,7 +30,7 @@ function System:update()
 end
 
 function System:destroy()
-	self:onDestroy()
+	xpcall(self.onDestroy, inlinedError, self)
 	if self._observers then
 		for _, observer in ipairs(self._observers) do
 			observer:destroy()
