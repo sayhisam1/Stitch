@@ -33,20 +33,17 @@ end
 
 function EntityManager:destroy()
 	self._instanceRemovedSignal:disconnect()
-
+	for entity, _ in pairs(self.entities) do
+		self:unregisterEntity(entity)
+	end
+	-- if there are somehow still tagged instances, we remove them here
+	for _, instance in ipairs(CollectionService:GetTagged(self.instanceTag)) do
+		self:unregisterEntity(instance)
+	end
 	for signalCategory, signals in pairs(self._signals) do
 		for _, signal in pairs(signals) do
 			signal:destroy()
 		end
-	end
-
-	for entity, _ in pairs(self.entities) do
-		self:unregisterEntity(entity)
-	end
-
-	-- if there are somehow still tagged instances, we remove them here
-	for _, instance in ipairs(CollectionService:GetTagged(self.instanceTag)) do
-		self:unregisterEntity(instance)
 	end
 end
 
