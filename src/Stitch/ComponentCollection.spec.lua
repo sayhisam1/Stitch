@@ -1,4 +1,5 @@
 local ComponentCollection = require(script.Parent.ComponentCollection)
+local Promise = require(script.Parent.Parent.Parent.Promise)
 
 return function()
 	local componentCollection
@@ -33,6 +34,21 @@ return function()
 				componentCollection:register(component)
 			end).to.throw()
 		end)
+		it("should should fire registered signal", function()
+			local component = {
+				name = "testComponent",
+				defaults = {},
+			}
+			local registered = nil
+			local promise = Promise.fromEvent(componentCollection:getComponentRegisteredSignal()):andThen(
+				function(registeredComponent)
+					registered = registeredComponent.name
+				end
+			)
+			componentCollection:register(component)
+			promise:await()
+			expect(registered).to.equal("testComponent")
+		end)
 	end)
 	describe("ComponentCollection:unregister", function()
 		it("should unregister a component", function()
@@ -43,6 +59,22 @@ return function()
 			componentCollection:register(component)
 			componentCollection:unregister(component)
 			expect(componentCollection:resolve(component)).to.never.be.ok()
+		end)
+		it("should should fire unregistered signal", function()
+			local component = {
+				name = "testComponent",
+				defaults = {},
+			}
+			local unregistered = nil
+			local promise = Promise.fromEvent(componentCollection:getComponentUnregisteredSignal()):andThen(
+				function(unregisteredComponent)
+					unregistered = unregisteredComponent.name
+				end
+			)
+			componentCollection:register(component)
+			componentCollection:unregister(component)
+			promise:await()
+			expect(unregistered).to.equal("testComponent")
 		end)
 	end)
 	describe("ComponentCollection:resolve", function()
