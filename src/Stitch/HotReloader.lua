@@ -35,7 +35,7 @@ function HotReloader:listen(module: ModuleScript, callback: callback, cleanup: c
 			self._clonedModules[module] = cloned
 			lastUpdated = cloned
 			local loaded = require(cloned)
-			callback(loaded)
+			callback(loaded, module)
 			warn(("HotReloaded %s!"):format(module:GetFullName()))
 		end)
 		table.insert(self._listeners, moduleChanged)

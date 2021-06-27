@@ -28,23 +28,26 @@ function Stitch:destroy()
 	self.entityManager:destroy()
 end
 
-function Stitch:addSystem(system: {} | ModuleScript)
-	if typeof(system) == "Instance" and system:IsA("ModuleScript") then
-		self._hotReloader:listen(system, function(value)
-			self:addSystem(value)
-		end, function(value)
-			self:removeSystem(value)
+function Stitch:addSystem(systemDefinition: {} | ModuleScript)
+	if typeof(systemDefinition) == "Instance" and systemDefinition:IsA("ModuleScript") then
+		self._hotReloader:listen(systemDefinition, function(system, originalModule: ModuleScript)
+			if not system.name then
+				system.name = originalModule.Name
+			end
+			self:addSystem(system)
+		end, function(system)
+			self:removeSystem(system)
 		end)
 		return
 	end
 
-	local updateEvent = system.updateEvent or System.updateEvent
+	local updateEvent = systemDefinition.updateEvent or System.updateEvent
 
 	if not self.systemGroups[updateEvent] then
 		self.systemGroups[updateEvent] = SystemGroup.new(updateEvent)
 	end
 
-	self.systemGroups[updateEvent]:addSystem(system, self)
+	self.systemGroups[updateEvent]:addSystem(systemDefinition, self)
 end
 
 function Stitch:removeSystem(system: {} | ModuleScript)

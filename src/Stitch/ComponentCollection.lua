@@ -25,7 +25,10 @@ end
 
 function ComponentCollection:register(componentDefinition: table | ModuleScript)
 	if typeof(componentDefinition) == "Instance" and componentDefinition:IsA("ModuleScript") then
-		self._hotReloader:listen(componentDefinition, function(component)
+		self._hotReloader:listen(componentDefinition, function(component, originalModule: ModuleScript)
+			if not component.name then
+				component.name = originalModule.Name
+			end
 			self:register(component)
 		end, function(component)
 			self:unregister(component)
