@@ -18,7 +18,7 @@ function System:createObserver(componentResolvable)
 	return observer
 end
 
-function System:registerSystemStateComponent(component)
+function System:registerComponent(component)
 	if not self._systemStateComponents then
 		self._systemStateComponents = {}
 	end

@@ -63,12 +63,12 @@ return function()
 		end)
 	end)
 
-	describe("EntityManager:registerComponentTemplate", function()
+	describe("EntityManager:registerComponent", function()
 		it("should properly register a component", function()
 			local component = {
 				name = "testComponent",
 			}
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 		end)
 	end)
 
@@ -81,7 +81,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance, {
 				baz = "qux",
@@ -97,7 +97,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local addedEntity = nil
 			local addedData = nil
@@ -122,7 +122,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local testEntity = {}
 			local data = entityManager:addComponent("testComponent", testEntity, {
@@ -140,7 +140,7 @@ return function()
 			}
 
 			entityManager:registerEntity(testInstance)
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance, {
 				baz = "qux",
@@ -156,7 +156,7 @@ return function()
 					foo = "bar",
 				},
 			}
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local testEntity = {}
 			entityManager:registerEntity(testEntity)
@@ -179,7 +179,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance)
 			entityManager:removeComponent("testComponent", testInstance)
@@ -193,7 +193,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local removedEntity = nil
 			local removedData = nil
@@ -219,14 +219,14 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 			local component2 = {
 				name = "testComponent2",
 				defaults = {
 					foo = "bar",
 				},
 			}
-			entityManager:registerComponentTemplate(component2)
+			entityManager:registerComponent(component2)
 
 			entityManager:addComponent("testComponent", testInstance)
 			entityManager:addComponent("testComponent2", testInstance)
@@ -248,7 +248,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 			entityManager:removeComponent("testComponent", testInstance)
 
 			expect(entityManager:getComponent("testComponent", testInstance)).to.never.be.ok()
@@ -264,7 +264,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance)
 			expect(entityManager:getComponent("testComponent", testInstance)).to.equal(data)
@@ -277,7 +277,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			expect(entityManager:getComponent("testComponent", testInstance)).to.never.be.ok()
 		end)
@@ -292,7 +292,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 			local data = entityManager:addComponent("testComponent", testInstance)
 			local testEntity = {}
 			local data = entityManager:addComponent("testComponent", testEntity)
@@ -307,7 +307,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			expect(next(entityManager:getEntitiesWith("testComponent"))).to.never.be.ok()
 		end)
@@ -321,7 +321,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance)
 			entityManager:setComponent("testComponent", testInstance, {
@@ -337,7 +337,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 			expect(function()
 				entityManager:setComponent("testComponent", testInstance, {
 					foo = "baz",
@@ -352,7 +352,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local changedEntity = nil
 			local changedData = nil
@@ -383,7 +383,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local data = entityManager:addComponent("testComponent", testInstance)
 			entityManager:updateComponent("testComponent", testInstance, {
@@ -400,7 +400,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 			expect(function()
 				entityManager:updateComponent("testComponent", testInstance, {
 					foo = "baz",
@@ -415,7 +415,7 @@ return function()
 				},
 			}
 
-			entityManager:registerComponentTemplate(component)
+			entityManager:registerComponent(component)
 
 			local changedEntity = nil
 			local changedData = nil

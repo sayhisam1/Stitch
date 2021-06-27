@@ -47,7 +47,7 @@ function EntityManager:destroy()
 	end
 end
 
-function EntityManager:registerComponentTemplate(componentDefinition: table | ModuleScript)
+function EntityManager:registerComponent(componentDefinition: table | ModuleScript)
 	self.collection:register(componentDefinition)
 end
 
