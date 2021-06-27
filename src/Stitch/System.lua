@@ -19,12 +19,12 @@ function System:createObserver(componentResolvable)
 end
 
 function System:registerComponent(component)
-	if not self._systemStateComponents then
-		self._systemStateComponents = {}
+	if not self._components then
+		self._components = {}
 	end
 
 	self.stitch.entityManager.collection:register(component)
-	table.insert(self._systemStateComponents, component)
+	table.insert(self._components, component)
 end
 
 function System:connectEntityAddedSignal(componentResolvable: string | table, callback: callback)
@@ -79,8 +79,8 @@ function System:destroy()
 			listener:disconnect()
 		end
 	end
-	if self._systemStateComponents then
-		for _, component in ipairs(self._systemStateComponents) do
+	if self._components then
+		for _, component in ipairs(self._components) do
 			self.stitch.entityManager.collection:unregister(component)
 		end
 	end
