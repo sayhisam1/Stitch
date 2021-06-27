@@ -1,46 +1,36 @@
 local Observer = {}
 Observer.__index = Observer
 
-function Observer.new(entityManager, componentResolvable: string | table)
-	local componentName = entityManager.collection:resolveOrError(componentResolvable)
-
+function Observer.new(...)
 	local self = setmetatable({
-		componentName = componentName,
-		dirtyList = {},
+		marked = {},
+		_listeners = {},
 	}, Observer)
 
-	local function markDirty(entity)
-		self.dirtyList[entity] = entity
+	local function mark(entity, data)
+		self.marked[entity] = data
 	end
-	local function unmarkDirty(entity)
-		self.dirtyList[entity] = nil
-	end
-	self._entityChangedSignal = entityManager:getEntityChangedSignal(componentResolvable):connect(markDirty)
 
-	self._entityAddedSignal = entityManager:getEntityAddedSignal(componentResolvable):connect(markDirty)
-
-	self._entityRemovedSignal = entityManager:getEntityRemovedSignal(componentResolvable):connect(unmarkDirty)
-
-	for _, entity in pairs(entityManager:getEntitiesWith(componentResolvable)) do
-		markDirty(entity)
+	for _, signal in pairs({ ... }) do
+		table.insert(self._listeners, signal:connect(mark))
 	end
 
 	return self
 end
 
 function Observer:destroy()
-	self._entityChangedSignal:disconnect()
-	self._entityAddedSignal:disconnect()
-	self._entityRemovedSignal:disconnect()
+	for _, listener in ipairs(self._listeners) do
+		listener:disconnect()
+	end
 	self:clear()
 end
 
 function Observer:get()
-	return self.dirtyList
+	return self.marked
 end
 
 function Observer:clear()
-	table.clear(self.dirtyList)
+	table.clear(self.marked)
 end
 
 return Observer

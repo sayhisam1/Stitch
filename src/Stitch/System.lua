@@ -8,8 +8,8 @@ System.__index = System
 System.priority = 1000
 System.updateEvent = RunService.Heartbeat
 
-function System:createObserver(componentResolvable)
-	local observer = Observer.new(self.stitch.entityManager, componentResolvable)
+function System:createObserver(...)
+	local observer = Observer.new(...)
 	if not self._observers then
 		self._observers = {}
 	end
