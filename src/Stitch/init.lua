@@ -22,6 +22,7 @@ function Stitch.new(namespace: string)
 end
 
 function Stitch:destroy()
+	self._hotReloader:destroy()
 	for _, systemGroup in pairs(self.systemGroups) do
 		systemGroup:destroy()
 	end

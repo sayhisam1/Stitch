@@ -45,6 +45,7 @@ function EntityManager:destroy()
 			signal:destroy()
 		end
 	end
+	self.collection:destroy()
 end
 
 function EntityManager:registerComponent(componentDefinition: table | ModuleScript)
