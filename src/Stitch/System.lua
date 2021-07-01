@@ -98,4 +98,25 @@ function System:onUpdate() end
 
 function System:onDestroy() end
 
+-- Helper methods that wrap stitch entityManager behavior
+function System:addComponent(...)
+	return self.stitch.entityManager:addComponent(...)
+end
+
+function System:getComponent(...)
+	return self.stitch.entityManager:getComponent(...)
+end
+
+function System:setComponent(...)
+	return self.stitch.entityManager:setComponent(...)
+end
+
+function System:updateComponent(...)
+	return self.stitch.entityManager:updateComponent(...)
+end
+
+function System:removeComponent(...)
+	return self.stitch.entityManager:removeComponent(...)
+end
+
 return System
