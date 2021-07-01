@@ -40,7 +40,7 @@ function HotReloader:listen(module: ModuleScript, callback: callback, cleanup: c
 		end)
 		table.insert(self._listeners, moduleChanged)
 	end
-	callback(require(module))
+	callback(require(module), module)
 end
 
 return HotReloader
