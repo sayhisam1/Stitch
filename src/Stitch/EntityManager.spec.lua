@@ -296,8 +296,9 @@ return function()
 			local data = entityManager:addComponent("testComponent", testInstance)
 			local testEntity = {}
 			local data = entityManager:addComponent("testComponent", testEntity)
-			expect(entityManager:getEntitiesWith("testComponent")[testInstance]).to.equal(testInstance)
-			expect(entityManager:getEntitiesWith("testComponent")[testEntity]).to.equal(testEntity)
+			expect(table.find(entityManager:getEntitiesWith("testComponent"), testInstance)).to.be.ok()
+			expect(table.find(entityManager:getEntitiesWith("testComponent"), testEntity)).to.be.ok()
+			expect(#entityManager:getEntitiesWith("testComponent")).to.equal(2)
 		end)
 		it("should return nil for non-existing components", function()
 			local component = {

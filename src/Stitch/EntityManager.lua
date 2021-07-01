@@ -104,7 +104,9 @@ end
 
 function EntityManager:getEntitiesWith(componentResolvable: string | table)
 	local component = self.collection:resolveOrError(componentResolvable)
-	return Util.shallowCopy(self.componentToEntity[component.name] or {})
+	local entities = Util.getValues(self.componentToEntity[component.name] or {})
+
+	return entities
 end
 
 function EntityManager:getEntityAddedSignal(componentResolvable: string | table)
