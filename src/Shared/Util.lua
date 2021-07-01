@@ -1,13 +1,13 @@
 local Util = {}
 
-function Util.shallowCopy(tbl)
+function Util.shallowCopy(dict)
 	debug.profilebegin("shallowCopy")
-	local newtbl = table.move(tbl, 1, #tbl, 1, {})
-	for k, v in pairs(tbl) do
-		newtbl[k] = v
+	local copied = table.move(dict, 1, #dict, 1, {})
+	for k, v in pairs(dict) do
+		copied[k] = v
 	end
 	debug.profileend()
-	return newtbl
+	return copied
 end
 
 function Util.getValues(dict, sizeEstimate: int?)
