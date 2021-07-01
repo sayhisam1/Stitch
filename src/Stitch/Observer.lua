@@ -1,3 +1,5 @@
+local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
+
 local Observer = {}
 Observer.__index = Observer
 
@@ -27,6 +29,12 @@ end
 
 function Observer:get()
 	return self.marked
+end
+
+function Observer:forEach(callback: callback)
+	for entity, data in pairs(self.marked) do
+		xpcall(callback, inlinedError, entity, data)
+	end
 end
 
 function Observer:clear()
