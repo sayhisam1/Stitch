@@ -1,5 +1,6 @@
 local RunService = game:GetService("RunService")
 local Observer = require(script.Parent.Observer)
+local EntityQuery = require(script.Parent.EntityQuery)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 
 local System = {}
@@ -16,6 +17,10 @@ function System:createObserver(...)
 
 	table.insert(self._observers, observer)
 	return observer
+end
+
+function System:createQuery()
+	return EntityQuery.new(self.stitch.entityManager)
 end
 
 function System:registerComponent(component)
