@@ -62,7 +62,7 @@ function SystemGroup:removeSystem(system: {})
 	for i, existing in ipairs(self.systems) do
 		if existing.name == system.name then
 			table.remove(self.systems, i)
-			xpcall(system.destroy, inlinedError, system)
+			xpcall(existing.destroy, inlinedError, existing)
 			return
 		end
 	end
