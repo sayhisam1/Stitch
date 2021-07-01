@@ -3,6 +3,7 @@ local CollectionService = game:GetService("CollectionService")
 
 local ComponentCollection = require(script.Parent.ComponentCollection)
 local Util = require(script.Parent.Parent.Shared.Util)
+local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 local Signal = require(script.Parent.Parent.Shared.Signal)
 
 local EntityManager = {}
@@ -173,6 +174,10 @@ function EntityManager:removeComponent(componentResolvable: string | table, enti
 	end
 
 	local oldData = self.entities[entity][component.name]
+
+	if component.destructor then
+		xpcall(component.destructor, inlinedError, entity, oldData)
+	end
 
 	self.entities[entity][component.name] = nil
 

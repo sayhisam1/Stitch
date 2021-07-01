@@ -185,6 +185,24 @@ return function()
 			entityManager:removeComponent("testComponent", testInstance)
 			expect(entityManager.componentToEntity["testComponent"][testInstance]).to.never.be.ok()
 		end)
+		it("should call destructor", function()
+			local called = 0
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+				destructor = function()
+					called += 1
+				end,
+			}
+
+			entityManager:registerComponent(component)
+
+			local data = entityManager:addComponent("testComponent", testInstance)
+			entityManager:removeComponent("testComponent", testInstance)
+			expect(called).to.equal(1)
+		end)
 		it("should fire entity removed signal", function()
 			local component = {
 				name = "testComponent",
