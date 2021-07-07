@@ -53,12 +53,17 @@ end
 function EntityQuery:forEach(callback: callback)
 	local entities = self.entityManager:getEntitiesWith(self.withComponents[1])
 	for _, entity in ipairs(entities) do
+		local obtainedComponents = table.create(#self.withComponents)
+		table.insert(obtainedComponents, self.entityManager:getComponent(self.withComponents[1], entity))
+
 		local valid = true
 		for _, withComponent in ipairs(self.withComponents) do
-			if not self.entityManager:getComponent(withComponent, entity) then
+			local component = self.entityManager:getComponent(withComponent, entity)
+			if not component then
 				valid = false
 				break
 			end
+			table.insert(obtainedComponents, component)
 		end
 		for _, withoutComponent in ipairs(self.withoutComponents) do
 			if self.entityManager:getComponent(withoutComponent, entity) then
@@ -67,7 +72,7 @@ function EntityQuery:forEach(callback: callback)
 			end
 		end
 		if valid then
-			xpcall(callback, inlinedError, entity)
+			xpcall(callback, inlinedError, entity, unpack(obtainedComponents))
 		end
 	end
 end
