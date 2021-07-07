@@ -8,7 +8,7 @@ Component.defaults = {}
 Component.validators = {}
 
 function Component:createFromData(data: table?): table
-	data = Util.mergeTable(self.defaults, data or {})
+	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {})
 
 	self:validateOrErrorData(data)
 
