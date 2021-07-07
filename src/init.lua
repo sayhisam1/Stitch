@@ -1,4 +1,6 @@
 return {
 	Stitch = require(script.Stitch),
-	Systems = {},
+	Systems = {
+		TagSystem = script.Systems.TagSystem,
+	},
 }
