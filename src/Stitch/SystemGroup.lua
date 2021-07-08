@@ -32,7 +32,9 @@ end
 
 function SystemGroup:updateSystems()
 	for _, system in ipairs(self.systems) do
+		debug.profilebegin(("%s update"):format(system.name))
 		xpcall(system.update, inlinedError, system)
+		debug.profileend()
 	end
 end
 
