@@ -23,6 +23,10 @@ end
 
 function Stitch:destroy()
 	self._hotReloader:destroy()
+	-- explicitly unregister all entities first to ensure system state components are properly cleaned up
+	for entity, _ in pairs(self.entityManager.entities) do
+		self.entityManager:unregisterEntity(entity)
+	end
 	for _, systemGroup in pairs(self.systemGroups) do
 		systemGroup:destroy()
 	end
