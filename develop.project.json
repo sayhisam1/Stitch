@@ -10,6 +10,9 @@
                 "Stitch": {
                     "$path": "./src"
                 }
+            },
+            "StitchTest": {
+                "$path": "./test/shared"
             }
         },
         "ServerScriptService": {
