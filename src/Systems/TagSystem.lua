@@ -11,8 +11,8 @@ function TagSystem:onCreate(stitch)
 
 	local function addComponent(component, instance)
 		if not self:getComponent(component, instance) then
-			local defaultsFolder = instance:FindFirstChild(component.name .. "defaults")
-			local componentDefaults = defaultsFolder and defaultsFolder:FindFirstChild(component.name) or nil
+			local defaults: Folder = instance:FindFirstChild("defaults")
+			local componentDefaults = defaults and defaults:FindFirstChild(component.name) or nil
 			local data = {}
 			for _, default in pairs(componentDefaults and componentDefaults:GetChildren() or {}) do
 				data[default.Name] = default.Value
