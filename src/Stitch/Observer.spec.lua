@@ -1,4 +1,3 @@
-local Promise = require(script.Parent.Parent.Parent.Promise)
 local EntityManager = require(script.Parent.EntityManager)
 local Observer = require(script.Parent.Observer)
 
@@ -72,6 +71,24 @@ return function()
 			expect(next(observer:get())).to.equal(testInstance)
 			observer:clear()
 			expect(next(observer:get())).to.never.be.ok()
+		end)
+	end)
+	describe("Observer:mark", function()
+		it("should mark", function()
+			local observer = Observer.new(entityManager:getEntityAddedSignal(testComponent))
+			entityManager:addComponent(testComponent, testInstance)
+			local testEntity = {}
+			local testData = {}
+			observer:mark(testEntity, testData)
+			expect(observer:get()[testEntity]).to.equal(testData)
+		end)
+		it("should error on invalid data", function()
+			local observer = Observer.new(entityManager:getEntityAddedSignal(testComponent))
+			entityManager:addComponent(testComponent, testInstance)
+			local testEntity = {}
+			expect(function()
+				observer:mark(testEntity)
+			end).to.throw()
 		end)
 	end)
 end

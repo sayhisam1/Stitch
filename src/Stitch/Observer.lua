@@ -20,6 +20,11 @@ function Observer.new(...)
 	return self
 end
 
+function Observer:mark(entity, data)
+	assert(typeof(data) == "table", "tried to mark with non-existent data!")
+	self.marked[entity] = data
+end
+
 function Observer:destroy()
 	for _, listener in ipairs(self._listeners) do
 		listener:disconnect()
