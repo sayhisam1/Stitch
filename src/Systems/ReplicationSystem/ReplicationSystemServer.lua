@@ -32,6 +32,10 @@ function ReplicationSystem:onCreate(stitch)
 	end
 
 	local function unregisterComponent(component)
+		if not component.replicated then
+			return
+		end
+
 		self._entityAddedObservers[component.name]:Destroy()
 		self._entityAddedObservers[component.name] = nil
 		self._entityChangedObservers[component.name]:Destroy()
