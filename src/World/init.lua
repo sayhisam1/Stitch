@@ -5,10 +5,10 @@ local SystemGroup = require(script.SystemGroup)
 local System = require(script.System)
 local HotReloader = require(script.HotReloader)
 
-local Stitch = {}
-Stitch.__index = Stitch
+local World = {}
+World.__index = World
 
-function Stitch.new(namespace: string)
+function World.new(namespace: string)
 	namespace = namespace or DEFAULT_NAMESPACE
 
 	local self = setmetatable({
@@ -16,12 +16,12 @@ function Stitch.new(namespace: string)
 		entityManager = EntityManager.new(namespace),
 		systemGroups = {},
 		_hotReloader = HotReloader.new(),
-	}, Stitch)
+	}, World)
 
 	return self
 end
 
-function Stitch:destroy()
+function World:destroy()
 	self._hotReloader:destroy()
 	-- explicitly unregister all entities first to ensure system state components are properly cleaned up
 	for entity, _ in pairs(self.entityManager.entities) do
@@ -33,7 +33,7 @@ function Stitch:destroy()
 	self.entityManager:destroy()
 end
 
-function Stitch:addSystem(systemDefinition: {} | ModuleScript)
+function World:addSystem(systemDefinition: {} | ModuleScript)
 	if typeof(systemDefinition) == "Instance" and systemDefinition:IsA("ModuleScript") then
 		self._hotReloader:listen(systemDefinition, function(module: ModuleScript)
 			systemDefinition = require(module)
@@ -60,7 +60,7 @@ function Stitch:addSystem(systemDefinition: {} | ModuleScript)
 	self.systemGroups[updateEvent]:addSystem(systemDefinition, self)
 end
 
-function Stitch:removeSystem(system: {} | ModuleScript)
+function World:removeSystem(system: {} | ModuleScript)
 	if typeof(system) == "ModuleScript" then
 		system = require(system)
 	end
@@ -72,4 +72,4 @@ function Stitch:removeSystem(system: {} | ModuleScript)
 	self.systemGroups[updateEvent]:removeSystem(system)
 end
 
-return Stitch
+return World

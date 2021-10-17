@@ -1,5 +1,5 @@
 return {
-	Stitch = require(script.Stitch),
+	World = require(script.World),
 	Systems = {
 		TagSystem = script.Systems.TagSystem,
 		ReplicationSystem = script.Systems.ReplicationSystem,

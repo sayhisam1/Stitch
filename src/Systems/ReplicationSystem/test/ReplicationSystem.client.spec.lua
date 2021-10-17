@@ -8,41 +8,40 @@ return function()
 	if not RunService:IsClient() then
 		return
 	end
-	local stitch
+	local world
 	local testComponent = {
 		name = "replicationSystemTest",
 		replicated = true,
 		defaults = {},
 	}
-	local replicatedFolderName = ("%s:replicated"):format(testComponent.name)
 	beforeEach(function()
-		stitch = StitchLib.Stitch.new("test")
+		world = StitchLib.World.new("test")
 	end)
 	afterEach(function()
-		stitch:destroy()
+		world:destroy()
 	end)
 
 	describe("Component added", function()
 		it("should read replicate folder on client", function()
-			stitch:addSystem(StitchLib.Systems.ReplicationSystem)
-			stitch.entityManager:registerComponent(testComponent)
+			world:addSystem(StitchLib.Systems.ReplicationSystem)
+			world.entityManager:registerComponent(testComponent)
 			local instance = Workspace:WaitForChild("ReplicationSystemTestInstance")
-			stitch.entityManager:addComponent(testComponent, instance)
+			world.entityManager:addComponent(testComponent, instance)
 			Promise.fromEvent(RunService.Heartbeat):await()
 			Promise.fromEvent(RunService.Heartbeat):await()
-			expect(stitch.entityManager:getComponent(testComponent, instance)).to.be.ok()
-			expect(stitch.entityManager:getComponent(testComponent, instance).foo).to.equal("bar")
+			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
+			expect(world.entityManager:getComponent(testComponent, instance).foo).to.equal("bar")
 		end)
 		it("should read replicate folder update on client", function()
-			stitch:addSystem(StitchLib.Systems.ReplicationSystem)
-			stitch.entityManager:registerComponent(testComponent)
+			world:addSystem(StitchLib.Systems.ReplicationSystem)
+			world.entityManager:registerComponent(testComponent)
 			local instance = Workspace:WaitForChild("ReplicationSystemTestInstance")
-			stitch.entityManager:addComponent(testComponent, instance)
+			world.entityManager:addComponent(testComponent, instance)
 			Promise.fromEvent(RunService.Heartbeat):await()
 			Promise.fromEvent(RunService.Heartbeat):await()
-			expect(stitch.entityManager:getComponent(testComponent, instance)).to.be.ok()
-			expect(stitch.entityManager:getComponent(testComponent, instance).foo).to.equal("baz")
-			expect(stitch.entityManager:getComponent(testComponent, instance).momma).to.equal("mia")
+			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
+			expect(world.entityManager:getComponent(testComponent, instance).foo).to.equal("baz")
+			expect(world.entityManager:getComponent(testComponent, instance).momma).to.equal("mia")
 		end)
 	end)
 end

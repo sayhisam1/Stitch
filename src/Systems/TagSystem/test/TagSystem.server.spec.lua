@@ -18,14 +18,14 @@ return function()
 		clientTestsEnabled = true
 	end
 	local invokeClientTest = require(ReplicatedStorage.StitchTests.invokeClientTest)
-	local stitch
+	local world
 	local instance
 	local testComponent = {
 		name = "tagSystemTest",
 		tagged = true,
 	}
 	beforeEach(function()
-		stitch = StitchLib.Stitch.new("test")
+		world = StitchLib.World.new("test")
 		instance = Instance.new("Folder")
 		instance.Name = "TagSystemTestInstance"
 		instance.Parent = Workspace
@@ -33,42 +33,42 @@ return function()
 
 	describe("Tag added", function()
 		it("should add component on entity tag", function()
-			stitch:addSystem(StitchLib.Systems.TagSystem)
-			stitch.entityManager:registerComponent(testComponent)
+			world:addSystem(StitchLib.Systems.TagSystem)
+			world.entityManager:registerComponent(testComponent)
 			local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal("tagSystemTest"))
 			CollectionService:AddTag(instance, "tagSystemTest")
 			promise:await()
-			expect(stitch.entityManager:getComponent(testComponent, instance)).to.be.ok()
+			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 		end)
 		it("should add component on existing instance tag", function()
-			stitch.entityManager:registerComponent(testComponent)
+			world.entityManager:registerComponent(testComponent)
 			local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal("tagSystemTest"))
 			CollectionService:AddTag(instance, "tagSystemTest")
 			promise:await()
-			stitch:addSystem(StitchLib.Systems.TagSystem)
-			expect(stitch.entityManager:getComponent(testComponent, instance)).to.be.ok()
+			world:addSystem(StitchLib.Systems.TagSystem)
+			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 		end)
 	end)
 	describe("Tag removed", function()
 		it("should remove component on entity tag removal", function()
-			stitch:addSystem(StitchLib.Systems.TagSystem)
-			stitch.entityManager:registerComponent(testComponent)
+			world:addSystem(StitchLib.Systems.TagSystem)
+			world.entityManager:registerComponent(testComponent)
 			CollectionService:AddTag(instance, "tagSystemTest")
 			local promise = Promise.fromEvent(CollectionService:GetInstanceRemovedSignal("tagSystemTest"))
 			CollectionService:RemoveTag(instance, "tagSystemTest")
 			promise:await()
-			expect(stitch.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
+			expect(world.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
 		end)
 	end)
 	if clientTestsEnabled then
 		describe("client tests", function()
 			it("should add component on entity on client", function()
-				stitch:addSystem(StitchLib.Systems.TagSystem)
-				stitch.entityManager:registerComponent(testComponent)
+				world:addSystem(StitchLib.Systems.TagSystem)
+				world.entityManager:registerComponent(testComponent)
 				local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal("tagSystemTest"))
 				CollectionService:AddTag(instance, "tagSystemTest")
 				promise:await()
-				expect(stitch.entityManager:getComponent(testComponent, instance)).to.be.ok()
+				expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 				invokeClientTest(
 					{ script.Parent["TagSystem.client.spec"] },
 					nil,
@@ -76,13 +76,13 @@ return function()
 				)
 			end)
 			it("should remove component on tag removal on client", function()
-				stitch:addSystem(StitchLib.Systems.TagSystem)
-				stitch.entityManager:registerComponent(testComponent)
+				world:addSystem(StitchLib.Systems.TagSystem)
+				world.entityManager:registerComponent(testComponent)
 				CollectionService:AddTag(instance, "tagSystemTest")
 				local promise = Promise.fromEvent(CollectionService:GetInstanceRemovedSignal("tagSystemTest"))
 				CollectionService:RemoveTag(instance, "tagSystemTest")
 				promise:await()
-				expect(stitch.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
+				expect(world.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
 				invokeClientTest(
 					{ script.Parent["TagSystem.client.spec"] },
 					nil,
@@ -92,7 +92,7 @@ return function()
 		end)
 	end
 	afterEach(function()
-		stitch:destroy()
+		world:destroy()
 		instance:destroy()
 	end)
 end

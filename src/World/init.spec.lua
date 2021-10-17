@@ -1,25 +1,25 @@
-local Stitch = require(script.Parent)
+local World = require(script.Parent)
 
 return function()
 	local bindableEvent
-	local stitch
+	local world
 	beforeEach(function()
 		bindableEvent = Instance.new("BindableEvent")
-		stitch = Stitch.new("test")
+		world = World.new("test")
 	end)
 
 	afterEach(function()
-		stitch:destroy()
+		world:destroy()
 		bindableEvent:destroy()
 	end)
 
-	describe("Stitch.new", function()
-		it("should return an Stitch", function()
-			expect(stitch).to.be.ok()
+	describe("World.new", function()
+		it("should return an World", function()
+			expect(world).to.be.ok()
 		end)
 	end)
 
-	describe("Stitch:addSystem", function()
+	describe("World:addSystem", function()
 		it("should add a system", function()
 			local system = {
 				priority = 10,
@@ -27,11 +27,11 @@ return function()
 				name = "test",
 				destroy = function() end,
 			}
-			stitch:addSystem(system)
+			world:addSystem(system)
 		end)
 	end)
 
-	describe("Stitch:removeSystem", function()
+	describe("World:removeSystem", function()
 		it("should remove a system", function()
 			local system = {
 				priority = 10,
@@ -39,8 +39,8 @@ return function()
 				name = "test",
 				destroy = function() end,
 			}
-			stitch:addSystem(system)
-			stitch:removeSystem(system)
+			world:addSystem(system)
+			world:removeSystem(system)
 		end)
 	end)
 end
