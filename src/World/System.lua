@@ -10,7 +10,7 @@ System.updateEvent = RunService.Heartbeat
 
 function System:create(world)
 	if self.stateComponent then
-		world:registerComponent(Util.setKey(self.stateComponent, "name", self.name))
+		world:registerComponent(Util.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
 	end
 	xpcall(self.onCreate, inlinedError, self, world)
 end
@@ -22,7 +22,7 @@ end
 function System:destroy(world)
 	xpcall(self.onDestroy, inlinedError, self, world)
 	if self.stateComponent then
-		world:unregisterComponent(self.stateComponent)
+		world:unregisterComponent(Util.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
 	end
 end
 

@@ -5,7 +5,7 @@ local TagSystem = {}
 TagSystem.name = "TagSystem"
 TagSystem.priority = -1E10
 
-local TagSystemState = {
+TagSystem.stateComponent = {
 	name = "TagSystemState",
 	defaults = {
 		tagAddedListeners = {},
@@ -22,10 +22,6 @@ local TagSystemState = {
 	end
 }
 
-function TagSystem:onCreate(world)
-	world:registerComponent(TagSystemState)
-end
-
 function TagSystem:onUpdate(world)
 	local function addComponentIfNotExists(componentDefinition, instance)
 		if not world:getComponent(componentDefinition, instance) then
@@ -33,8 +29,8 @@ function TagSystem:onUpdate(world)
 		end
 	end
 	local registeredComponents = world.componentRegistry:getAll()
-	addComponentIfNotExists(TagSystemState, workspace)
-	local state = world:getComponent(TagSystemState, workspace)
+	addComponentIfNotExists(self.stateComponent, workspace)
+	local state = world:getComponent(self.stateComponent, workspace)
 
 	if state.lastComponents == registeredComponents then
 		return
@@ -85,7 +81,7 @@ function TagSystem:onUpdate(world)
 		end
 	end
 
-	world:updateComponent(TagSystemState, workspace, {
+	world:updateComponent(self.stateComponent, workspace, {
 		tagAddedListeners = newTagAddedListeners,
 		tagRemovedListeners = newTagRemovedListeners,
 		lastComponents = registeredComponents,
