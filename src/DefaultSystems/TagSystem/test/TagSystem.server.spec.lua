@@ -5,7 +5,7 @@ local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 local Promise = require(script.Parent.Parent.Parent.Parent.Parent.Promise)
 
-local StitchLib = require(script.Parent.Parent.Parent.Parent)
+local Stitch = require(script.Parent.Parent.Parent.Parent)
 
 return function()
 	if not RunService:IsServer() then
@@ -25,7 +25,7 @@ return function()
 		tag = true
 	}
 	beforeEach(function()
-		world = StitchLib.World.new("test")
+		world = Stitch.World.new("test")
 		instance = Instance.new("Folder")
 		instance.Name = "TagSystemTestInstance"
 		instance.Parent = Workspace
@@ -33,7 +33,7 @@ return function()
 
 	describe("Tag added", function()
 		it("should add component on entity tag", function()
-			world:addSystem(StitchLib.DefaultSystems.TagSystem)
+			world:addSystem(Stitch.DefaultSystems.TagSystem)
 
 			Promise.fromEvent(RunService.Heartbeat):await()
 			world:registerComponent(testComponent)
@@ -48,7 +48,7 @@ return function()
 			CollectionService:AddTag(instance, "tagSystemTest")
 
 			Promise.fromEvent(RunService.Heartbeat):await()
-			world:addSystem(StitchLib.DefaultSystems.TagSystem)
+			world:addSystem(Stitch.DefaultSystems.TagSystem)
 			Promise.fromEvent(RunService.Heartbeat):await()
 
 			expect(world:getComponent(testComponent, instance)).to.be.ok()
@@ -56,7 +56,7 @@ return function()
 	end)
 	describe("Tag removed", function()
 		it("should remove component on entity tag removal", function()
-			world:addSystem(StitchLib.DefaultSystems.TagSystem)
+			world:addSystem(Stitch.DefaultSystems.TagSystem)
 			world:registerComponent(testComponent)
 
 			CollectionService:AddTag(instance, "tagSystemTest")
@@ -71,7 +71,7 @@ return function()
 	if clientTestsEnabled then
 		describe("client tests", function()
 			it("should add component on entity on client", function()
-				world:addSystem(StitchLib.DefaultSystems.TagSystem)
+				world:addSystem(Stitch.DefaultSystems.TagSystem)
 				world:registerComponent(testComponent)
 				CollectionService:AddTag(instance, "tagSystemTest")
 				Promise.fromEvent(RunService.Heartbeat):await()
@@ -83,7 +83,7 @@ return function()
 				)
 			end)
 			it("should remove component on tag removal on client", function()
-				world:addSystem(StitchLib.DefaultSystems.TagSystem)
+				world:addSystem(Stitch.DefaultSystems.TagSystem)
 				world:registerComponent(testComponent)
 				CollectionService:AddTag(instance, "tagSystemTest")
 				Promise.fromEvent(RunService.Heartbeat):await()
