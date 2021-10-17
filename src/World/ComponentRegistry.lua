@@ -1,7 +1,6 @@
 local ComponentDefinition = require(script.Parent.ComponentDefinition)
 local HotReloader = require(script.Parent.HotReloader)
 local Util = require(script.Parent.Parent.Shared.Util)
-local Signal = require(script.Parent.Parent.Shared.Signal)
 
 local ComponentRegistry = {}
 ComponentRegistry.__index = ComponentRegistry
