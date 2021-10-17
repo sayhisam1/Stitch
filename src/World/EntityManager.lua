@@ -4,7 +4,6 @@ local CollectionService = game:GetService("CollectionService")
 local ComponentRegistry = require(script.Parent.ComponentRegistry)
 local Util = require(script.Parent.Parent.Shared.Util)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
-local Signal = require(script.Parent.Parent.Shared.Signal)
 
 local EntityManager = {}
 EntityManager.__index = EntityManager
@@ -16,11 +15,6 @@ function EntityManager.new(namespace: string)
 		entities = {},
 		componentToEntity = {},
 		_instanceRemovedSignal = nil,
-		_signals = {
-			entityAdded = {},
-			entityRemoved = {},
-			entityChanged = {},
-		},
 	}, EntityManager)
 
 	self._instanceRemovedSignal = CollectionService
@@ -41,11 +35,7 @@ function EntityManager:destroy()
 	for _, instance in ipairs(CollectionService:GetTagged(self.instanceTag)) do
 		self:unregisterEntity(instance)
 	end
-	for signalCategory, signals in pairs(self._signals) do
-		for _, signal in pairs(signals) do
-			signal:destroy()
-		end
-	end
+
 	self.collection:destroy()
 end
 
@@ -90,10 +80,6 @@ function EntityManager:addComponent(componentResolvable: string | {}, entity: In
 
 	self.componentToEntity[component.name][entity] = entity
 
-	if self._signals["entityAdded"][component.name] then
-		self._signals["entityAdded"][component.name]:fire(entity, self.entities[entity][component.name])
-	end
-
 	return self.entities[entity][component.name]
 end
 
@@ -110,16 +96,6 @@ function EntityManager:getEntitiesWith(componentResolvable: string | {})
 	return entities
 end
 
-function EntityManager:getEntityAddedSignal(componentResolvable: string | {})
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	if not self._signals["entityAdded"][component.name] then
-		self._signals["entityAdded"][component.name] = Signal.new()
-	end
-
-	return self._signals["entityAdded"][component.name]
-end
-
 function EntityManager:setComponent(componentResolvable: string | {}, entity: Instance | {}, data: {}): {}
 	local component = self.collection:resolveOrError(componentResolvable)
 
@@ -128,10 +104,6 @@ function EntityManager:setComponent(componentResolvable: string | {}, entity: In
 	end
 
 	self.entities[entity][component.name] = component:setFromData(data)
-
-	if self._signals["entityChanged"][component.name] then
-		self._signals["entityChanged"][component.name]:fire(entity, self.entities[entity][component.name])
-	end
 
 	return self.entities[entity][component.name]
 end
@@ -149,21 +121,7 @@ function EntityManager:updateComponent(
 
 	self.entities[entity][component.name] = component:updateFromData(self.entities[entity][component.name], data)
 
-	if self._signals["entityChanged"][component.name] then
-		self._signals["entityChanged"][component.name]:fire(entity, self.entities[entity][component.name])
-	end
-
 	return self.entities[entity][component.name]
-end
-
-function EntityManager:getEntityChangedSignal(componentResolvable: string | {})
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	if not self._signals["entityChanged"][component.name] then
-		self._signals["entityChanged"][component.name] = Signal.new()
-	end
-
-	return self._signals["entityChanged"][component.name]
 end
 
 function EntityManager:removeComponent(componentResolvable: string | {}, entity: Instance | {})
@@ -187,20 +145,6 @@ function EntityManager:removeComponent(componentResolvable: string | {}, entity:
 		-- since the entity has no more components, we clear the ref to allow gc'ing
 		self.entities[entity] = nil
 	end
-
-	if self._signals["entityRemoved"][component.name] then
-		self._signals["entityRemoved"][component.name]:fire(entity, oldData)
-	end
-end
-
-function EntityManager:getEntityRemovedSignal(componentResolvable: string | {})
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	if not self._signals["entityRemoved"][component.name] then
-		self._signals["entityRemoved"][component.name] = Signal.new()
-	end
-
-	return self._signals["entityRemoved"][component.name]
 end
 
 return EntityManager

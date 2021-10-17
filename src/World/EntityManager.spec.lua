@@ -89,31 +89,6 @@ return function()
 			expect(data.foo).to.equal("bar")
 			expect(data.baz).to.equal("qux")
 		end)
-		it("should fire entity added signal", function()
-			local component = {
-				name = "testComponent",
-				defaults = {
-					foo = "bar",
-				},
-			}
-
-			entityManager:registerComponent(component)
-
-			local addedEntity = nil
-			local addedData = nil
-			local promise = Promise.fromEvent(entityManager:getEntityAddedSignal("testComponent")):andThen(
-				function(entity, data)
-					addedEntity = entity
-					addedData = data
-				end
-			)
-			local data = entityManager:addComponent("testComponent", testInstance, {
-				baz = "qux",
-			})
-			promise:await()
-			expect(addedEntity).to.equal(testInstance)
-			expect(addedData).to.equal(data)
-		end)
 		it("should add a component to an unregistered table", function()
 			local component = {
 				name = "testComponent",
@@ -202,32 +177,6 @@ return function()
 			local data = entityManager:addComponent("testComponent", testInstance)
 			entityManager:removeComponent("testComponent", testInstance)
 			expect(called).to.equal(1)
-		end)
-		it("should fire entity removed signal", function()
-			local component = {
-				name = "testComponent",
-				defaults = {
-					foo = "bar",
-				},
-			}
-
-			entityManager:registerComponent(component)
-
-			local removedEntity = nil
-			local removedData = nil
-			local promise = Promise.fromEvent(entityManager:getEntityRemovedSignal("testComponent")):andThen(
-				function(entity, data)
-					removedEntity = entity
-					removedData = data
-				end
-			)
-			local data = entityManager:addComponent("testComponent", testInstance, {
-				baz = "qux",
-			})
-			entityManager:removeComponent("testComponent", testInstance)
-			promise:await()
-			expect(removedEntity).to.equal(testInstance)
-			expect(removedData).to.equal(data)
 		end)
 		it("should clear references to an entity when all components are removed", function()
 			local component = {
@@ -363,34 +312,6 @@ return function()
 				})
 			end).to.throw()
 		end)
-		it("should fire entity changed signal", function()
-			local component = {
-				name = "testComponent",
-				defaults = {
-					foo = "bar",
-				},
-			}
-
-			entityManager:registerComponent(component)
-
-			local changedEntity = nil
-			local changedData = nil
-			local promise = Promise.fromEvent(entityManager:getEntityChangedSignal("testComponent")):andThen(
-				function(entity, data)
-					changedEntity = entity
-					changedData = data
-				end
-			)
-			local data = entityManager:addComponent("testComponent", testInstance, {
-				baz = "qux",
-			})
-			entityManager:setComponent("testComponent", testInstance, {
-				spaghet = "baguette",
-			})
-			promise:await()
-			expect(changedEntity).to.equal(testInstance)
-			expect(changedData.spaghet).to.equal("baguette")
-		end)
 	end)
 
 	describe("EntityManager:updateComponent", function()
@@ -425,36 +346,6 @@ return function()
 					foo = "baz",
 				})
 			end).to.throw()
-		end)
-		it("should fire entity changed signal", function()
-			local component = {
-				name = "testComponent",
-				defaults = {
-					foo = "bar",
-				},
-			}
-
-			entityManager:registerComponent(component)
-
-			local changedEntity = nil
-			local changedData = nil
-			local promise = Promise.fromEvent(entityManager:getEntityChangedSignal("testComponent")):andThen(
-				function(entity, data)
-					changedEntity = entity
-					changedData = data
-				end
-			)
-			local data = entityManager:addComponent("testComponent", testInstance, {
-				baz = "qux",
-			})
-			entityManager:updateComponent("testComponent", testInstance, {
-				spaghet = "baguette",
-			})
-			promise:await()
-			expect(changedEntity).to.equal(testInstance)
-			expect(changedData.spaghet).to.equal("baguette")
-			expect(changedData.baz).to.equal("qux")
-			expect(changedData.foo).to.equal("bar")
 		end)
 	end)
 end
