@@ -35,13 +35,18 @@ end
 
 function Stitch:addSystem(systemDefinition: {} | ModuleScript)
 	if typeof(systemDefinition) == "Instance" and systemDefinition:IsA("ModuleScript") then
-		self._hotReloader:listen(systemDefinition, function(system, originalModule: ModuleScript)
-			if not system.name then
-				system.name = originalModule.Name
+		self._hotReloader:listen(systemDefinition, function(module: ModuleScript)
+			systemDefinition = require(module)
+			if not systemDefinition.name then
+				systemDefinition.name = module.Name
 			end
-			self:addSystem(system)
-		end, function(system)
-			self:removeSystem(system)
+			self:addSystem(systemDefinition)
+		end, function(module:ModuleScript)
+			systemDefinition = require(module)
+			if not systemDefinition.name then
+				systemDefinition.name = module.Name
+			end
+			self:removeSystem(systemDefinition)
 		end)
 		return
 	end
