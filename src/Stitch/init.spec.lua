@@ -1,4 +1,3 @@
-local Promise = require(script.Parent.Parent.Parent.Promise)
 local Stitch = require(script.Parent)
 
 return function()
