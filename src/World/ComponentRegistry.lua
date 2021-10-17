@@ -10,16 +10,12 @@ function ComponentRegistry.new()
 	local self = setmetatable({
 		registeredComponents = {},
 		_hotReloader = HotReloader.new(),
-		_componentRegistered = Signal.new(),
-		_componentUnregistered = Signal.new(),
 	}, ComponentRegistry)
 
 	return self
 end
 
 function ComponentRegistry:destroy()
-	self._componentRegistered:destroy()
-	self._componentUnregistered:destroy()
 	self._hotReloader:destroy()
 end
 
@@ -53,8 +49,6 @@ function ComponentRegistry:register(componentSpec: {} | ModuleScript)
 	setmetatable(componentSpec, ComponentDefinition)
 	self.registeredComponents = Util.setKey(self.registeredComponents, componentName, componentSpec)
 
-	self._componentRegistered:fire(componentSpec)
-
 	return componentSpec
 end
 
@@ -62,8 +56,6 @@ function ComponentRegistry:unregister(componentResolvable)
 	local resolvedComponent = self:resolveOrError(componentResolvable)
 
 	self.registeredComponents = Util.removeKey(self.registeredComponents, resolvedComponent.name)
-
-	self._componentUnregistered:fire(resolvedComponent)
 end
 
 function ComponentRegistry:resolve(componentResolvable)
@@ -95,12 +87,6 @@ function ComponentRegistry:getAll()
 	return self.registeredComponents
 end
 
-function ComponentRegistry:getComponentRegisteredSignal()
-	return self._componentRegistered
-end
 
-function ComponentRegistry:getComponentUnregisteredSignal()
-	return self._componentUnregistered
-end
 
 return ComponentRegistry

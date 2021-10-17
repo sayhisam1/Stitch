@@ -34,21 +34,6 @@ return function()
 				registry:register(component)
 			end).to.throw()
 		end)
-		it("should should fire registered signal", function()
-			local component = {
-				name = "testComponent",
-				defaults = {},
-			}
-			local registered = nil
-			local promise = Promise.fromEvent(registry:getComponentRegisteredSignal()):andThen(
-				function(registeredComponent)
-					registered = registeredComponent.name
-				end
-			)
-			registry:register(component)
-			promise:await()
-			expect(registered).to.equal("testComponent")
-		end)
 	end)
 	describe("ComponentRegistry:unregister", function()
 		it("should unregister a component", function()
@@ -59,22 +44,6 @@ return function()
 			registry:register(component)
 			registry:unregister(component)
 			expect(registry:resolve(component)).to.never.be.ok()
-		end)
-		it("should should fire unregistered signal", function()
-			local component = {
-				name = "testComponent",
-				defaults = {},
-			}
-			local unregistered = nil
-			local promise = Promise.fromEvent(registry:getComponentUnregisteredSignal()):andThen(
-				function(unregisteredComponent)
-					unregistered = unregisteredComponent.name
-				end
-			)
-			registry:register(component)
-			registry:unregister(component)
-			promise:await()
-			expect(unregistered).to.equal("testComponent")
 		end)
 	end)
 	describe("ComponentRegistry:resolve", function()
