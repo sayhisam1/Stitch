@@ -3,27 +3,27 @@ local HotReloader = require(script.Parent.HotReloader)
 local Util = require(script.Parent.Parent.Shared.Util)
 local Signal = require(script.Parent.Parent.Shared.Signal)
 
-local ComponentCollection = {}
-ComponentCollection.__index = ComponentCollection
+local ComponentRegistry = {}
+ComponentRegistry.__index = ComponentRegistry
 
-function ComponentCollection.new()
+function ComponentRegistry.new()
 	local self = setmetatable({
 		registeredComponents = {},
 		_hotReloader = HotReloader.new(),
 		_componentRegistered = Signal.new(),
 		_componentUnregistered = Signal.new(),
-	}, ComponentCollection)
+	}, ComponentRegistry)
 
 	return self
 end
 
-function ComponentCollection:destroy()
+function ComponentRegistry:destroy()
 	self._componentRegistered:destroy()
 	self._componentUnregistered:destroy()
 	self._hotReloader:destroy()
 end
 
-function ComponentCollection:register(componentSpec: {} | ModuleScript)
+function ComponentRegistry:register(componentSpec: {} | ModuleScript)
 	if typeof(componentSpec) == "Instance" and componentSpec:IsA("ModuleScript") then
 		self._hotReloader:listen(componentSpec, function(module: ModuleScript)
 			componentSpec = require(module)
@@ -58,7 +58,7 @@ function ComponentCollection:register(componentSpec: {} | ModuleScript)
 	return componentSpec
 end
 
-function ComponentCollection:unregister(componentResolvable)
+function ComponentRegistry:unregister(componentResolvable)
 	local resolvedComponent = self:resolveOrError(componentResolvable)
 
 	self.registeredComponents = Util.removeKey(self.registeredComponents, resolvedComponent.name)
@@ -66,7 +66,7 @@ function ComponentCollection:unregister(componentResolvable)
 	self._componentUnregistered:fire(resolvedComponent)
 end
 
-function ComponentCollection:resolve(componentResolvable)
+function ComponentRegistry:resolve(componentResolvable)
 	local componentResolvableType = typeof(componentResolvable)
 	if not componentResolvableType == "string" and not componentResolvableType == "table" then
 		error(
@@ -85,22 +85,22 @@ function ComponentCollection:resolve(componentResolvable)
 	return self.registeredComponents[componentName]
 end
 
-function ComponentCollection:resolveOrError(componentResolvable)
+function ComponentRegistry:resolveOrError(componentResolvable)
 	return self:resolve(componentResolvable) or error(
 		("Failed to resolve Component %s!"):format(tostring(componentResolvable))
 	)
 end
 
-function ComponentCollection:getAll()
+function ComponentRegistry:getAll()
 	return self.registeredComponents
 end
 
-function ComponentCollection:getComponentRegisteredSignal()
+function ComponentRegistry:getComponentRegisteredSignal()
 	return self._componentRegistered
 end
 
-function ComponentCollection:getComponentUnregisteredSignal()
+function ComponentRegistry:getComponentUnregisteredSignal()
 	return self._componentUnregistered
 end
 
-return ComponentCollection
+return ComponentRegistry

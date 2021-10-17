@@ -1,7 +1,7 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
 
-local ComponentCollection = require(script.Parent.ComponentCollection)
+local ComponentRegistry = require(script.Parent.ComponentRegistry)
 local Util = require(script.Parent.Parent.Shared.Util)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 local Signal = require(script.Parent.Parent.Shared.Signal)
@@ -12,7 +12,7 @@ EntityManager.__index = EntityManager
 function EntityManager.new(namespace: string)
 	local self = setmetatable({
 		instanceTag = ("Stitch%sTag"):format(namespace),
-		collection = ComponentCollection.new(),
+		collection = ComponentRegistry.new(),
 		entities = {},
 		componentToEntity = {},
 		_instanceRemovedSignal = nil,
