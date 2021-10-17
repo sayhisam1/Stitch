@@ -1,112 +1,116 @@
+local Util = require(script.Parent.Parent.Parent.Shared.Util)
 local Serialization = require(script.Parent.Serialization)
 
 local ReplicationSystem = {}
+
+
 ReplicationSystem.name = "ReplicationSystem"
-ReplicationSystem.priority = 1E10
+ReplicationSystem.priority = -1E10
+ReplicationSystem.stateComponent = {
+	name = "replicationSystemState",
+	defaults = {
+		lastComponentData = {},
+		lastComponents = {},
+	}
+}
 
-function ReplicationSystem:onCreate(stitch)
-	self._entityAddedObservers = {}
-	self._entityChangedObservers = {}
-	self._entityRemovedObservers = {}
+function ReplicationSystem:replicate(world, componentName: string)
+	world:createQuery():all(componentName):forEach(function(entity, data)
+		if not world:getComponent(self.stateComponent, entity) then
+			world:addComponent(self.stateComponent, entity)
+		end
 
-	local function registerComponent(component)
-		if not component.replicated then
+		local state = world:getComponent(self.stateComponent, entity)
+		if state.lastComponentData[componentName] == data then
+			return
+		end
+		
+		-- write data to folder
+		local folderName = ("%s:%s:replicated"):format(world.namespace, componentName)
+		local folder = entity:FindFirstChild(folderName)
+		if not folder then
+			folder = Instance.new("Folder")
+			folder.Name = folderName
+			folder.Parent = entity
+		end
+
+		Serialization.write(data, folder)
+
+		world:updateComponent(self.stateComponent, entity,{
+			lastComponentData = Util.setKey(state.lastComponentData, componentName, data)
+		})
+	end)
+end
+
+function ReplicationSystem:removeReplicate(world, componentName: string)
+	world:createQuery():all(componentName):forEach(function(entity, data)
+		if not world:getComponent(self.stateComponent, entity) then
 			return
 		end
 
-		self._entityAddedObservers[component.name] = self:createObserver(
-			stitch.entityManager:getEntityAddedSignal(component)
-		)
+		local state = world:getComponent(self.stateComponent, entity)
+		if not state.lastComponentData[componentName] then
+			return
+		end
+	end)
+end
 
-		self:createQuery():all(component):forEach(function(entity, data)
-			self._entityAddedObservers[component.name]:mark(entity, data)
-		end)
+function ReplicationSystem:onUpdate(world)
+	local function addComponentIfNotExists(componentDefinition, instance)
+		if not world:getComponent(componentDefinition, instance) then
+			world:addComponent(componentDefinition, instance)
+		end
+	end
+	local registeredComponents = world.componentRegistry:getAll()
+	addComponentIfNotExists(self.stateComponent, workspace)
+	local state = world:getComponent(self.stateComponent, workspace)
 
-		self._entityChangedObservers[component.name] = self:createObserver(
-			stitch.entityManager:getEntityChangedSignal(component)
-		)
-
-		self._entityRemovedObservers[component.name] = self:createObserver(
-			stitch.entityManager:getEntityRemovedSignal(component)
-		)
+	if state.lastComponents ~= registeredComponents then
+		-- check for removed components
+		for name, _ in pairs(state.lastComponents) do
+			if not registeredComponents[name] then
+				self:removeReplicate(world, name)
+			end
+		end
+		world:updateComponent(self.stateComponent, workspace, {
+			lastComponents = registeredComponents,
+		})
 	end
 
-	local function unregisterComponent(component)
-		if not component.replicated then
+	for _, componentDefinition in pairs(registeredComponents) do
+		if not componentDefinition.replicate then
+			continue
+		end
+
+		self:replicate(world, componentDefinition.name)
+	end
+
+	world:createQuery():all(self.stateComponent):forEach(function(entity, data)
+		if entity == workspace then
 			return
 		end
 
-		self._entityAddedObservers[component.name]:Destroy()
-		self._entityAddedObservers[component.name] = nil
-		self._entityChangedObservers[component.name]:Destroy()
-		self._entityChangedObservers[component.name] = nil
-		self._entityRemovedObservers[component.name]:Destroy()
-		self._entityRemovedObservers[component.name] = nil
-	end
+		local newComponentDatas = data.lastComponentData
+		for componentName, lastData in pairs(data.lastComponentData) do
+			local folderName = ("%s:%s:replicated"):format(world.namespace, componentName)
+			local folder = entity:FindFirstChild(folderName)
+			local newData = world:getComponent(componentName, entity)
+			if not newData then
+				if folder then
+					folder:Destroy()
+				end
+				newComponentDatas = Util.removeKey(newComponentDatas, componentName)
+			end
+		end
 
-	local componentRegistered = stitch.entityManager.collection:getComponentRegisteredSignal()
-	self._componentRegisteredListener = componentRegistered:connect(registerComponent)
-	for _, component in pairs(stitch.entityManager.collection:getAll()) do
-		registerComponent(component)
-	end
+		if newComponentDatas == data.lastComponentData then
+			return
+		end
 
-	local componentUnregistered = stitch.entityManager.collection:getComponentUnregisteredSignal()
-	self._componentUnregisteredListener = componentUnregistered:connect(unregisterComponent)
-end
-
-function ReplicationSystem:writeData(component, entity: Instance | {})
-	if not typeof(entity) == "Instance" then
-		return
-	end
-	component = self.stitch.entityManager.collection:resolveOrError(component)
-	local replicatedContainerName = ("%s:replicated"):format(component.name)
-
-	local container = entity:FindFirstChild(replicatedContainerName)
-	if not container then
-		container = Instance.new("Folder")
-		container.Name = replicatedContainerName
-		container.Parent = entity
-	end
-
-	Serialization.write(self:getComponent(component, entity), container)
-end
-
-function ReplicationSystem:removeData(component, entity: Instance | {})
-	if not typeof(entity) == "Instance" then
-		return
-	end
-	component = self.stitch.entityManager.collection:resolveOrError(component)
-	local replicatedContainerName = ("%s:replicated"):format(component.name)
-
-	local container = entity:FindFirstChild(replicatedContainerName)
-	if container then
-		container:destroy()
-	end
-end
-
-function ReplicationSystem:onUpdate()
-	for componentName, observer in pairs(self._entityAddedObservers) do
-		observer:forEach(function(entity)
-			self:writeData(componentName, entity)
-		end)
-	end
-
-	for componentName, observer in pairs(self._entityChangedObservers) do
-		observer:forEach(function(entity)
-			self:writeData(componentName, entity)
-		end)
-	end
-
-	for componentName, observer in pairs(self._entityRemovedObservers) do
-		observer:forEach(function(entity)
-			self:removeData(componentName, entity)
-		end)
-	end
-end
-
-function ReplicationSystem:onDestroy()
-	self._componentRegisteredListener:disconnect()
-	self._componentUnregisteredListener:disconnect()
+		world:updateComponent(self.stateComponent, entity, {
+			lastComponentData = newComponentDatas
+		})
+	end)
 end
 
 return ReplicationSystem
