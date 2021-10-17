@@ -17,7 +17,7 @@ return function()
 	if #Players:GetPlayers() >= 1 then
 		clientTestsEnabled = true
 	end
-	local invokeClientTest = require(ReplicatedStorage.StitchTest.invokeClientTest)
+	local invokeClientTest = require(ReplicatedStorage.StitchTests.invokeClientTest)
 	local stitch
 	local instance
 	local testComponent = {

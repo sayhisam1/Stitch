@@ -1,33 +1,41 @@
 {
-    "name": "Stitch",
-    "servePort": 34873,
+    "name": "Stitch Test Place",
     "tree": {
         "$className": "DataModel",
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
-            "Packages": {
-                "$path": "./vendor",
-                "Stitch": {
-                    "$path": "./src"
-                }
+            "Stitch": {
+                "$path": "src"
             },
-            "StitchTest": {
-                "$path": "./test/shared"
-            }
-        },
-        "ServerScriptService": {
-            "$className": "ServerScriptService",
-            "StitchTest": {
-                "$path": "./test/server"
+            "TestEZ": {
+                "$path": "modules/testez"
+            },
+            "Promise": {
+                "$path": "modules/roblox-lua-promise"
+            },
+            "StitchTests": {
+                "$path": "test/shared"
             }
         },
         "StarterPlayer": {
             "$className": "StarterPlayer",
             "StarterPlayerScripts": {
                 "$className": "StarterPlayerScripts",
-                "StitchTest": {
-                    "$path": "./test/client"
+                "StitchTests": {
+                    "$path": "test/client"
                 }
+            }
+        },
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+            "StitchTests": {
+                "$path": "test/server"
+            }
+        },
+        "Players": {
+            "$className": "Players",
+            "$properties": {
+                "CharacterAutoLoads": false
             }
         }
     }

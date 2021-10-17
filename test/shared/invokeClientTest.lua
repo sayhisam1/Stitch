@@ -8,7 +8,7 @@ if RunService:IsServer() then
 	remoteFunction.Parent = script
 else
 	remoteFunction = script:WaitForChild("TestRemoteRPC")
-	local TestEZ = require(ReplicatedStorage.Packages.TestEZ)
+	local TestEZ = require(ReplicatedStorage.TestEZ)
 	remoteFunction.OnClientInvoke = function(...)
 		TestEZ.TestBootstrap:run(...)
 	end

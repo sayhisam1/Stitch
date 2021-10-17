@@ -1,2 +1,2 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-require(ReplicatedStorage.StitchTest.invokeClientTest)
+require(ReplicatedStorage.StitchTests.invokeClientTest)

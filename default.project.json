@@ -1,8 +1,5 @@
 {
     "name": "Stitch",
-    "globIgnorePaths": [
-        "**/*.spec.lua"
-    ],
     "tree": {
         "$path": "src"
     }
