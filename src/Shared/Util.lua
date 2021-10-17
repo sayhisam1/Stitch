@@ -21,6 +21,25 @@ function Util.deepCopy(dict)
 	return copied
 end
 
+function Util.removeKey(dict, key)
+	local newDict = table.move(dict, 1, #dict, 1, {})
+	for k, v in pairs(dict) do
+		if k ~= key then
+			newDict[k] = v
+		end
+	end
+	return newDict
+end
+
+function Util.setKey(dict, key, value)
+	local newDict = table.move(dict, 1, #dict, 1, {})
+	for k, v in pairs(dict) do
+		newDict[k] = v
+	end
+	newDict[key] = value
+	return newDict
+end
+
 function Util.getValues(dict, sizeEstimate: number?)
 	debug.profilebegin("getValues")
 	local values = table.create(sizeEstimate or 8)

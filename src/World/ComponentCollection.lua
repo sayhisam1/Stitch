@@ -51,7 +51,7 @@ function ComponentCollection:register(componentSpec: {} | ModuleScript)
 	end
 
 	setmetatable(componentSpec, ComponentDefinition)
-	self.registeredComponents[componentName] = componentSpec
+	self.registeredComponents = Util.setKey(self.registeredComponents, componentName, componentSpec)
 
 	self._componentRegistered:fire(componentSpec)
 
@@ -61,7 +61,8 @@ end
 function ComponentCollection:unregister(componentResolvable)
 	local resolvedComponent = self:resolveOrError(componentResolvable)
 
-	self.registeredComponents[resolvedComponent.name] = nil
+	self.registeredComponents = Util.removeKey(self.registeredComponents, resolvedComponent.name)
+
 	self._componentUnregistered:fire(resolvedComponent)
 end
 
