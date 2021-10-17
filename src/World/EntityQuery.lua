@@ -3,12 +3,12 @@ local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 local EntityQuery = {}
 EntityQuery.__index = EntityQuery
 
-function EntityQuery.new(entityManager)
-	assert(entityManager, "Tried to create query without entity manager!")
+function EntityQuery.new(world)
+	assert(world, "Tried to create query without a world!")
 	local self = setmetatable({
 		withComponents = {},
 		withoutComponents = {},
-		entityManager = entityManager,
+		world = world,
 	}, EntityQuery)
 
 	return self
@@ -27,18 +27,18 @@ function EntityQuery:except(...)
 end
 
 function EntityQuery:get()
-	local entities = self.entityManager:getEntitiesWith(self.withComponents[1])
+	local entities = self.world:getEntitiesWith(self.withComponents[1])
 	local validEntities = {}
 	for _, entity in ipairs(entities) do
 		local valid = true
 		for _, withComponent in ipairs(self.withComponents) do
-			if not self.entityManager:getComponent(withComponent, entity) then
+			if not self.world:getComponent(withComponent, entity) then
 				valid = false
 				break
 			end
 		end
 		for _, withoutComponent in ipairs(self.withoutComponents) do
-			if self.entityManager:getComponent(withoutComponent, entity) then
+			if self.world:getComponent(withoutComponent, entity) then
 				valid = false
 				break
 			end
@@ -51,14 +51,14 @@ function EntityQuery:get()
 end
 
 function EntityQuery:forEach(callback: ({},...{}) -> nil)
-	local entities = self.entityManager:getEntitiesWith(self.withComponents[1])
+	local entities = self.world:getEntitiesWith(self.withComponents[1])
 	for _, entity in ipairs(entities) do
 		local obtainedComponents = table.create(#self.withComponents)
-		table.insert(obtainedComponents, self.entityManager:getComponent(self.withComponents[1], entity))
+		table.insert(obtainedComponents, self.world:getComponent(self.withComponents[1], entity))
 
 		local valid = true
 		for _, withComponent in ipairs(self.withComponents) do
-			local component = self.entityManager:getComponent(withComponent, entity)
+			local component = self.world:getComponent(withComponent, entity)
 			if not component then
 				valid = false
 				break
@@ -66,7 +66,7 @@ function EntityQuery:forEach(callback: ({},...{}) -> nil)
 			table.insert(obtainedComponents, component)
 		end
 		for _, withoutComponent in ipairs(self.withoutComponents) do
-			if self.entityManager:getComponent(withoutComponent, entity) then
+			if self.world:getComponent(withoutComponent, entity) then
 				valid = false
 				break
 			end

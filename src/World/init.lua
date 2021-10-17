@@ -1,5 +1,6 @@
 local DEFAULT_NAMESPACE = "game"
 
+local ComponentRegistry = require(script.ComponentRegistry)
 local EntityManager = require(script.EntityManager)
 local SystemGroup = require(script.SystemGroup)
 local System = require(script.System)
@@ -13,6 +14,7 @@ function World.new(namespace: string)
 
 	local self = setmetatable({
 		namespace = namespace,
+		componentRegistry = ComponentRegistry.new(),
 		entityManager = EntityManager.new(namespace),
 		systemGroups = {},
 		_hotReloader = HotReloader.new(),
@@ -24,14 +26,23 @@ end
 function World:destroy()
 	self._hotReloader:destroy()
 	-- explicitly unregister all entities first to ensure system state components are properly cleaned up
-	for entity, _ in pairs(self.entityManager.entities) do
-		self.entityManager:unregisterEntity(entity)
+	for entity, _ in pairs(self.entityManager:getAll()) do
+		self.entityManager:unregister(entity)
 	end
 	for _, systemGroup in pairs(self.systemGroups) do
 		systemGroup:destroy()
 	end
+	self.componentRegistry:destroy()
 	self.entityManager:destroy()
 end
+
+function World:registerComponent(componentDefinition: {} | ModuleScript)
+	self.componentRegistry:register(componentDefinition)
+end
+function World:unregisterComponent(componentDefinition: {} | ModuleScript)
+	self.componentRegistry:unregister(componentDefinition)
+end
+
 
 function World:addSystem(systemDefinition: {} | ModuleScript)
 	if typeof(systemDefinition) == "Instance" and systemDefinition:IsA("ModuleScript") then
@@ -70,6 +81,34 @@ function World:removeSystem(system: {} | ModuleScript)
 		return
 	end
 	self.systemGroups[updateEvent]:removeSystem(system)
+end
+
+function World:addComponent(componentDefinition: {}, entity: Instance | {}, data: {}?): {}
+	return self.entityManager:addComponent(self.componentRegistry:resolveOrError(componentDefinition), entity, data)
+end
+
+function World:getComponent(componentDefinition: string | {}, entity: Instance | {}): {}?
+	return self.entityManager:getComponent(self.componentRegistry:resolveOrError(componentDefinition), entity)
+end
+
+function World:getEntitiesWith(componentDefinition: {})
+	return self.entityManager:getEntitiesWith(self.componentRegistry:resolveOrError(componentDefinition))
+end
+
+function World:setComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
+	return self.entityManager:setComponent(self.componentRegistry:resolveOrError(componentDefinition), entity, data)
+end
+
+function World:updateComponent(
+	componentDefinition: {},
+	entity: Instance | {},
+	data: {}
+): {}
+	return self.entityManager:updateComponent(self.componentRegistry:resolveOrError(componentDefinition), entity, data)
+end
+
+function World:removeComponent(componentDefinition: {}, entity: Instance | {})
+	return self.entityManager:removeComponent(self.componentRegistry:resolveOrError(componentDefinition), entity)
 end
 
 return World

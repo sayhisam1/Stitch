@@ -22,20 +22,19 @@ local TagSystemState = {
 	end
 }
 
-function TagSystem:onCreate()
-	self:registerComponent(TagSystemState)
-end
-
-function TagSystem:addComponentIfNotExists(componentDefinition, instance)
-	if not self:getComponent(componentDefinition, instance) then
-		self:addComponent(componentDefinition, instance)
-	end
+function TagSystem:onCreate(world)
+	world:registerComponent(TagSystemState)
 end
 
 function TagSystem:onUpdate(world)
-	local registeredComponents = world.entityManager.collection:getAll()
-	self:addComponentIfNotExists(TagSystemState, workspace)
-	local state = self:getComponent(TagSystemState, workspace)
+	local function addComponentIfNotExists(componentDefinition, instance)
+		if not world:getComponent(componentDefinition, instance) then
+			world:addComponent(componentDefinition, instance)
+		end
+	end
+	local registeredComponents = world.componentRegistry:getAll()
+	addComponentIfNotExists(TagSystemState, workspace)
+	local state = world:getComponent(TagSystemState, workspace)
 
 	if state.lastComponents == registeredComponents then
 		return
@@ -61,14 +60,14 @@ function TagSystem:onUpdate(world)
 		end
 
 		newTagAddedListeners[componentDefinition.name] = CollectionService:GetInstanceAddedSignal(tag):Connect(function(instance)
-			self:addComponentIfNotExists(componentDefinition, instance)
+			addComponentIfNotExists(componentDefinition, instance)
 		end)
 		for _, instance in pairs(CollectionService:GetTagged(tag)) do
-			self:addComponentIfNotExists(componentDefinition, instance)
+			addComponentIfNotExists(componentDefinition, instance)
 		end
 
 		newTagRemovedListeners[componentDefinition.name] = CollectionService:GetInstanceRemovedSignal(tag):Connect(function(instance)
-			self:removeComponent(componentDefinition, instance)
+			world:removeComponent(componentDefinition, instance)
 		end)
 	end
 
@@ -86,7 +85,7 @@ function TagSystem:onUpdate(world)
 		end
 	end
 
-	self:updateComponent(TagSystemState, workspace, {
+	world:updateComponent(TagSystemState, workspace, {
 		tagAddedListeners = newTagAddedListeners,
 		tagRemovedListeners = newTagRemovedListeners,
 		lastComponents = registeredComponents,

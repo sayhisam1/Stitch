@@ -17,7 +17,7 @@ function System:registerComponent(component)
 		self._components = {}
 	end
 
-	self.stitch.entityManager.collection:register(component)
+	self.stitch:registerComponent(component)
 	table.insert(self._components, component)
 end
 
@@ -33,7 +33,7 @@ function System:destroy()
 	xpcall(self.onDestroy, inlinedError, self, self.stitch)
 	if self._components then
 		for _, component in ipairs(self._components) do
-			self.stitch.entityManager.collection:unregister(component)
+			self.stitch:unregisterComponent(component)
 		end
 	end
 end
@@ -44,26 +44,5 @@ function System:onCreate() end
 function System:onUpdate() end
 
 function System:onDestroy() end
-
--- Helper methods that wrap stitch entityManager behavior
-function System:addComponent(...)
-	return self.stitch.entityManager:addComponent(...)
-end
-
-function System:getComponent(...)
-	return self.stitch.entityManager:getComponent(...)
-end
-
-function System:setComponent(...)
-	return self.stitch.entityManager:setComponent(...)
-end
-
-function System:updateComponent(...)
-	return self.stitch.entityManager:updateComponent(...)
-end
-
-function System:removeComponent(...)
-	return self.stitch.entityManager:removeComponent(...)
-end
 
 return System

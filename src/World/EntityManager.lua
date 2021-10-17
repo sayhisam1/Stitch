@@ -1,150 +1,122 @@
 --!strict
 local CollectionService = game:GetService("CollectionService")
-
-local ComponentRegistry = require(script.Parent.ComponentRegistry)
 local Util = require(script.Parent.Parent.Shared.Util)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 
 local EntityManager = {}
 EntityManager.__index = EntityManager
 
-function EntityManager.new(namespace: string)
+function EntityManager.new()
 	local self = setmetatable({
-		instanceTag = ("Stitch%sTag"):format(namespace),
-		collection = ComponentRegistry.new(),
-		entities = {},
+		entityToComponent = {},
 		componentToEntity = {},
-		_instanceRemovedSignal = nil,
 	}, EntityManager)
-
-	self._instanceRemovedSignal = CollectionService
-		:GetInstanceRemovedSignal(self.instanceTag)
-		:connect(function(instance: Instance)
-			self:unregisterEntity(instance)
-		end)
 
 	return self
 end
 
 function EntityManager:destroy()
-	self._instanceRemovedSignal:disconnect()
-	for entity, _ in pairs(self.entities) do
-		self:unregisterEntity(entity)
+	for entity, _ in pairs(self.entityToComponent) do
+		self:unregister(entity)
 	end
-	-- if there are somehow still tagged instances, we remove them here
-	for _, instance in ipairs(CollectionService:GetTagged(self.instanceTag)) do
-		self:unregisterEntity(instance)
-	end
-
-	self.collection:destroy()
 end
 
-function EntityManager:registerComponent(componentDefinition: {} | ModuleScript)
-	self.collection:register(componentDefinition)
+function EntityManager:register(entity: Instance | {})
+	self.entityToComponent[entity] = self.entityToComponent[entity] or {}
 end
 
-function EntityManager:registerEntity(entity: Instance | {})
-	if typeof(entity) == "Instance" and not CollectionService:HasTag(entity, self.instanceTag) then
-		CollectionService:AddTag(entity, self.instanceTag)
-	end
-	self.entities[entity] = self.entities[entity] or {}
-end
-
-function EntityManager:unregisterEntity(entity: Instance | {})
-	if typeof(entity) == "Instance" and CollectionService:HasTag(entity, self.instanceTag) then
-		CollectionService:RemoveTag(entity, self.instanceTag)
-	end
-	for componentName, data in pairs(self.entities[entity] or {}) do
+function EntityManager:unregister(entity: Instance | {})
+	for componentName, data in pairs(self.entityToComponent[entity] or {}) do
 		self:removeComponent(componentName, entity)
 	end
-	self.entities[entity] = nil
+	self.entityToComponent[entity] = nil
 end
 
-function EntityManager:addComponent(componentResolvable: string | {}, entity: Instance | {}, data: {}?): {}
-	local component = self.collection:resolveOrError(componentResolvable)
+function EntityManager:isRegistered(entity: Instance | {})
+	return self.entityToComponent[entity] ~= nil
+end
 
+function EntityManager:addComponent(componentDefinition: {}, entity: Instance | {}, data: {}?): {}
 	-- for convenience, we register the entity if needed
-	if not self.entities[entity] then
-		self:registerEntity(entity)
+	if not self:isRegistered(entity) then
+		self:register(entity)
 	end
 
-	if self.entities[entity][component.name] then
-		error(("%s already has a component of type %s!"):format(tostring(entity), component.name))
+	if self.entityToComponent[entity][componentDefinition.name] then
+		error(("%s already has a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entities[entity][component.name] = component:createFromData(data)
+	self.entityToComponent[entity][componentDefinition.name] = componentDefinition:createFromData(data)
 
-	if not self.componentToEntity[component.name] then
-		self.componentToEntity[component.name] = {}
+	if not self.componentToEntity[componentDefinition.name] then
+		self.componentToEntity[componentDefinition.name] = {}
 	end
 
-	self.componentToEntity[component.name][entity] = entity
+	self.componentToEntity[componentDefinition.name][entity] = entity
 
-	return self.entities[entity][component.name]
+	return self.entityToComponent[entity][componentDefinition.name]
 end
 
-function EntityManager:getComponent(componentResolvable: string | {}, entity: Instance | {}): {}?
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	return self.entities[entity] and self.entities[entity][component.name] or nil
+function EntityManager:getComponent(componentDefinition: string | {}, entity: Instance | {}): {}?
+	return self.entityToComponent[entity] and self.entityToComponent[entity][componentDefinition.name] or nil
 end
 
-function EntityManager:getEntitiesWith(componentResolvable: string | {})
-	local component = self.collection:resolveOrError(componentResolvable)
-	local entities = Util.getValues(self.componentToEntity[component.name] or {})
+function EntityManager:getEntitiesWith(componentDefinition: {})
+	local entities = Util.getValues(self.componentToEntity[componentDefinition.name] or {})
 
 	return entities
 end
 
-function EntityManager:setComponent(componentResolvable: string | {}, entity: Instance | {}, data: {}): {}
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	if not self.entities[entity] or not self.entities[entity][component.name] then
-		error(("%s does not have a component of type %s!"):format(tostring(entity), component.name))
+function EntityManager:setComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
+	if not self.entityToComponent[entity] or not self.entityToComponent[entity][componentDefinition.name] then
+		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entities[entity][component.name] = component:setFromData(data)
+	self.entityToComponent[entity][componentDefinition.name] = componentDefinition:setFromData(data)
 
-	return self.entities[entity][component.name]
+	return self.entityToComponent[entity][componentDefinition.name]
 end
 
-function EntityManager:updateComponent(
-	componentResolvable: string | {},
-	entity: Instance | {},
-	data: {}
-): {}
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	if not self.entities[entity] or not self.entities[entity][component.name] then
-		error(("%s does not have a component of type %s!"):format(tostring(entity), component.name))
+function EntityManager:updateComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
+	if not self.entityToComponent[entity] or not self.entityToComponent[entity][componentDefinition.name] then
+		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entities[entity][component.name] = component:updateFromData(self.entities[entity][component.name], data)
+	self.entityToComponent[entity][componentDefinition.name] = componentDefinition:updateFromData(
+		self.entityToComponent[entity][componentDefinition.name],
+		data
+	)
 
-	return self.entities[entity][component.name]
+	return self.entityToComponent[entity][componentDefinition.name]
 end
 
-function EntityManager:removeComponent(componentResolvable: string | {}, entity: Instance | {})
-	local component = self.collection:resolveOrError(componentResolvable)
-
-	if not self.entities[entity] or not self.entities[entity][component.name] then
+function EntityManager:removeComponent(componentDefinition: {}, entity: Instance | {})
+	if not self.entityToComponent[entity] or not self.entityToComponent[entity][componentDefinition.name] then
 		return
 	end
 
-	local oldData = self.entities[entity][component.name]
+	local oldData = self.entityToComponent[entity][componentDefinition.name]
 
-	if component.destructor then
-		xpcall(component.destructor, inlinedError, entity, oldData)
+	if componentDefinition.destructor then
+		xpcall(componentDefinition.destructor, inlinedError, entity, oldData)
 	end
 
-	self.entities[entity][component.name] = nil
+	self.entityToComponent[entity][componentDefinition.name] = nil
 
-	self.componentToEntity[component.name][entity] = nil
+	self.componentToEntity[componentDefinition.name][entity] = nil
 
-	if next(self.entities[entity]) == nil then
+	if next(self.entityToComponent[entity]) == nil then
 		-- since the entity has no more components, we clear the ref to allow gc'ing
-		self.entities[entity] = nil
+		self.entityToComponent[entity] = nil
 	end
+end
+
+function EntityManager:getAll()
+	local entites = {}
+	for entity, _ in pairs(self.entityToComponent) do
+		table.insert(entites, entity)
+	end
+	return entites
 end
 
 return EntityManager
