@@ -1,6 +1,6 @@
 local RunService = game:GetService("RunService")
-local EntityQuery = require(script.Parent.EntityQuery)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
+local Util = require(script.Parent.Parent.Shared.Util)
 
 local System = {}
 System.__index = System
@@ -8,33 +8,21 @@ System.__index = System
 System.priority = 1000
 System.updateEvent = RunService.Heartbeat
 
-function System:createQuery()
-	return EntityQuery.new(self.stitch.entityManager)
-end
-
-function System:registerComponent(component)
-	if not self._components then
-		self._components = {}
+function System:create(world)
+	if self.stateComponent then
+		world:registerComponent(Util.setKey(self.stateComponent, "name", self.name))
 	end
-
-	self.stitch:registerComponent(component)
-	table.insert(self._components, component)
+	xpcall(self.onCreate, inlinedError, self, world)
 end
 
-function System:create()
-	xpcall(self.onCreate, inlinedError, self, self.stitch)
+function System:update(world)
+	xpcall(self.onUpdate, inlinedError, self, world)
 end
 
-function System:update()
-	xpcall(self.onUpdate, inlinedError, self, self.stitch)
-end
-
-function System:destroy()
-	xpcall(self.onDestroy, inlinedError, self, self.stitch)
-	if self._components then
-		for _, component in ipairs(self._components) do
-			self.stitch:unregisterComponent(component)
-		end
+function System:destroy(world)
+	xpcall(self.onDestroy, inlinedError, self, world)
+	if self.stateComponent then
+		world:unregisterComponent(self.stateComponent)
 	end
 end
 
