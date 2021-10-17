@@ -36,7 +36,7 @@ function Observer:get()
 	return self.marked
 end
 
-function Observer:forEach(callback: callback)
+function Observer:forEach(callback: ({}, {}) -> nil)
 	for entity, data in pairs(self.marked) do
 		xpcall(callback, inlinedError, entity, data)
 	end

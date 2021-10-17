@@ -68,7 +68,7 @@ end
 
 function ReplicationSystem:onUpdate()
 	for componentName, observer in pairs(self._entityRemovedObservers) do
-		observer:forEach(function(entity: Instance | table)
+		observer:forEach(function(entity: Instance | {})
 			if typeof(entity) ~= "Instance" then
 				return
 			end
@@ -97,7 +97,7 @@ function ReplicationSystem:onUpdate()
 	end
 
 	for componentName, observer in pairs(self._entityAddedObservers) do
-		observer:forEach(function(entity: Instance | table)
+		observer:forEach(function(entity: Instance | {})
 			if typeof(entity) ~= "Instance" then
 				return
 			end

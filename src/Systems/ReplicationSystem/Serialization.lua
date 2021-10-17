@@ -1,6 +1,6 @@
 local Serializer = {}
 
-function Serializer.write(data: table, container: Folder)
+function Serializer.write(data: {}, container: Folder)
 	for _, child in pairs(container:GetChildren()) do
 		if not data[child.Name] then
 			child:Destroy()

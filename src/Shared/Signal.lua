@@ -12,7 +12,7 @@ function Signal:destroy()
 	self._listeners = nil
 end
 
-function Signal:connect(callback: callback)
+function Signal:connect(callback: (any) -> nil)
 	table.insert(self._listeners, callback)
 	local disconnect = function()
 		for i, v in ipairs(self._listeners) do

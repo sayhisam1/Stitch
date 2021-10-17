@@ -54,7 +54,7 @@ function ReplicationSystem:onCreate(stitch)
 	self._componentUnregisteredListener = componentUnregistered:connect(unregisterComponent)
 end
 
-function ReplicationSystem:writeData(component, entity: Instance | table)
+function ReplicationSystem:writeData(component, entity: Instance | {})
 	if not typeof(entity) == "Instance" then
 		return
 	end
@@ -71,7 +71,7 @@ function ReplicationSystem:writeData(component, entity: Instance | table)
 	Serialization.write(self:getComponent(component, entity), container)
 end
 
-function ReplicationSystem:removeData(component, entity: Instance | table)
+function ReplicationSystem:removeData(component, entity: Instance | {})
 	if not typeof(entity) == "Instance" then
 		return
 	end

@@ -32,7 +32,7 @@ function System:registerComponent(component)
 	table.insert(self._components, component)
 end
 
-function System:connectEntityAddedSignal(componentResolvable: string | table, callback: callback)
+function System:connectEntityAddedSignal(componentResolvable: string | {}, callback: ({}) -> nil)
 	if not self._listeners then
 		self._listeners = {}
 	end
@@ -41,7 +41,7 @@ function System:connectEntityAddedSignal(componentResolvable: string | table, ca
 	table.insert(self._listeners, listener)
 end
 
-function System:connectEntityChangedSignal(componentResolvable: string | table, callback: callback)
+function System:connectEntityChangedSignal(componentResolvable: string | {}, callback: ({}) -> nil)
 	if not self._listeners then
 		self._listeners = {}
 	end
@@ -50,7 +50,7 @@ function System:connectEntityChangedSignal(componentResolvable: string | table, 
 	table.insert(self._listeners, listener)
 end
 
-function System:connectEntityRemovedSignal(componentResolvable: string | table, callback: callback)
+function System:connectEntityRemovedSignal(componentResolvable: string | {}, callback: ({}) -> nil)
 	if not self._listeners then
 		self._listeners = {}
 	end

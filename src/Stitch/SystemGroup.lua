@@ -38,7 +38,7 @@ function SystemGroup:updateSystems()
 	end
 end
 
-function SystemGroup:addSystem(system: table, stitch: table?)
+function SystemGroup:addSystem(system: {}, stitch: {}?)
 	if typeof(system.name) ~= "string" then
 		error("Tried to add a system without a name!")
 	end

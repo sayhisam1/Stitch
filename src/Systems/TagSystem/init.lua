@@ -44,14 +44,14 @@ function TagSystem:onCreate(stitch)
 		end
 
 		local entityAdded = stitch.entityManager:getEntityAddedSignal(component)
-		self._entityAddedListeners[component.name] = entityAdded:connect(function(entity: Instance | table)
+		self._entityAddedListeners[component.name] = entityAdded:connect(function(entity: Instance | {})
 			if typeof(entity) == "Instance" and not CollectionService:HasTag(entity, component.name) then
 				CollectionService:AddTag(entity, component.name)
 			end
 		end)
 
 		local entityRemoved = stitch.entityManager:getEntityRemovedSignal(component)
-		self._entityRemovedListeners[component.name] = entityRemoved:connect(function(entity: Instance | table)
+		self._entityRemovedListeners[component.name] = entityRemoved:connect(function(entity: Instance | {})
 			if typeof(entity) == "Instance" and CollectionService:HasTag(entity, component.name) then
 				CollectionService:RemoveTag(entity, component.name)
 			end

@@ -49,18 +49,18 @@ function EntityManager:destroy()
 	self.collection:destroy()
 end
 
-function EntityManager:registerComponent(componentDefinition: table | ModuleScript)
+function EntityManager:registerComponent(componentDefinition: {} | ModuleScript)
 	self.collection:register(componentDefinition)
 end
 
-function EntityManager:registerEntity(entity: Instance | table)
+function EntityManager:registerEntity(entity: Instance | {})
 	if typeof(entity) == "Instance" and not CollectionService:HasTag(entity, self.instanceTag) then
 		CollectionService:AddTag(entity, self.instanceTag)
 	end
 	self.entities[entity] = self.entities[entity] or {}
 end
 
-function EntityManager:unregisterEntity(entity: Instance | table)
+function EntityManager:unregisterEntity(entity: Instance | {})
 	if typeof(entity) == "Instance" and CollectionService:HasTag(entity, self.instanceTag) then
 		CollectionService:RemoveTag(entity, self.instanceTag)
 	end
@@ -70,7 +70,7 @@ function EntityManager:unregisterEntity(entity: Instance | table)
 	self.entities[entity] = nil
 end
 
-function EntityManager:addComponent(componentResolvable: string | table, entity: Instance | table, data: table?): table
+function EntityManager:addComponent(componentResolvable: string | {}, entity: Instance | {}, data: {}?): {}
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	-- for convenience, we register the entity if needed
@@ -97,20 +97,20 @@ function EntityManager:addComponent(componentResolvable: string | table, entity:
 	return self.entities[entity][component.name]
 end
 
-function EntityManager:getComponent(componentResolvable: string | table, entity: Instance | table): table?
+function EntityManager:getComponent(componentResolvable: string | {}, entity: Instance | {}): {}?
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	return self.entities[entity] and self.entities[entity][component.name] or nil
 end
 
-function EntityManager:getEntitiesWith(componentResolvable: string | table)
+function EntityManager:getEntitiesWith(componentResolvable: string | {})
 	local component = self.collection:resolveOrError(componentResolvable)
 	local entities = Util.getValues(self.componentToEntity[component.name] or {})
 
 	return entities
 end
 
-function EntityManager:getEntityAddedSignal(componentResolvable: string | table)
+function EntityManager:getEntityAddedSignal(componentResolvable: string | {})
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self._signals["entityAdded"][component.name] then
@@ -120,7 +120,7 @@ function EntityManager:getEntityAddedSignal(componentResolvable: string | table)
 	return self._signals["entityAdded"][component.name]
 end
 
-function EntityManager:setComponent(componentResolvable: string | table, entity: Instance | table, data: table): table
+function EntityManager:setComponent(componentResolvable: string | {}, entity: Instance | {}, data: {}): {}
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] or not self.entities[entity][component.name] then
@@ -137,10 +137,10 @@ function EntityManager:setComponent(componentResolvable: string | table, entity:
 end
 
 function EntityManager:updateComponent(
-	componentResolvable: string | table,
-	entity: Instance | table,
-	data: table
-): table
+	componentResolvable: string | {},
+	entity: Instance | {},
+	data: {}
+): {}
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] or not self.entities[entity][component.name] then
@@ -156,7 +156,7 @@ function EntityManager:updateComponent(
 	return self.entities[entity][component.name]
 end
 
-function EntityManager:getEntityChangedSignal(componentResolvable: string | table)
+function EntityManager:getEntityChangedSignal(componentResolvable: string | {})
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self._signals["entityChanged"][component.name] then
@@ -166,7 +166,7 @@ function EntityManager:getEntityChangedSignal(componentResolvable: string | tabl
 	return self._signals["entityChanged"][component.name]
 end
 
-function EntityManager:removeComponent(componentResolvable: string | table, entity: Instance | table)
+function EntityManager:removeComponent(componentResolvable: string | {}, entity: Instance | {})
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self.entities[entity] or not self.entities[entity][component.name] then
@@ -193,7 +193,7 @@ function EntityManager:removeComponent(componentResolvable: string | table, enti
 	end
 end
 
-function EntityManager:getEntityRemovedSignal(componentResolvable: string | table)
+function EntityManager:getEntityRemovedSignal(componentResolvable: string | {})
 	local component = self.collection:resolveOrError(componentResolvable)
 
 	if not self._signals["entityRemoved"][component.name] then

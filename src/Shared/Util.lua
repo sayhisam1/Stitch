@@ -21,7 +21,7 @@ function Util.deepCopy(dict)
 	return copied
 end
 
-function Util.getValues(dict, sizeEstimate: int?)
+function Util.getValues(dict, sizeEstimate: number?)
 	debug.profilebegin("getValues")
 	local values = table.create(sizeEstimate or 8)
 	for k, v in pairs(dict) do
@@ -31,7 +31,7 @@ function Util.getValues(dict, sizeEstimate: int?)
 	return values
 end
 
-function Util.mergeTable(a: table, b: table)
+function Util.mergeTable(a: {}, b: {})
 	local new_table = Util.shallowCopy(a)
 	for k, v in pairs(b) do
 		new_table[k] = v

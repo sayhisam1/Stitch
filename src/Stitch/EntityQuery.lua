@@ -50,7 +50,7 @@ function EntityQuery:get()
 	return validEntities
 end
 
-function EntityQuery:forEach(callback: callback)
+function EntityQuery:forEach(callback: ({},...{}) -> nil)
 	local entities = self.entityManager:getEntitiesWith(self.withComponents[1])
 	for _, entity in ipairs(entities) do
 		local obtainedComponents = table.create(#self.withComponents)
