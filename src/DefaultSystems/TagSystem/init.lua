@@ -1,99 +1,96 @@
 local CollectionService = game:GetService("CollectionService")
-
+-- Automatically adds components to instance entities that are tagged
 local TagSystem = {}
+
 TagSystem.name = "TagSystem"
 TagSystem.priority = -1E10
 
-function TagSystem:onCreate(stitch)
-	self._instanceAddedListeners = {}
-	self._instanceRemovedListeners = {}
-	self._entityAddedListeners = {}
-	self._entityRemovedListeners = {}
-
-	local function addComponent(component, instance)
-		if not self:getComponent(component, instance) then
-			local defaults: Folder = instance:FindFirstChild("defaults")
-			local componentDefaults = defaults and defaults:FindFirstChild(component.name) or nil
-			local data = {}
-			for _, default in pairs(componentDefaults and componentDefaults:GetChildren() or {}) do
-				data[default.Name] = default.Value
-			end
-			self:addComponent(component, instance)
+local TagSystemState = {
+	name = "TagSystemState",
+	defaults = {
+		tagAddedListeners = {},
+		tagRemovedListeners = {},
+		lastComponents = {},
+	},
+	destructor = function(_, data)
+		for _, listener in pairs(data.tagAddedListeners) do
+			listener:disconnect()
+		end
+		for _, listener in pairs(data.tagRemovedListeners) do
+			listener:disconnect()
 		end
 	end
-	local function removeComponent(component, instance)
-		self:removeComponent(component, instance)
-	end
+}
 
-	local function registerComponent(component)
-		if not component.tagged then
-			return
-		end
-		local instanceAdded = CollectionService:GetInstanceAddedSignal(component.name)
-		self._instanceAddedListeners[component.name] = instanceAdded:connect(function(instance: Instance)
-			addComponent(component, instance)
-		end)
-
-		local instanceRemoved = CollectionService:GetInstanceRemovedSignal(component.name)
-		self._instanceRemovedListeners[component.name] = instanceRemoved:connect(function(instance: Instance)
-			removeComponent(component, instance)
-		end)
-
-		for _, instance in pairs(CollectionService:GetTagged(component.name)) do
-			addComponent(component, instance)
-		end
-
-		local entityAdded = stitch.entityManager:getEntityAddedSignal(component)
-		self._entityAddedListeners[component.name] = entityAdded:connect(function(entity: Instance | {})
-			if typeof(entity) == "Instance" and not CollectionService:HasTag(entity, component.name) then
-				CollectionService:AddTag(entity, component.name)
-			end
-		end)
-
-		local entityRemoved = stitch.entityManager:getEntityRemovedSignal(component)
-		self._entityRemovedListeners[component.name] = entityRemoved:connect(function(entity: Instance | {})
-			if typeof(entity) == "Instance" and CollectionService:HasTag(entity, component.name) then
-				CollectionService:RemoveTag(entity, component.name)
-			end
-		end)
-	end
-
-	local componentRegistered = stitch.entityManager.collection:getComponentRegisteredSignal()
-	self._componentRegisteredListener = componentRegistered:connect(registerComponent)
-	for _, component in pairs(stitch.entityManager.collection:getAll()) do
-		registerComponent(component)
-	end
-
-	local componentUnregistered = stitch.entityManager.collection:getComponentUnregisteredSignal()
-	self._componentUnregisteredListener = componentUnregistered:connect(function(component)
-		if self._instanceAddedListeners[component.name] then
-			self._instanceAddedListeners[component.name]:disconnect()
-			self._instanceAddedListeners[component.name] = nil
-			self._instanceRemovedListeners[component.name]:disconnect()
-			self._instanceRemovedListeners[component.name] = nil
-			self._entityAddedListeners[component.name]:disconnect()
-			self._entityAddedListeners[component.name] = nil
-			self._entityRemovedListeners[component.name]:disconnect()
-			self._entityRemovedListeners[component.name] = nil
-		end
-	end)
+function TagSystem:onCreate()
+	self:registerComponent(TagSystemState)
 end
 
-function TagSystem:onDestroy()
-	self._componentRegisteredListener:disconnect()
-	self._componentUnregisteredListener:disconnect()
-	for _, listener in pairs(self._instanceAddedListeners) do
-		listener:disconnect()
+function TagSystem:addComponentIfNotExists(componentDefinition, instance)
+	if not self:getComponent(componentDefinition, instance) then
+		self:addComponent(componentDefinition, instance)
 	end
-	for _, listener in pairs(self._instanceRemovedListeners) do
-		listener:disconnect()
+end
+
+function TagSystem:onUpdate(world)
+	local registeredComponents = world.entityManager.collection:getAll()
+	self:addComponentIfNotExists(TagSystemState, workspace)
+	local state = self:getComponent(TagSystemState, workspace)
+
+	if state.lastComponents == registeredComponents then
+		return
 	end
-	for _, listener in pairs(self._entityAddedListeners) do
-		listener:disconnect()
+
+	-- handle new additions
+	local newTagAddedListeners = {}
+	local newTagRemovedListeners = {}
+	for _, componentDefinition in pairs(registeredComponents) do
+		local tag = componentDefinition.tag
+		if not tag then
+			continue
+		end
+
+		if typeof(tag) == "boolean" then
+			tag = componentDefinition.name
+		end
+
+		if state.tagAddedListeners[tag] then
+			newTagAddedListeners[tag] = state.tagAddedListeners[tag]
+			newTagRemovedListeners[tag] = state.tagRemovedListeners[tag]
+			continue
+		end
+
+		newTagAddedListeners[componentDefinition.name] = CollectionService:GetInstanceAddedSignal(tag):Connect(function(instance)
+			self:addComponentIfNotExists(componentDefinition, instance)
+		end)
+		for _, instance in pairs(CollectionService:GetTagged(tag)) do
+			self:addComponentIfNotExists(componentDefinition, instance)
+		end
+
+		newTagRemovedListeners[componentDefinition.name] = CollectionService:GetInstanceRemovedSignal(tag):Connect(function(instance)
+			self:removeComponent(componentDefinition, instance)
+		end)
 	end
-	for _, listener in pairs(self._entityRemovedListeners) do
-		listener:disconnect()
+
+	-- check for removed components
+	for name, listener in pairs(state.tagAddedListeners) do
+		if not registeredComponents[name] then
+			listener:disconnect()
+			newTagAddedListeners[name] = nil
+		end
 	end
+	for name, listener in pairs(state.tagRemovedListeners) do
+		if not registeredComponents[name] then
+			listener:disconnect()
+			newTagRemovedListeners[name] = nil
+		end
+	end
+
+	self:updateComponent(TagSystemState, workspace, {
+		tagAddedListeners = newTagAddedListeners,
+		tagRemovedListeners = newTagRemovedListeners,
+		lastComponents = registeredComponents,
+	})
 end
 
 return TagSystem

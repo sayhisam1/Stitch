@@ -22,7 +22,7 @@ return function()
 	local instance
 	local testComponent = {
 		name = "tagSystemTest",
-		tagged = true,
+		tag = true
 	}
 	beforeEach(function()
 		world = StitchLib.World.new("test")
@@ -34,18 +34,23 @@ return function()
 	describe("Tag added", function()
 		it("should add component on entity tag", function()
 			world:addSystem(StitchLib.DefaultSystems.TagSystem)
+
+			Promise.fromEvent(RunService.Heartbeat):await()
 			world.entityManager:registerComponent(testComponent)
-			local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal("tagSystemTest"))
 			CollectionService:AddTag(instance, "tagSystemTest")
-			promise:await()
+			Promise.fromEvent(RunService.Heartbeat):await()
+
+			expect(CollectionService:HasTag(instance, "tagSystemTest")).to.be.ok()
 			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 		end)
 		it("should add component on existing instance tag", function()
 			world.entityManager:registerComponent(testComponent)
-			local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal("tagSystemTest"))
 			CollectionService:AddTag(instance, "tagSystemTest")
-			promise:await()
+
+			Promise.fromEvent(RunService.Heartbeat):await()
 			world:addSystem(StitchLib.DefaultSystems.TagSystem)
+			Promise.fromEvent(RunService.Heartbeat):await()
+
 			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 		end)
 	end)
@@ -53,10 +58,13 @@ return function()
 		it("should remove component on entity tag removal", function()
 			world:addSystem(StitchLib.DefaultSystems.TagSystem)
 			world.entityManager:registerComponent(testComponent)
+
 			CollectionService:AddTag(instance, "tagSystemTest")
-			local promise = Promise.fromEvent(CollectionService:GetInstanceRemovedSignal("tagSystemTest"))
+			Promise.fromEvent(RunService.Heartbeat):await()
+			
 			CollectionService:RemoveTag(instance, "tagSystemTest")
-			promise:await()
+			Promise.fromEvent(RunService.Heartbeat):await()
+
 			expect(world.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
 		end)
 	end)
@@ -65,13 +73,12 @@ return function()
 			it("should add component on entity on client", function()
 				world:addSystem(StitchLib.DefaultSystems.TagSystem)
 				world.entityManager:registerComponent(testComponent)
-				local promise = Promise.fromEvent(CollectionService:GetInstanceAddedSignal("tagSystemTest"))
 				CollectionService:AddTag(instance, "tagSystemTest")
-				promise:await()
+				Promise.fromEvent(RunService.Heartbeat):await()
+
 				expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 				invokeClientTest(
 					{ script.Parent["TagSystem.client.spec"] },
-					nil,
 					{ testNamePattern = "should add component on entity on client" }
 				)
 			end)
@@ -79,13 +86,15 @@ return function()
 				world:addSystem(StitchLib.DefaultSystems.TagSystem)
 				world.entityManager:registerComponent(testComponent)
 				CollectionService:AddTag(instance, "tagSystemTest")
-				local promise = Promise.fromEvent(CollectionService:GetInstanceRemovedSignal("tagSystemTest"))
+				Promise.fromEvent(RunService.Heartbeat):await()
+
 				CollectionService:RemoveTag(instance, "tagSystemTest")
-				promise:await()
+				Promise.fromEvent(RunService.Heartbeat):await()
+
 				expect(world.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
+
 				invokeClientTest(
 					{ script.Parent["TagSystem.client.spec"] },
-					nil,
 					{ testNamePattern = "should remove component on tag removal on client" }
 				)
 			end)

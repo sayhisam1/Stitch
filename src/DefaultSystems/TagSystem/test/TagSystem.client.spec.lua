@@ -1,6 +1,8 @@
 local RunService = game:GetService("RunService")
 local Workspace = game:GetService("Workspace")
 
+local Promise = require(script.Parent.Parent.Parent.Parent.Parent.Promise)
+
 local StitchLib = require(script.Parent.Parent.Parent.Parent)
 
 return function()
@@ -10,7 +12,7 @@ return function()
 	local world
 	local testComponent = {
 		name = "tagSystemTest",
-		tagged = true,
+		tag = true,
 	}
 	beforeEach(function()
 		world = StitchLib.World.new("test")
@@ -25,6 +27,7 @@ return function()
 			world.entityManager:registerComponent(testComponent)
 			local instance = Workspace:WaitForChild("TagSystemTestInstance", 5)
 			expect(instance).to.be.ok()
+			Promise.fromEvent(RunService.Heartbeat):await()
 			expect(world.entityManager:getComponent(testComponent, instance)).to.be.ok()
 		end)
 	end)
@@ -34,6 +37,7 @@ return function()
 			world.entityManager:registerComponent(testComponent)
 			local instance = Workspace:WaitForChild("TagSystemTestInstance", 5)
 			expect(instance).to.be.ok()
+			Promise.fromEvent(RunService.Heartbeat):await()
 			expect(world.entityManager:getComponent(testComponent, instance)).to.never.be.ok()
 		end)
 	end)
