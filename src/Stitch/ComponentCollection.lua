@@ -1,4 +1,4 @@
-local Component = require(script.Parent.Component)
+local ComponentDefinition = require(script.Parent.ComponentDefinition)
 local HotReloader = require(script.Parent.HotReloader)
 local Util = require(script.Parent.Parent.Shared.Util)
 local Signal = require(script.Parent.Parent.Shared.Signal)
@@ -23,38 +23,39 @@ function ComponentCollection:destroy()
 	self._hotReloader:destroy()
 end
 
-function ComponentCollection:register(componentDefinition: table | ModuleScript)
-	if typeof(componentDefinition) == "Instance" and componentDefinition:IsA("ModuleScript") then
-		self._hotReloader:listen(componentDefinition, function(component, originalModule: ModuleScript)
-			if not component.name then
-				component.name = originalModule.Name
+function ComponentCollection:register(componentSpec: {} | ModuleScript)
+	if typeof(componentSpec) == "Instance" and componentSpec:IsA("ModuleScript") then
+		self._hotReloader:listen(componentSpec, function(module: ModuleScript)
+			componentSpec = require(module)
+			if not componentSpec.name then
+				componentSpec.name = module.Name
 			end
-			self:register(component)
-		end, function(component)
-			self:unregister(component)
+			self:register(componentSpec)
+		end, function(module: ModuleScript)
+			self:unregister(require(module))
 		end)
 		return
 	end
-	if getmetatable(componentDefinition) then
+	if getmetatable(componentSpec) then
 		error(
 			"Failed to register component %s: components should not have a metatable!",
-			tostring(componentDefinition.name)
+			tostring(componentSpec.name)
 		)
 	end
 
-	componentDefinition = Util.shallowCopy(componentDefinition)
-	local componentName = componentDefinition.name
+	componentSpec = Util.shallowCopy(componentSpec)
+	local componentName = componentSpec.name
 
 	if self.registeredComponents[componentName] then
 		error(("Tried to register duplicate Component %s!"):format(componentName))
 	end
 
-	setmetatable(componentDefinition, Component)
-	self.registeredComponents[componentName] = componentDefinition
+	setmetatable(componentSpec, ComponentDefinition)
+	self.registeredComponents[componentName] = componentSpec
 
-	self._componentRegistered:fire(componentDefinition)
+	self._componentRegistered:fire(componentSpec)
 
-	return componentDefinition
+	return componentSpec
 end
 
 function ComponentCollection:unregister(componentResolvable)

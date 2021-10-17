@@ -1,13 +1,12 @@
 --!strict
 local Util = require(script.Parent.Parent.Shared.Util)
 
-local Component = {}
-Component.__index = Component
+local ComponentDefinition = {}
+ComponentDefinition.__index = ComponentDefinition
+ComponentDefinition.defaults = {}
+ComponentDefinition.validators = {}
 
-Component.defaults = {}
-Component.validators = {}
-
-function Component:createFromData(data: table?): table
+function ComponentDefinition:createFromData(data: {}?): {}
 	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {})
 
 	self:validateOrErrorData(data)
@@ -15,7 +14,7 @@ function Component:createFromData(data: table?): table
 	return data
 end
 
-function Component:setFromData(data: table): table
+function ComponentDefinition:setFromData(data: {}): {}
 	data = Util.shallowCopy(data)
 
 	self:validateOrErrorData(data)
@@ -23,7 +22,7 @@ function Component:setFromData(data: table): table
 	return data
 end
 
-function Component:updateFromData(old: table, new: table): table
+function ComponentDefinition:updateFromData(old: {}, new: {}): {}
 	local data = Util.mergeTable(old, new)
 
 	self:validateOrErrorData(data)
@@ -31,7 +30,7 @@ function Component:updateFromData(old: table, new: table): table
 	return data
 end
 
-function Component:validateOrErrorData(data: table)
+function ComponentDefinition:validateOrErrorData(data: {})
 	for key, validator in pairs(self.validators) do
 		if not validator(data[key]) then
 			error("Failed to create component %s - invalid value %s (of type %s) for key %s!"):format(
@@ -44,4 +43,4 @@ function Component:validateOrErrorData(data: table)
 	end
 end
 
-return Component
+return ComponentDefinition
