@@ -25,10 +25,11 @@ function HotReloader:listen(module: ModuleScript, callback: (ModuleScript) -> ni
 			if self._clonedModules[module] then
 				cleanup(self._clonedModules[module])
 				self._clonedModules[module]:Destroy()
+			else
+				cleanup(module)
 			end
 
 			local cloned = module:Clone()
-			cloned.Name = cloned.Name
 			cloned.Parent = module.Parent
 			self._clonedModules[module] = cloned
 
