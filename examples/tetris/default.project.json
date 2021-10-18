@@ -4,10 +4,16 @@
         "$className": "DataModel",
         "ReplicatedStorage": {
             "$className": "ReplicatedStorage",
-            "tetris": {
+            "Stitch": {
+                "$path": "../../src"
+            },
+            "tetris":{
                 "$className": "Folder",
                 "shared": {
                     "$path": "./shared"
+                },
+                "client": {
+                    "$path": "./client"
                 }
             }
         },
@@ -26,8 +32,8 @@
                 "$className": "StarterPlayerScripts",
                 "tetris": {
                     "$className": "Folder",
-                    "client": {
-                        "$path": "./client"
+                    "main": {
+                        "$path": "./client/main.client.lua"
                     }
                 }
             }
