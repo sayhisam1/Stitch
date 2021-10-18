@@ -50,6 +50,7 @@ return function()
 			Promise.fromEvent(RunService.Heartbeat):await()
 			world:addSystem(Stitch.DefaultSystems.TagSystem)
 			Promise.fromEvent(RunService.Heartbeat):await()
+			Promise.fromEvent(RunService.Heartbeat):await()
 
 			expect(world:getComponent(testComponent, instance)).to.be.ok()
 		end)
@@ -75,8 +76,11 @@ return function()
 				world:registerComponent(testComponent)
 				CollectionService:AddTag(instance, "tagSystemTest")
 				Promise.fromEvent(RunService.Heartbeat):await()
-
+				expect(CollectionService:HasTag(instance, testComponent.name)).to.be.ok()
+				
+				Promise.fromEvent(RunService.Heartbeat):await()
 				expect(world:getComponent(testComponent, instance)).to.be.ok()
+				
 				invokeClientTest(
 					{ script.Parent["TagSystem.client.spec"] },
 					{ testNamePattern = "should add component on entity on client" }
@@ -91,6 +95,7 @@ return function()
 				CollectionService:RemoveTag(instance, "tagSystemTest")
 				Promise.fromEvent(RunService.Heartbeat):await()
 
+				Promise.fromEvent(RunService.Heartbeat):await()
 				expect(world:getComponent(testComponent, instance)).to.never.be.ok()
 
 				invokeClientTest(
