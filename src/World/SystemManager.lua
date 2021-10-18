@@ -49,7 +49,7 @@ function SystemManager:addSystem(systemDefinition: {} | ModuleScript)
 end
 
 function SystemManager:removeSystem(system: {} | ModuleScript)
-	if typeof(system) == "ModuleScript" then
+	if typeof(system) == "Instance" and system:IsA("ModuleScript") then
 		system = require(system)
 	end
 
