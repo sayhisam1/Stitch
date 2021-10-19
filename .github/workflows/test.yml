@@ -26,10 +26,10 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: run rojo build
-      run: rojo build -o ./tests.rbxlx develop.project.json
+      run: rojo build develop.project.json --output tests.rbxlx
     
     - name: listfiles
       run: tree
 
     - name: run tests
-      run: run-in-roblox --place ./tests.rbxlx --script ./test/ci_runtest.lua
+      run: run-in-roblox --place tests.rbxlx --script test/ci_runtest.lua
