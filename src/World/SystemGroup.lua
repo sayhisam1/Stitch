@@ -1,7 +1,7 @@
 --!strict
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 local Util = require(script.Parent.Parent.Shared.Util)
-local System = require(script.Parent.System)
+local SystemDefinition = require(script.Parent.SystemDefinition)
 
 local SystemGroup = {}
 SystemGroup.__index = SystemGroup
@@ -43,7 +43,7 @@ function SystemGroup:addSystem(system: {})
 	if typeof(system.name) ~= "string" then
 		error("Tried to add a system without a name!")
 	end
-	system = setmetatable(Util.shallowCopy(system), System)
+	system = setmetatable(Util.shallowCopy(system), SystemDefinition)
 
 	local priority = system.priority
 	local insertPos = #self.systems + 1

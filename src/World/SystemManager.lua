@@ -1,5 +1,5 @@
 local HotReloader = require(script.Parent.HotReloader)
-local System = require(script.Parent.System)
+local SystemDefinition = require(script.Parent.SystemDefinition)
 local SystemGroup = require(script.Parent.SystemGroup)
 
 local SystemManager = {}
@@ -39,7 +39,7 @@ function SystemManager:addSystem(systemDefinition: {} | ModuleScript)
 		return
 	end
 
-	local updateEvent = systemDefinition.updateEvent or System.updateEvent
+	local updateEvent = systemDefinition.updateEvent or SystemDefinition.updateEvent
 
 	if not self.systemGroups[updateEvent] then
 		self.systemGroups[updateEvent] = SystemGroup.new(updateEvent, self.world)
@@ -57,7 +57,7 @@ function SystemManager:removeSystem(system: {} | ModuleScript)
 		end
 	end
 
-	local updateEvent = system.updateEvent or System.updateEvent
+	local updateEvent = system.updateEvent or SystemDefinition.updateEvent
 	if not self.systemGroups[updateEvent] then
 		return
 	end
