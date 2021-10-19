@@ -50,7 +50,11 @@ end
 
 function SystemManager:removeSystem(system: {} | ModuleScript)
 	if typeof(system) == "Instance" and system:IsA("ModuleScript") then
+		local moduleName = system.Name
 		system = require(system)
+		if not system.name then
+			system.name = moduleName
+		end
 	end
 
 	local updateEvent = system.updateEvent or System.updateEvent
