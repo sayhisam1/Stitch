@@ -27,6 +27,9 @@ jobs:
 
     - name: run rojo build
       run: rojo build -o ./tests.rbxlx develop.project.json
+    
+    - name: listfiles
+      run: tree
 
     - name: run tests
-      run: run-in-roblox --place ./tests.rbxlx --script test/server/runStitchTests.server.lua
+      run: run-in-roblox --place ./tests.rbxlx --script ./test/server/runStitchTests.server.lua
