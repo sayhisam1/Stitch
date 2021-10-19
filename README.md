@@ -2,7 +2,8 @@
   <strong><a href="https://sayhisam1.github.io/Stitch">Now with Documentation!</a></strong>
 </p>
 
-# Stitch
+# Stitch [![CI](https://github.com/sayhisam1/Stitch/actions/workflows/test.yml/badge.svg)](https://github.com/sayhisam1/Stitch/actions/workflows/test.yml)
+
 Stitch is an Entity Component System (https://en.wikipedia.org/wiki/Entity_component_system) built for Roblox.
 
 
