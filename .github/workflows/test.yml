@@ -32,4 +32,4 @@ jobs:
       run: tree
 
     - name: run tests
-      run: run-in-roblox --place ./tests.rbxlx --script ./test/server/runStitchTests.server.lua
+      run: run-in-roblox --place ./tests.rbxlx --script ./test/ci_runtest.lua
