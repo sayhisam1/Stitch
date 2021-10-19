@@ -1,11 +1,12 @@
 local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 local Promise = require(script.Parent.Parent.Parent.Parent.Parent.Promise)
 
 local Stitch = require(script.Parent.Parent.Parent.Parent)
 
 return function()
-	if not RunService:IsClient() then
+	if not RunService:IsClient() or not RunService:IsRunning() or not Players.LocalPlayer then
 		return
 	end
 	local world
