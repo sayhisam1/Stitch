@@ -1,4 +1,5 @@
-local Promise = require(script.Parent.Parent.Parent.Promise)
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Promise = require(ReplicatedStorage.Packages.Promise)
 local SystemGroup = require(script.Parent.SystemGroup)
 
 return function()

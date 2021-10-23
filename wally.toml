@@ -1,0 +1,12 @@
+[package]
+name = "sayhisam1/stitch"
+description = "An extendible ECS for Roblox"
+version = "0.9.0"
+license = "MIT"
+authors = ["sayhisam1 <sayhisam1@gmail.com>"]
+realm = "shared"
+registry = "https://github.com/upliftgames/wally-index"
+
+[dependencies]
+TestEZ = "roblox/testez@0.4.1"
+Promise = "evaera/promise@3.1.0"

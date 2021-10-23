@@ -1,8 +1,9 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
 
-local Promise = require(script.Parent.Parent.Parent.Parent.Parent.Promise)
+local Promise = require(ReplicatedStorage.Packages.Promise)
 
 local Stitch = require(script.Parent.Parent.Parent.Parent)
 

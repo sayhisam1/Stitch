@@ -7,11 +7,8 @@
             "Stitch": {
                 "$path": "src"
             },
-            "TestEZ": {
-                "$path": "modules/testez"
-            },
-            "Promise": {
-                "$path": "modules/roblox-lua-promise"
+            "Packages": {
+                "$path": "Packages"
             },
             "StitchTests": {
                 "$path": "test/shared"

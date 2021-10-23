@@ -1,5 +1,4 @@
 local ComponentRegistry = require(script.Parent.ComponentRegistry)
-local Promise = require(script.Parent.Parent.Parent.Promise)
 
 return function()
 	local registry

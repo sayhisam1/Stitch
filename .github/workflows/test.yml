@@ -22,14 +22,14 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: install foreman packages (rojo, run-in-roblox)
+      - name: install foreman packages (rojo, run-in-roblox, wally)
         run: foreman install
+
+      - name: install development dependencies
+        run: wally install
 
       - name: run rojo build
         run: rojo build develop.project.json --output tests.rbxlx
-
-      - name: listfiles
-        run: tree
 
       - name: run tests
         uses: nick-invision/retry@v2

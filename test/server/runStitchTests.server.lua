@@ -1,5 +1,6 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local TestEZ = require(ReplicatedStorage.Packages.TestEZ)
 
-require(ReplicatedStorage.TestEZ).TestBootstrap:run({
+TestEZ.TestBootstrap:run({
 	ReplicatedStorage.Stitch,
 })
