@@ -1,7 +1,7 @@
 <p align="center">
    <a href="https://sayhisam1.github.io/Stitch">
       <img 
-         src="/docs/assets/logo.png" 
+         src="https://github.com/sayhisam1/Stitch/blob/master/docs/assets/logo.png" 
          alt="https://sayhisam1.github.io/Stitch"
          width="100"
       />
