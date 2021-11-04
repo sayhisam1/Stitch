@@ -1,30 +1,57 @@
 <p align="center">
-  <strong><a href="https://sayhisam1.github.io/Stitch">Now with Documentation!</a></strong>
+   <a href="https://sayhisam1.github.io/Stitch">
+      <img 
+         src="/docs/assets/logo.png" 
+         alt="https://sayhisam1.github.io/Stitch"
+         width="100"
+      />
+   </a>
 </p>
 
-# Stitch [![CI](https://github.com/sayhisam1/Stitch/actions/workflows/test.yml/badge.svg)](https://github.com/sayhisam1/Stitch/actions/workflows/test.yml)
+<p align="center">
+   <a href="https://github.com/sayhisam1/Stitch/actions/workflows/test.yml">
+      <img src="https://github.com/sayhisam1/Stitch/actions/workflows/test.yml/badge.svg" alt="Build Status" />
+   </a>
+   <br></br>
+   <a href="https://sayhisam1.github.io/Stitch">
+    Read the docs
+   </a>
+</p>
 
-Stitch is an Entity Component System (https://en.wikipedia.org/wiki/Entity_component_system) built for Roblox.
+<div align="center">
 
+| :exclamation:  Stitch is still in pre-release, and should not be considered stable for production use! |
+| ------------------------------------------------------------------------------------------------------ |
 
-Stitch was heavily inspired by several projects, including [Unity's ECS DOTS](https://unity.com/dots) and [evaera's library Fabric](https://github.com/evaera/Fabric).
+</div>
 
-Stitch has several key features:
-- Stitch is made with simplicity in mind. Behavior should be clear and easy to understand. In addition, user-defined components and systems should require minimal boilerplate or understanding of Stitch
-- Stitch has real Systems, which means data flows "top-down". this makes it easy to use libraries like [Roact](https://github.com/Roblox/Roact) to render state, and also opens the door to optimizations and complex interactions.
-- Stitch has clear semantics - there are no black magic getters that have strange side-effects.
+<div align="center">
 
+| ❔ New to Stitch? Take a look at our [Getting started guide](docs/intro)! |
+| ------------------------------------------------------------------------------------------------------ |
 
-**Stitch is still highly experimental, and should not be considered stable for production use!**
+</div>
 
-Issues and Pull Requests are appreciated :)
+# **Stitch** 
 
-Planned features:
-- Efficient Entity querying
-- Signals API to listen to Stitch events
-- Built-in support for Replication of component data
-- A complete, full game example using Stitch
-- Support for Roblox Actors for multithreading
-- Helper methods to enable distributing tasks over many frames (prevents lagspikes)
-- Complete docs
-- A plugin frontend to make Stitch incredibly easy to work with
+Stitch is an [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) built for Roblox game development.
+
+At a high-level, Stitch lets you reduce the complexity of your code by separating the data and behavior of things in your game. [For examples, see the documentation.](https://sayhisam1.github.io/Stitch)
+
+## 😶 **Stitch is simple**
+- Minimal boilerplate code
+- Clear, concise API
+- Clear [documentation](https://sayhisam1.github.io/Stitch) (tutorials coming soon!)
+- Works directly with Roblox instances
+
+## ⚡ **Stitch is powerful**
+- Highly performant Systems
+- Full support for [Hot Reloading](https://en.wikipedia.org/wiki/Hot_swapping) - no more restarting your game to test small changes!
+- Built-in support for component Replication
+
+## ⚙️ **Planned features** (Contributors are welcome!)
+- Observers for event-driven behavior
+- Plugin to make Stitch even easier to use
+- Client-Server message passing built directly into Systems
+- Support for Roblox Actors
+

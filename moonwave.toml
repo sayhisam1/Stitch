@@ -1,0 +1,8 @@
+classOrder = [
+    "World",
+    "SystemDefinition",
+    "ComponentDefinition",
+]
+
+[docusaurus]
+favicon = "/logo.png"
