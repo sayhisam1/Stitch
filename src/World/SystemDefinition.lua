@@ -65,7 +65,7 @@ end
 --[=[
 	Called when the System is added to a World.
 
-	@param world World - The World the System was added to.
+	@param world World -- The World the System was added to.
 	@return nil
 ]=]
 function SystemDefinition:onCreate() end
@@ -73,7 +73,7 @@ function SystemDefinition:onCreate() end
 --[=[
 	Called when the System is updated.
 
-	@param world World - The World the System belongs to.
+	@param world World -- The World the System belongs to.
 	@return nil
 ]=]
 function SystemDefinition:onUpdate() end
@@ -81,7 +81,7 @@ function SystemDefinition:onUpdate() end
 --[=[
 	Called when the System is removed from the World.
 
-	@param world World - The World the System belonged to.
+	@param world World -- The World the System belonged to.
 	@return nil
 ]=]
 function SystemDefinition:onDestroy() end
