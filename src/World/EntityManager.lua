@@ -46,7 +46,7 @@ function EntityManager:addComponent(componentDefinition: {}, entity: Instance | 
 		error(("%s already has a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entityToComponent[entity][componentDefinition.name] = componentDefinition:createFromData(data)
+	self.entityToComponent[entity][componentDefinition.name] = table.freeze(componentDefinition:createFromData(data))
 
 	if not self.componentToEntity[componentDefinition.name] then
 		self.componentToEntity[componentDefinition.name] = {}
@@ -72,7 +72,7 @@ function EntityManager:setComponent(componentDefinition: {}, entity: Instance | 
 		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entityToComponent[entity][componentDefinition.name] = componentDefinition:setFromData(data)
+	self.entityToComponent[entity][componentDefinition.name] = table.freeze(componentDefinition:setFromData(data))
 
 	return self.entityToComponent[entity][componentDefinition.name]
 end
@@ -82,10 +82,10 @@ function EntityManager:updateComponent(componentDefinition: {}, entity: Instance
 		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entityToComponent[entity][componentDefinition.name] = componentDefinition:updateFromData(
+	self.entityToComponent[entity][componentDefinition.name] = table.freeze(componentDefinition:updateFromData(
 		self.entityToComponent[entity][componentDefinition.name],
 		data
-	)
+	))
 
 	return self.entityToComponent[entity][componentDefinition.name]
 end
