@@ -5,7 +5,7 @@ sidebar_position: 2
 # Installation
 
 ### Method 1 (recommended) - Using [Wally](https://wally.run/) and [Rojo](https://rojo.space/)
-1. Add `Stitch = "sayhisam1/stitch@0.9.1"` under the [dependencies] section in `wally.toml`
+1. Add `Stitch = "sayhisam1/stitch@0.9.2"` under the [dependencies] section in `wally.toml`
 2. Use `wally install` to automatically download Stitch
 3. Update your [Rojo configuration](https://rojo.space/docs/6.x/project-format/) to point to the appropriate path and sync the file in.
 
