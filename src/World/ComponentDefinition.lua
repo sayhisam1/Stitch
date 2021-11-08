@@ -54,23 +54,36 @@ ComponentDefinition.validators = {}
 --[=[
 	@prop tag boolean? | string?
 	@within ComponentDefinition
+	| ❕ This property only has an effect when `TagSystem` is added to the World. |
+	| --------------------------------------------------------------------------------- |
+
 	Used to apply CollectionService tags to the entity the component is attached to
 	(see: `TagSystem` for more details).
 
 	If tag is `true`, the tag will be the same as the name of the ComponentDefinition.
-
-	**Note: To use this property, add the `TagSystem` to the World.**
 ]=]
 ComponentDefinition.tag = nil
 
 --[=[
 	@prop replicate boolean?
 	@within ComponentDefinition
+	| ❕ This property only has an effect when `ReplicationSystem` is added to the World. |
+	| --------------------------------------------------------------------------------- |
 	Enables replication of the component (see: `ReplicationSystem` for more details).
-
-	**Note: To use this property, add the `ReplicationSystem` to the World.**
 ]=]
-ComponentDefinition.tag = nil
+ComponentDefinition.replicate = nil
+
+--[=[
+	@prop destructor (entity, data) -> nil?
+	@within ComponentDefinition
+	If set, this function will be called when the component is removed.
+	The function will be passed the entity and the data of the component.
+
+	| ❗ Component destructors should not yield - this will lead to undefined behavior. |
+	| --------------------------------------------------------------------------------- |
+]=]
+ComponentDefinition.destructor = nil
+
 
 function ComponentDefinition:createFromData(data: {}?): {}
 	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {})
