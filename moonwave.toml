@@ -4,5 +4,9 @@ classOrder = [
     "ComponentDefinition",
 ]
 
+[home]
+enabled = true
+includeReadme = false
+
 [docusaurus]
 favicon = "/logo.png"
