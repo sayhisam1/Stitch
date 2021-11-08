@@ -74,6 +74,7 @@ function SystemDefinition:onCreate() end
 	Called when the System is updated.
 
 	@param world World -- The World the System belongs to.
+	@param ... any -- The arguments passed to the updateEvent. By default, this is just the time since last update.
 	@return nil
 ]=]
 function SystemDefinition:onUpdate() end
