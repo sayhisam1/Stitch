@@ -64,6 +64,7 @@ end
 
 --[=[
 	Called when the System is added to a World.
+	You should override this function if you wanted to do some manual setup for the System.
 
 	@param world World -- The World the System was added to.
 	@return nil
@@ -72,6 +73,7 @@ function SystemDefinition:onCreate() end
 
 --[=[
 	Called when the System is updated.
+	You should override this function to control what happens on each update.
 
 	@param world World -- The World the System belongs to.
 	@param ... any -- The arguments passed to the updateEvent. By default, this is just the time since last update.
@@ -81,6 +83,7 @@ function SystemDefinition:onUpdate() end
 
 --[=[
 	Called when the System is removed from the World.
+	You should override this function if you wanted to do some manual cleanup for the System.
 
 	@param world World -- The World the System belonged to.
 	@return nil
