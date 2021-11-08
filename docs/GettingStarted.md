@@ -80,5 +80,5 @@ world:addSystem({
 ```
 If you run the game now, you should see that anything with a `velocity` component is moving.
 
-| ❗ To take full advantage of what Stitch can do, it is recommended to keep each System and Component in a different `ModuleScript`. Please take a look at a more [advanced example](https://github.com/sayhisam1/Stitch/tree/master/examples/tetris) to see how this would work in practice. | 
+| ❗ To take full advantage of everything Stitch can do, it is recommended you keep each System and Component in a different `ModuleScript`. When adding systems or registering components, the methods can directly take a ModuleScript, which is required for HotReloading functionality. Please take a look at a more [advanced example](https://github.com/sayhisam1/Stitch/tree/master/examples/tetris) to see how this would look in practice. | 
 | ----------------------------------------------------------------------------------------------------- |
