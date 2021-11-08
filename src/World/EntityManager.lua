@@ -1,5 +1,4 @@
 --!strict
-local CollectionService = game:GetService("CollectionService")
 local Util = require(script.Parent.Parent.Shared.Util)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 
