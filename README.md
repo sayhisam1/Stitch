@@ -27,7 +27,7 @@
 
 <div align="center">
 
-| ❔ New to Stitch? Take a look at our [Getting started guide](docs/intro)! |
+| ❔ New to Stitch? Take a look at the [Getting started guide](https://sayhisam1.github.io/Stitch/docs/GettingStarted)! |
 | ------------------------------------------------------------------------------------------------------ |
 
 </div>
