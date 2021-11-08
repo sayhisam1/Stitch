@@ -18,9 +18,3 @@ sidebar_position: 2
 ### Method 3 - Git Submodule
 1. Add the Stitch repository as a git submodule (ideally within a folder called `submodules`) (tutorial [here](https://gist.github.com/gitaarik/8735255))
 2. Update your [Rojo configuration](https://rojo.space/docs/6.x/project-format/) to point to the appropriate path and sync the file in.
-
-
-
-## Next
-
-Now, check out the [API reference](/api)!
