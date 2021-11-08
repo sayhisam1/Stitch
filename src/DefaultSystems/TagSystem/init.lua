@@ -22,15 +22,15 @@ TagSystem.stateComponent = {
 	end
 }
 
-function TagSystem:onUpdate(world)
+function TagSystem.onUpdate(world)
 	local function addComponentIfNotExists(componentDefinition, instance)
 		if not world:getComponent(componentDefinition, instance) then
 			world:addComponent(componentDefinition, instance)
 		end
 	end
 	local registeredComponents = world.componentRegistry:getAll()
-	addComponentIfNotExists(self.stateComponent, workspace)
-	local state = world:getComponent(self.stateComponent, workspace)
+	addComponentIfNotExists(TagSystem.stateComponent, workspace)
+	local state = world:getComponent(TagSystem.stateComponent, workspace)
 
 	if state.lastComponents == registeredComponents then
 		return
@@ -81,7 +81,7 @@ function TagSystem:onUpdate(world)
 		end
 	end
 
-	world:updateComponent(self.stateComponent, workspace, {
+	world:updateComponent(TagSystem.stateComponent, workspace, {
 		tagAddedListeners = newTagAddedListeners,
 		tagRemovedListeners = newTagRemovedListeners,
 		lastComponents = registeredComponents,

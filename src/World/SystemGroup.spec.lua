@@ -91,6 +91,24 @@ return function()
 			systemGroup:updateSystems()
 			expect(updated).to.equal(true)
 		end)
+		it("should pass fired with args to systems", function()
+			local received = nil
+			local system = {
+				name = "test",
+				priority = 10,
+				destroy = function() end,
+				update = function(self, ...)
+					received = {...}
+				end,
+			}
+			systemGroup:addSystem(system)
+			local promise = Promise.fromEvent(bindableEvent.Event)
+			bindableEvent:Fire("foo")
+			promise:await()
+			expect(#received).to.equal(2)
+			expect(received[1]).to.equal(nil) -- no world in this case
+			expect(received[2]).to.equal("foo")
+		end)
 		it("should update on event fire", function()
 			local updated = false
 			local system = {

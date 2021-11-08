@@ -14,13 +14,13 @@ ReplicationSystem.stateComponent = {
 	}
 }
 
-function ReplicationSystem:replicate(world, componentName: string)
+function ReplicationSystem.replicate(world, componentName: string)
 	world:createQuery():all(componentName):forEach(function(entity, data)
-		if not world:getComponent(self.stateComponent, entity) then
-			world:addComponent(self.stateComponent, entity)
+		if not world:getComponent(ReplicationSystem.stateComponent, entity) then
+			world:addComponent(ReplicationSystem.stateComponent, entity)
 		end
 
-		local state = world:getComponent(self.stateComponent, entity)
+		local state = world:getComponent(ReplicationSystem.stateComponent, entity)
 		if state.lastComponentData[componentName] == data then
 			return
 		end
@@ -36,43 +36,43 @@ function ReplicationSystem:replicate(world, componentName: string)
 
 		Serialization.write(data, folder)
 
-		world:updateComponent(self.stateComponent, entity,{
+		world:updateComponent(ReplicationSystem.stateComponent, entity,{
 			lastComponentData = Util.setKey(state.lastComponentData, componentName, data)
 		})
 	end)
 end
 
-function ReplicationSystem:removeReplicate(world, componentName: string)
+function ReplicationSystem.removeReplicate(world, componentName: string)
 	world:createQuery():all(componentName):forEach(function(entity, data)
-		if not world:getComponent(self.stateComponent, entity) then
+		if not world:getComponent(ReplicationSystem.stateComponent, entity) then
 			return
 		end
 
-		local state = world:getComponent(self.stateComponent, entity)
+		local state = world:getComponent(ReplicationSystem.stateComponent, entity)
 		if not state.lastComponentData[componentName] then
 			return
 		end
 	end)
 end
 
-function ReplicationSystem:onUpdate(world)
+function ReplicationSystem.onUpdate(world)
 	local function addComponentIfNotExists(componentDefinition, instance)
 		if not world:getComponent(componentDefinition, instance) then
 			world:addComponent(componentDefinition, instance)
 		end
 	end
 	local registeredComponents = world.componentRegistry:getAll()
-	addComponentIfNotExists(self.stateComponent, workspace)
-	local state = world:getComponent(self.stateComponent, workspace)
+	addComponentIfNotExists(ReplicationSystem.stateComponent, workspace)
+	local state = world:getComponent(ReplicationSystem.stateComponent, workspace)
 
 	if state.lastComponents ~= registeredComponents then
 		-- check for removed components
 		for name, _ in pairs(state.lastComponents) do
 			if not registeredComponents[name] then
-				self:removeReplicate(world, name)
+				ReplicationSystem:removeReplicate(world, name)
 			end
 		end
-		world:updateComponent(self.stateComponent, workspace, {
+		world:updateComponent(ReplicationSystem.stateComponent, workspace, {
 			lastComponents = registeredComponents,
 		})
 	end
@@ -82,10 +82,10 @@ function ReplicationSystem:onUpdate(world)
 			continue
 		end
 
-		self:replicate(world, componentDefinition.name)
+		ReplicationSystem.replicate(world, componentDefinition.name)
 	end
 
-	world:createQuery():all(self.stateComponent):forEach(function(entity, data)
+	world:createQuery():all(ReplicationSystem.stateComponent):forEach(function(entity, data)
 		if entity == workspace then
 			return
 		end
@@ -107,7 +107,7 @@ function ReplicationSystem:onUpdate(world)
 			return
 		end
 
-		world:updateComponent(self.stateComponent, entity, {
+		world:updateComponent(ReplicationSystem.stateComponent, entity, {
 			lastComponentData = newComponentDatas
 		})
 	end)

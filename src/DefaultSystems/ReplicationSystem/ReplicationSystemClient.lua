@@ -17,13 +17,13 @@ ReplicationSystem.stateComponent = {
 	end,
 }
 
-function ReplicationSystem:createWatchers(world, componentName: string)
+function ReplicationSystem.createWatchers(world, componentName: string)
 	world:createQuery():all(componentName):forEach(function(entity, data)
-		if not world:getComponent(self.stateComponent, entity) then
-			world:addComponent(self.stateComponent, entity)
+		if not world:getComponent(ReplicationSystem.stateComponent, entity) then
+			world:addComponent(ReplicationSystem.stateComponent, entity)
 		end
 
-		local state = world:getComponent(self.stateComponent, entity)
+		local state = world:getComponent(ReplicationSystem.stateComponent, entity)
 		if state.watchers[componentName] then
 			if state.watchers[componentName]:isDirty() then
 				world:updateComponent(componentName, entity, state.watchers[componentName]:read())
@@ -32,16 +32,16 @@ function ReplicationSystem:createWatchers(world, componentName: string)
 		end
 
 		local watcher = ReplicationWatcher.new(entity, ("%s:%s:replicated"):format(world.namespace, componentName))
-		world:updateComponent(self.stateComponent, entity, {
+		world:updateComponent(ReplicationSystem.stateComponent, entity, {
 			watchers = Util.setKey(state.watchers, componentName, watcher),
 		})
 		world:updateComponent(componentName, entity, watcher:read())
 	end)
 end
 
-function ReplicationSystem:removeWatchers(world, componentName: string)
+function ReplicationSystem.removeWatchers(world, componentName: string)
 	world:createQuery():all(componentName):forEach(function(entity, data)
-		local state = world:getComponent(self.stateComponent, entity)
+		local state = world:getComponent(ReplicationSystem.stateComponent, entity)
 		if not state then
 			return
 		end
@@ -51,30 +51,30 @@ function ReplicationSystem:removeWatchers(world, componentName: string)
 		end
 
 		state.watchers[componentName.name]:destroy()
-		world:updateComponent(self.stateComponent, entity, {
+		world:updateComponent(ReplicationSystem.stateComponent, entity, {
 			watchers = Util.removeKey(state.watchers, componentName),
 		})
 	end)
 end
 
-function ReplicationSystem:onUpdate(world)
+function ReplicationSystem.onUpdate(world)
 	local function addComponentIfNotExists(componentDefinition, instance)
 		if not world:getComponent(componentDefinition, instance) then
 			world:addComponent(componentDefinition, instance)
 		end
 	end
 	local registeredComponents = world.componentRegistry:getAll()
-	addComponentIfNotExists(self.stateComponent, workspace)
-	local state = world:getComponent(self.stateComponent, workspace)
+	addComponentIfNotExists(ReplicationSystem.stateComponent, workspace)
+	local state = world:getComponent(ReplicationSystem.stateComponent, workspace)
 
 	if state.lastComponents ~= registeredComponents then
 		-- check for removed components
 		for name, _ in pairs(state.lastComponents) do
 			if not registeredComponents[name] then
-				self:removeReplicate(world, name)
+				ReplicationSystem:removeReplicate(world, name)
 			end
 		end
-		world:updateComponent(self.stateComponent, workspace, {
+		world:updateComponent(ReplicationSystem.stateComponent, workspace, {
 			lastComponents = registeredComponents,
 		})
 	end
@@ -84,10 +84,10 @@ function ReplicationSystem:onUpdate(world)
 			continue
 		end
 
-		self:createWatchers(world, componentDefinition.name)
+		ReplicationSystem.createWatchers(world, componentDefinition.name)
 	end
 
-	world:createQuery():all(self.stateComponent):forEach(function(entity, data)
+	world:createQuery():all(ReplicationSystem.stateComponent):forEach(function(entity, data)
 		if entity == workspace then
 			return
 		end
@@ -105,7 +105,7 @@ function ReplicationSystem:onUpdate(world)
 			return
 		end
 
-		world:updateComponent(self.stateComponent, entity, {
+		world:updateComponent(ReplicationSystem.stateComponent, entity, {
 			watchers = newWatchers
 		})
 	end)

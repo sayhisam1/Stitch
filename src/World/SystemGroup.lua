@@ -16,8 +16,8 @@ function SystemGroup.new(event, world)
 		world = world
 	}, SystemGroup)
 
-	self._listener = event:connect(function()
-		self:updateSystems()
+	self._listener = event:connect(function(...)
+		self:updateSystems(...)
 	end)
 
 	return self
@@ -31,10 +31,10 @@ function SystemGroup:destroy()
 	end
 end
 
-function SystemGroup:updateSystems()
+function SystemGroup:updateSystems(...)
 	for _, system in ipairs(self.systems) do
 		debug.profilebegin(("%s update"):format(system.name))
-		xpcall(system.update, inlinedError, system, self.world)
+		xpcall(system.update, inlinedError, system, self.world, ...)
 		debug.profileend()
 	end
 end

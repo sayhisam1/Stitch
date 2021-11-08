@@ -46,15 +46,15 @@ function SystemDefinition:create(world)
 	if self.stateComponent then
 		world:registerComponent(Util.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
 	end
-	xpcall(self.onCreate, inlinedError, self, world)
+	xpcall(self.onCreate, inlinedError, world)
 end
 
-function SystemDefinition:update(world)
-	xpcall(self.onUpdate, inlinedError, self, world)
+function SystemDefinition:update(world, ...)
+	xpcall(self.onUpdate, inlinedError, world, ...)
 end
 
 function SystemDefinition:destroy(world)
-	xpcall(self.onDestroy, inlinedError, self, world)
+	xpcall(self.onDestroy, inlinedError, world)
 	if self.stateComponent then
 		world:unregisterComponent(Util.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
 	end
