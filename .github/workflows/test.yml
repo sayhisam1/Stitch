@@ -23,10 +23,18 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: install foreman packages (rojo, run-in-roblox, wally)
-        run: foreman install
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 5
+          command: foreman install
 
       - name: install development dependencies
-        run: wally install
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 5
+          command: wally install
 
       - name: run rojo build
         run: rojo build develop.project.json --output tests.rbxlx
