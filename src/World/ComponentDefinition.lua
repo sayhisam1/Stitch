@@ -43,13 +43,12 @@ ComponentDefinition.name = nil
 ComponentDefinition.defaults = {}
 
 --[=[
-	@prop validators {string : (any) -> boolean}?
+	@prop validator ((data: {}) -> boolean)?
 	@within ComponentDefinition
-	A table of functions that will be called to validate the data when adding or changing a component.
-	
-	The value of each key is a function that accepts data[key] and returns true if the value is valid.
+	A function that will be called to validate the data when adding or changing a component.
+	Should return true if the data is valid, false otherwise.
 ]=]
-ComponentDefinition.validators = {}
+ComponentDefinition.validator = nil
 
 --[=[
 	@prop tag boolean? | string?
@@ -85,7 +84,6 @@ ComponentDefinition.replicate = nil
 ]=]
 ComponentDefinition.destructor = nil
 
-
 function ComponentDefinition:createFromData(data: {}?): {}
 	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {})
 
@@ -111,16 +109,13 @@ function ComponentDefinition:updateFromData(old: {}, new: {}): {}
 end
 
 function ComponentDefinition:validateOrErrorData(data: {})
-	for key, validator in pairs(self.validators) do
-		if not validator(data[key]) then
-			error("Failed to create component %s - invalid value %s (of type %s) for key %s!"):format(
-				self.name,
-				tostring(data[key]),
-				typeof(data[key]),
-				key
-			)
-		end
+	if not self.validator then
+		return true
 	end
+	if not self.validator(data) then
+		error(("Failed to validate data for component of type %s."):format(self.name), 2)
+	end
+	return true
 end
 
 return ComponentDefinition
