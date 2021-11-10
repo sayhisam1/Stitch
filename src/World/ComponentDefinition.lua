@@ -77,6 +77,7 @@ ComponentDefinition.replicate = nil
 	@prop destructor (entity, data) -> nil?
 	@within ComponentDefinition
 	If set, this function will be called when the component is removed.
+	You should use this to clean up any resources that were allocated when adding the component (e.g. any event connections).
 	The function will be passed the entity and the data of the component.
 
 	| ❗ Component destructors should not yield - this will lead to undefined behavior. |
