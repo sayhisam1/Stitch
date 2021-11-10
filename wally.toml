@@ -8,5 +8,6 @@ realm = "shared"
 registry = "https://github.com/upliftgames/wally-index"
 
 [dependencies]
+# Only needed for development/testing
 TestEZ = "roblox/testez@0.4.1"
 Promise = "evaera/promise@3.1.0"
