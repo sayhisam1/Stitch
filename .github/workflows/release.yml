@@ -1,0 +1,52 @@
+name: build-stitch-release
+
+on: 
+  release:
+    types: ["prereleased", "released"]
+
+jobs:
+  build-stitch:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: download roblox install script
+        uses: OrbitalOwen/roblox-win-installer-action@1.1
+        with:
+          cookie: ${{ secrets.ROBLOSECURITY }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: install foreman
+        uses: rojo-rbx/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: install foreman packages (rojo, run-in-roblox, wally)
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 5
+          command: foreman install
+
+      - name: install development dependencies
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 5
+          command: wally install
+
+      - name: run rojo build
+        run: rojo build default.project.json --output Stitch.rbxm
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: Stitch.rbxm
+          asset_name: Stitch.rbxm
+          tag: ${{ github.ref }}
+          overwrite: true
+          body: "Pre-Built Stitch"
