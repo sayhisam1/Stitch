@@ -56,6 +56,27 @@ return function()
 			expect(data.foo).to.equal("bar")
 			expect(data.baz).to.equal("qux")
 		end)
+		it("should properly validate data", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+				validator = function(data)
+					return data.foo == "bar"
+				end
+			}, ComponentDefinition)
+
+			expect(function()
+				entityManager:addComponent(component, testInstance, {
+					foo = "baz",
+				})
+			end).to.throw()
+			entityManager:addComponent(component, testInstance)
+			entityManager:addComponent(component, {}, {
+				foo = "bar",
+			})
+		end)
 		it("should add a component to an unregistered table", function()
 			local component = setmetatable({
 				name = "testComponent",
@@ -247,6 +268,27 @@ return function()
 			})
 			expect(entityManager:getComponent(component, testInstance).foo).to.equal("baz")
 		end)
+		it("should properly validate data", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+				validator = function(data)
+					return data.foo == "bar"
+				end
+			}, ComponentDefinition)
+			entityManager:addComponent(component, testInstance)
+
+			expect(function()
+				entityManager:setComponent(component, testInstance, {
+					foo = "baz",
+				})
+			end).to.throw()
+			entityManager:setComponent(component, testInstance, {
+				foo = "bar",
+			})
+		end)
 		it("should return error for non-existing components", function()
 			local component = setmetatable({
 				name = "testComponent",
@@ -278,6 +320,28 @@ return function()
 			})
 			expect(entityManager:getComponent(component, testInstance).foo).to.equal("bar")
 			expect(entityManager:getComponent(component, testInstance).baz).to.equal("qux")
+		end)
+		it("should properly validate data", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+				validator = function(data)
+					return data.foo == "bar"
+				end
+			}, ComponentDefinition)
+			entityManager:addComponent(component, testInstance)
+
+			expect(function()
+				entityManager:updateComponent(component, testInstance, {
+					foo = "baz",
+				})
+			end).to.throw()
+
+			entityManager:updateComponent(component, testInstance, {
+				foo = "bar",
+			})
 		end)
 		it("should return error for non-existing components", function()
 			local component = setmetatable({

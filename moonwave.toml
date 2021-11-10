@@ -4,6 +4,9 @@ classOrder = [
     "ComponentDefinition",
 ]
 
+title = "Stitch"
+gitRepoUrl = "https://github.com/sayhisam1/Stitch"
+
 [home]
 enabled = true
 includeReadme = false
