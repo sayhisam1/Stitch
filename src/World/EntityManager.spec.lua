@@ -1,5 +1,7 @@
 local ComponentDefinition = require(script.Parent.ComponentDefinition)
 local EntityManager = require(script.Parent.EntityManager)
+local Symbol = require(script.Parent.Parent.Shared.Symbol)
+local NONE = Symbol.named("NONE")
 
 return function()
 	local entityManager
@@ -54,6 +56,21 @@ return function()
 				baz = "qux",
 			})
 			expect(data.foo).to.equal("bar")
+			expect(data.baz).to.equal("qux")
+		end)
+		it("should remove NONE keys", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local data = entityManager:addComponent(component, testInstance, {
+				baz = "qux",
+				foo = NONE
+			})
+			expect(data.foo).to.never.be.ok()
 			expect(data.baz).to.equal("qux")
 		end)
 		it("should properly validate data", function()
@@ -319,6 +336,22 @@ return function()
 				baz = "qux",
 			})
 			expect(entityManager:getComponent(component, testInstance).foo).to.equal("bar")
+			expect(entityManager:getComponent(component, testInstance).baz).to.equal("qux")
+		end)
+		it("should update NONE keys", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local data = entityManager:addComponent(component, testInstance)
+			entityManager:updateComponent(component, testInstance, {
+				baz = "qux",
+				foo = NONE
+			})
+			expect(entityManager:getComponent(component, testInstance).foo).to.never.be.ok()
 			expect(entityManager:getComponent(component, testInstance).baz).to.equal("qux")
 		end)
 		it("should properly validate data", function()

@@ -50,9 +50,12 @@ function Util.getValues(dict, sizeEstimate: number?)
 	return values
 end
 
-function Util.mergeTable(a: {}, b: {})
+function Util.mergeTable(a: {}, b: {}, noneValue: any?)
 	local new_table = Util.shallowCopy(a)
 	for k, v in pairs(b) do
+		if v == noneValue then
+			v = nil
+		end
 		new_table[k] = v
 	end
 	return new_table

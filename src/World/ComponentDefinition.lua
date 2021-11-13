@@ -1,5 +1,8 @@
 --!strict
 local Util = require(script.Parent.Parent.Shared.Util)
+local Symbol = require(script.Parent.Parent.Shared.Symbol)
+local NONE = Symbol.named("NONE")
+
 export type ComponentDefinition = {
 	name: string,
 	defaults: {}?,
@@ -85,7 +88,7 @@ ComponentDefinition.replicate = nil
 ComponentDefinition.destructor = nil
 
 function ComponentDefinition:createFromData(data: {}?): {}
-	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {})
+	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {}, NONE)
 
 	self:validateOrErrorData(data)
 
@@ -101,7 +104,7 @@ function ComponentDefinition:setFromData(data: {}): {}
 end
 
 function ComponentDefinition:updateFromData(old: {}, new: {}): {}
-	local data = Util.mergeTable(old, new)
+	local data = Util.mergeTable(old, new, NONE)
 
 	self:validateOrErrorData(data)
 

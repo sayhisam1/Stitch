@@ -3,8 +3,7 @@ local Symbol = {
 }
 
 function Symbol.named(name)
-	Symbol._symbols[name] = Symbol._symbols[name] or {}
-
+	Symbol._symbols[name] = Symbol._symbols[name] or newproxy()
 	return Symbol._symbols[name]
 end
 
