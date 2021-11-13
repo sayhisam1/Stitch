@@ -94,4 +94,20 @@ return function()
 			expect(table.find(gotEntities, testInstance4)).to.be.ok()
 		end)
 	end)
+	describe("EntityQuery:forEach", function()
+		it("should pass all components to callback", function()
+			world:addComponent(testComponent, testInstance, {
+				foo = "bar"
+			})
+			world:addComponent(testComponent2, testInstance, {
+				baz="qux"
+			})
+
+			local valid = nil
+			EntityQuery.new(world):all(testComponent, testComponent2):forEach(function(entity, c1, c2)
+				valid = (entity==testInstance) and (c1.foo == "bar") and (c2.baz == "qux")
+			end)
+			expect(valid).to.be.ok()
+		end)
+	end)
 end

@@ -54,7 +54,6 @@ function EntityQuery:forEach(callback: ({},...{}) -> nil)
 	local entities = self.world:getEntitiesWith(self.withComponents[1])
 	for _, entity in ipairs(entities) do
 		local obtainedComponents = table.create(#self.withComponents)
-		table.insert(obtainedComponents, self.world:getComponent(self.withComponents[1], entity))
 
 		local valid = true
 		for _, withComponent in ipairs(self.withComponents) do

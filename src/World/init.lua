@@ -4,6 +4,7 @@ local ComponentRegistry = require(script.ComponentRegistry)
 local EntityManager = require(script.EntityManager)
 local SystemManager = require(script.SystemManager)
 local EntityQuery = require(script.EntityQuery)
+local Symbol = require(script.Parent.Shared.Symbol)
 
 --[=[
 	@class World
@@ -14,6 +15,19 @@ local EntityQuery = require(script.EntityQuery)
 ]=]
 local World = {}
 World.__index = World
+
+--[=[
+	@prop NONE UserData
+	@within World
+	Used to set keys to `nil` on `world:addComponent` or `world:updateComponent` calls.
+	```lua
+	world:updateComponent("someComponent", entity, {
+		foo = World.NONE
+	})
+	world:getComponent("someComponent", entity).foo -- is nil
+	```
+]=]
+World.NONE = Symbol.named("NONE")
 
 --[=[
 	Creates a new World.
@@ -27,7 +41,7 @@ function World.new(namespace: string)
 	local self = setmetatable({
 		namespace = namespace,
 		componentRegistry = ComponentRegistry.new(),
-		entityManager = EntityManager.new(namespace),
+		entityManager = EntityManager.new(),
 		systemGroups = {},
 	}, World)
 
