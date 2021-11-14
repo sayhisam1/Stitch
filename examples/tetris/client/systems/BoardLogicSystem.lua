@@ -1,37 +1,89 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local TetrisLib = require(ReplicatedStorage.tetris.shared.lib.TetrisLib)
+local Tetris = require(ReplicatedStorage.tetris.shared.lib.Tetris)
+local Tetrimino = require(ReplicatedStorage.tetris.shared.lib.Tetrimino)
 
 local TetrisSystem = {}
 TetrisSystem.priority = 1
+TetrisSystem.systemStateComponent = {
+	name = "RunningTetrisState",
+}
 
-function TetrisSystem:onUpdate(world)
-	world:createQuery():all("board"):forEach(function(entity, boardData)
-		if not boardData.isRunning then
+local DEFAULT_HEIGHT = 22
+local DEFAULT_WIDTH = 10
+
+function TetrisSystem.onUpdate(world)
+	world:createQuery():all("tetris"):forEach(function(entity, tetris)
+		if not tetris.isRunning then
 			return
 		end
-		local inputAppliedLayer = boardData.layer2
-		if boardData.stepCounter % 4 == 0 then
-			local inputDirection = world:getComponent("boardInput", entity).direction
-			inputAppliedLayer = TetrisLib.step(boardData.layer2, Vector2.new(inputDirection, 0))
-			if not inputAppliedLayer or not TetrisLib.composeLayers(boardData.layer1, inputAppliedLayer) then
-				inputAppliedLayer = boardData.layer2
-			end
-			world:removeComponent("boardInput", entity)
+
+		local board = tetris.board
+		if not board then
+			board = Tetris.createBoard(DEFAULT_WIDTH, DEFAULT_HEIGHT)
 		end
 
-		if boardData.stepCounter == 0 then
-			inputAppliedLayer = TetrisLib.step(boardData.layer2, Vector2.new(0, -1))
-			if not inputAppliedLayer or not TetrisLib.composeLayers(boardData.layer1, inputAppliedLayer) then
-				-- merge down layer 2 into 1
-				world:updateComponent("board", entity, {
-					layer1 = TetrisLib.composeLayers(boardData.layer1, boardData.layer2),
+		local tetrimino = tetris.tetrimino
+		if not tetrimino then
+			print("CREATE NEW TETRIMINO!")
+			tetrimino = Tetrimino.createRandom()
+			tetrimino.offset = Vector2.new(math.floor(board.width / 2), 0)
+			if not Tetris.isPlaceable(board, tetrimino) then
+				print("GAME OVER!")
+				world:removeComponent("tetris", entity)
+				world:addComponent("tetris", entity, {
+					isRunning = false,
 				})
-				inputAppliedLayer = TetrisLib.createRandomTetriminoLayer(#boardData.layer1, #boardData.layer1[1])
+				return
 			end
 		end
-		world:updateComponent("board", entity, {
-			stepCounter = (boardData.stepCounter + 1) % 10,
-			layer2= inputAppliedLayer
+
+		local stepCount = tetris.stepCount or 0
+
+		-- move piece
+		local boardInput = world:getComponent("boardInput", entity)
+		if stepCount % 3 == 0 and boardInput then
+			if boardInput.direction ~= 0 then
+				local nextTetrimino = Tetrimino.move(tetrimino, Vector2.new(boardInput.direction, 0))
+				if Tetris.isPlaceable(board, nextTetrimino) then
+					tetrimino = nextTetrimino
+				end
+			end
+		end
+
+		-- rotate piece
+		if stepCount % 4 == 0 and boardInput then
+			if boardInput.rotation ~= 0 then
+				local nextTetrimino = Tetrimino.rotate(tetrimino, boardInput.rotation)
+				if Tetris.isPlaceable(board, nextTetrimino) then
+					tetrimino = nextTetrimino
+				end
+			end
+		end
+
+		-- advance piece down
+		if stepCount % 30 == 0 or (stepCount % 2 == 0 and boardInput and boardInput.shouldAdvance) then
+			local nextTetrimino = Tetrimino.move(tetrimino, Vector2.new(0, 1))
+			if Tetris.isPlaceable(board, nextTetrimino) then
+				tetrimino = nextTetrimino
+			else
+				board = Tetris.placeTetrimino(board, tetrimino)
+				tetrimino = world.NONE
+			end
+		end
+
+		-- only clear rows if board has mutated
+		if board ~= tetris.board then
+			local nRemoved
+			board, nRemoved = Tetris.clearRows(board)
+			if nRemoved > 0 then
+				print("Cleared", nRemoved, "rows!")
+			end
+		end
+
+		world:updateComponent("tetris", entity, {
+			board = board,
+			tetrimino = tetrimino,
+			stepCount = (stepCount + 1) % 60,
 		})
 	end)
 end

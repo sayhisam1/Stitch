@@ -31,6 +31,7 @@ World.NONE = Symbol.named("NONE")
 
 --[=[
 	Creates a new World.
+	@tag constructor
 
 	@param namespace string? -- The namespace to use for this world.
 	@return World
@@ -53,6 +54,7 @@ end
 --[=[
 	Destroys a World. 
 	Components are detached from entities and Systems are stopped.
+	@tag destructor
 
 	@return nil
 ]=]
