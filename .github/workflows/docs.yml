@@ -25,12 +25,11 @@ jobs:
       - name: Build docs
         run: |
           npx moonwave build
-
-      - name: Force push to gh-pages
-        run: |
-          rm -rf .git
-          cd build
-          git init .
-          git add -f *
-          git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "Docs update"
-          git push --force https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/sayhisam1/Stitch HEAD:gh-pages
+      
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@3.7.1
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build
+          CLEAN: true
