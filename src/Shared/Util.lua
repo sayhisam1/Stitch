@@ -22,22 +22,22 @@ function Util.deepCopy(dict)
 end
 
 function Util.removeKey(dict, key)
-	local newDict = table.move(dict, 1, #dict, 1, {})
+	local copied = table.move(dict, 1, #dict, 1, {})
 	for k, v in pairs(dict) do
 		if k ~= key then
-			newDict[k] = v
+			copied[k] = v
 		end
 	end
-	return newDict
+	return copied
 end
 
 function Util.setKey(dict, key, value)
-	local newDict = table.move(dict, 1, #dict, 1, {})
+	local copied = table.move(dict, 1, #dict, 1, {})
 	for k, v in pairs(dict) do
-		newDict[k] = v
+		copied[k] = v
 	end
-	newDict[key] = value
-	return newDict
+	copied[key] = value
+	return copied
 end
 
 function Util.getValues(dict, sizeEstimate: number?)
@@ -51,14 +51,14 @@ function Util.getValues(dict, sizeEstimate: number?)
 end
 
 function Util.mergeTable(a: {}, b: {}, noneValue: any?)
-	local new_table = Util.shallowCopy(a)
+	local copied = Util.shallowCopy(a)
 	for k, v in pairs(b) do
 		if v == noneValue then
 			v = nil
 		end
-		new_table[k] = v
+		copied[k] = v
 	end
-	return new_table
+	return copied
 end
 
 return Util
