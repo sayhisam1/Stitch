@@ -33,4 +33,4 @@ jobs:
           git init .
           git add -f *
           git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "Docs update"
-          git push --force https://x-access-token:${{GITHUB_TOKEN}}@github.com/${{GITHUB_REPOSITORY}} gh-pages
+          git push --force https://x-access-token:${{secrets.GITHUB_TOKEN}}@github.com/${{GITHUB_REPOSITORY}} gh-pages
