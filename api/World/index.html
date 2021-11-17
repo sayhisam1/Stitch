@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="generator" content="Docusaurus v2.0.0-beta.6">
+<title data-react-helmet="true">World | Stitch</title><meta data-react-helmet="true" property="og:title" content="World | Stitch"><meta data-react-helmet="true" name="twitter:card" content="summary_large_image"><meta data-react-helmet="true" name="description" content="The World class is a collection of entities, components, and systems.
+It is the central class that ties all other parts of an ECS together.
+A game could have many worlds, but normally there is only one world per game."><meta data-react-helmet="true" property="og:description" content="The World class is a collection of entities, components, and systems.
+It is the central class that ties all other parts of an ECS together.
+A game could have many worlds, but normally there is only one world per game."><meta data-react-helmet="true" property="og:url" content="https://sayhisam1.github.io/Stitch/api/World"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="shortcut icon" href="/Stitch/logo.png"><link data-react-helmet="true" rel="canonical" href="https://sayhisam1.github.io/Stitch/api/World"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/World" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/World" hreflang="x-default"><link rel="stylesheet" href="/Stitch/assets/css/styles.60329a60.css">
+<link rel="preload" href="/Stitch/assets/js/runtime~main.e7cc5ee2.js" as="script">
+<link rel="preload" href="/Stitch/assets/js/main.3a0efbc2.js" as="script">
+</head>
+<body>
+<script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
+<div><a href="#" class="skipToContent_1oUP">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Stitch/"><b class="navbar__title">Stitch</b></a><a class="navbar__item navbar__link" href="/Stitch/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Stitch/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/sayhisam1/Stitch" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link"><span>GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_3J9K"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></span></a><div class="react-toggle toggle_3Zt9 react-toggle--disabled"><div class="react-toggle-track" role="button" tabindex="-1"><div class="react-toggle-track-check"><span class="toggle_71bT">🌜</span></div><div class="react-toggle-track-x"><span class="toggle_71bT">🌞</span></div><div class="react-toggle-thumb"></div></div><input type="checkbox" class="react-toggle-screenreader-only" aria-label="Switch between dark and light mode"></div><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_2Kz0"><div class="docPage_1bdk"><div class="docSidebarContainer_1ykS"><div class="sidebar_15mo"><nav class="menu thin-scrollbar menu_Bmed menuWithAnnouncementBar_2WvA"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/Stitch/api/World">​World</a></li><li class="theme-doc-sidebar-item-link menu__list-item"><a class="menu__link" href="/Stitch/api/SystemDefinition">​System​Definition</a></li><li class="theme-doc-sidebar-item-link menu__list-item"><a class="menu__link" href="/Stitch/api/ComponentDefinition">​Component​Definition</a></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_1CGd"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_3E-R"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div><main class="docMainContainer_28N5"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_3WPG"><div class="docItemContainer_3XDu"><article><div class="member_qHIL markdown"><div class="tocCollapsible_1PrD theme-doc-toc-mobile tocMobile_3ryM"><button type="button" class="clean-btn tocCollapsibleButton_2O1e">On this page</button></div><header><h1 class="docTitle_1ddc" style="text-decoration:none"><span style="display:inline-block">World</span></h1><div class="luaClassTags_2Zrs"></div><div>
+<p>
+  The World class is a collection of entities, components, and systems.
+  It is the central class that ties all other parts of an ECS together.
+  A game could have many worlds, but normally there is only one world per game.
+</p>
+</div></header><h2><a aria-hidden="true" tabindex="-1" class="anchor anchor__h2 anchorWithStickyNavbar_31ik" id="properties"></a>Properties<a class="hash-link" href="#properties" title="Direct link to heading">#</a></h2><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="NONE"></a><code style="text-decoration:none">NONE</code><a class="hash-link" href="#NONE" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L30"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World.NONE: </code> <code class="blue_2Afy">UserData</code></div><div>
+<p>Used to set keys to <code>nil</code> on <code>world:addComponent</code> or <code>world:updateComponent</code> calls.</p>
+<pre class="language-lua"><code class="language-lua">world<span class="token punctuation">:</span><span class="token function">updateComponent</span><span class="token punctuation">(</span><span class="token string">"someComponent"</span><span class="token punctuation">,</span> entity<span class="token punctuation">,</span> <span class="token punctuation">{</span>
+	foo <span class="token operator">=</span> World<span class="token punctuation">.</span>NONE
+<span class="token punctuation">}</span><span class="token punctuation">)</span>
+world<span class="token punctuation">:</span><span class="token function">getComponent</span><span class="token punctuation">(</span><span class="token string">"someComponent"</span><span class="token punctuation">,</span> entity<span class="token punctuation">)</span><span class="token punctuation">.</span>foo <span class="token comment">-- is nil</span>
+</code></pre>
+</div><h2><a aria-hidden="true" tabindex="-1" class="anchor anchor__h2 anchorWithStickyNavbar_31ik" id="functions"></a>Functions<a class="hash-link" href="#functions" title="Direct link to heading">#</a></h2><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="new"></a><code style="text-decoration:none">new</code><a class="hash-link" href="#new" title="Direct link to heading">#</a></h3><span class="docTag_3qMS" style="border-color:#70cc00;color:#70cc00">constructor</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L39"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World.</code><code class="green_3LnD">new</code><code>(</code><div class="inset_2cJr"><div><code>namespace: </code><code class="blue_2Afy">string?</code><span class="inlineDescription_17uy">-- <span>
+<p>The namespace to use for this world.</p>
+</span></span></div></div><code>) → </code><code class="blue_2Afy">World</code></div><div>
+<p>Creates a new World.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="destroy"></a><code style="text-decoration:none">destroy</code><a class="hash-link" href="#destroy" title="Direct link to heading">#</a></h3><span class="docTag_3qMS" style="border-color:#218c74;color:#218c74">destructor</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L61"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">destroy</code><code>(</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+<p>
+  Destroys a World.
+  Components are detached from entities and Systems are stopped.
+</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="registerComponent"></a><code style="text-decoration:none">registerComponent</code><a class="hash-link" href="#registerComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L81"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">registerComponent</code><code>(</code><code>componentDefinition: </code><code class="blue_2Afy">ComponentDefinition</code><code class="op_1JtD"> | </code><code class="blue_2Afy">ModuleScript</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+<p>Registers a new ComponentDefintion to the World.</p>
+<p>When passed as a ModuleScript:</p>
+<ul>
+  <li>Hot reloading will be enabled</li>
+  <li>The ComponentDefinition will use the name of the ModuleScript if not provided.</li>
+</ul>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="unregisterComponent"></a><code style="text-decoration:none">unregisterComponent</code><a class="hash-link" href="#unregisterComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L91"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">unregisterComponent</code><code>(</code><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+<p>Unregisters a ComponentDefinition from the World.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="createQuery"></a><code style="text-decoration:none">createQuery</code><a class="hash-link" href="#createQuery" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L100"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">createQuery</code><code>(</code><code>) → </code><code class="blue_2Afy">EntityQuery</code></div><div>
+<p>Creates a new EntityQuery.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="addSystem"></a><code style="text-decoration:none">addSystem</code><a class="hash-link" href="#addSystem" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L114"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">addSystem</code><code>(</code><code>systemDefinition: </code><code class="blue_2Afy">SystemDefinition</code><code class="op_1JtD"> | </code><code class="blue_2Afy">ModuleScript</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+<p>Adds a new System to the World.</p>
+<p>When passed as a ModuleScript:</p>
+<ul>
+  <li>Hot reloading will be enabled</li>
+  <li>The SystemDefinition will use the name of the ModuleScript if not provided.</li>
+</ul>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="removeSystem"></a><code style="text-decoration:none">removeSystem</code><a class="hash-link" href="#removeSystem" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L124"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">removeSystem</code><code>(</code><code>systemResolvable: </code><code class="blue_2Afy">SystemDefinition</code><code class="op_1JtD"> | </code><code class="blue_2Afy">ModuleScript</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+<p>Removes a System from the World.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="addComponent"></a><code style="text-decoration:none">addComponent</code><a class="hash-link" href="#addComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L138"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">addComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the type of component to attach</p>
+</span></span></div><div><code>entity: </code><code class="blue_2Afy">Instance</code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the entity to attach the component to</p>
+</span></span></div><div><code>data: </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="blue_2Afy">?</code><span class="inlineDescription_17uy">-- <span>
+<p>the data to use for the component</p>
+</span></span></div></div><code>) → </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>The added component</p>
+</span></span></div><div>
+<p>
+  Attaches a component to an entity with given data.
+  If no data is provided, the <code>.default</code> property of the ComponentDefinition will be used.
+</p>
+</div><h3>Errors</h3><table class="errorTable_25fH"><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>&quot;Already exists&quot;</td><td>Thrown if the given component already exists on the entity.</td></tr></tbody></table><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="getComponent"></a><code style="text-decoration:none">getComponent</code><a class="hash-link" href="#getComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L151"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">getComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the type of component to attach</p>
+</span></span></div><div><code>entity: </code><code class="blue_2Afy">Instance</code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>the entity to get component from</p>
+</span></span></div></div><code>) → </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="blue_2Afy">?</code><span class="inlineDescription_17uy">-- <span>
+<p>The attached component</p>
+</span></span></div><div>
+<p>Gets the component of the given type attached to the given entity.</p>
+<p>Returns <code>nil</code> if no such component is attached.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="getEntitiesWith"></a><code style="text-decoration:none">getEntitiesWith</code><a class="hash-link" href="#getEntitiesWith" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L161"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">getEntitiesWith</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><span class="inlineDescription_17uy">-- <span>
+<p>the type of component to get entities with</p>
+</span></span></div></div><code>) → </code><code class="op_1JtD">{</code><code class="blue_2Afy">any</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>all entities in the world with the given component</p>
+</span></span></div><div>
+<p>Gets all entities with the given component type.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="setComponent"></a><code style="text-decoration:none">setComponent</code><a class="hash-link" href="#setComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L173"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">setComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the type of component</p>
+</span></span></div><div><code>entity: </code><code class="blue_2Afy">Instance</code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the entity with the component</p>
+</span></span></div><div><code>data: </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>the data to set</p>
+</span></span></div></div><code>) → </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>The newly set component</p>
+</span></span></div><div>
+<p>Sets the data of the given component on the given entity.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="updateComponent"></a><code style="text-decoration:none">updateComponent</code><a class="hash-link" href="#updateComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L185"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">updateComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the type of component</p>
+</span></span></div><div><code>entity: </code><code class="blue_2Afy">Instance</code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the entity with the component</p>
+</span></span></div><div><code>data: </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>the data to merge into the existing data</p>
+</span></span></div></div><code>) → </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>The newly updated component</p>
+</span></span></div><div>
+<p>Updates (i.e. merges the keys) the data of the given component on the given entity.</p>
+</div><div class="divider_3z1R"></div><h3><a aria-hidden="true" tabindex="-1" class="anchor anchor__h3 anchorWithStickyNavbar_31ik" id="removeComponent"></a><code style="text-decoration:none">removeComponent</code><a class="hash-link" href="#removeComponent" title="Direct link to heading">#</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L196"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World:</code><code class="green_3LnD">removeComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable: </code><code class="blue_2Afy">ComponentResolvable</code><code>,</code><span class="inlineDescription_17uy">-- <span>
+<p>the type of component</p>
+</span></span></div><div><code>entity: </code><code class="blue_2Afy">Instance</code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
+<p>the entity with the component</p>
+</span></span></div></div><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+<p>Removes the given component from the given entity.</p>
+</div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
+    &quot;functions&quot;: [
+        {
+            &quot;name&quot;: &quot;new&quot;,
+            &quot;desc&quot;: &quot;Creates a new World.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;namespace&quot;,
+                    &quot;desc&quot;: &quot;The namespace to use for this world.&quot;,
+                    &quot;lua_type&quot;: &quot;string?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;World&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;static&quot;,
+            &quot;tags&quot;: [
+                &quot;constructor&quot;
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 39,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;destroy&quot;,
+            &quot;desc&quot;: &quot;Destroys a World. \nComponents are detached from entities and Systems are stopped.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;tags&quot;: [
+                &quot;destructor&quot;
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 61,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;registerComponent&quot;,
+            &quot;desc&quot;: &quot;Registers a new ComponentDefintion to the World.\n\nWhen passed as a ModuleScript:\n- Hot reloading will be enabled\n- The ComponentDefinition will use the name of the ModuleScript if not provided.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentDefinition&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentDefinition | ModuleScript&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 81,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;unregisterComponent&quot;,
+            &quot;desc&quot;: &quot;Unregisters a ComponentDefinition from the World.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 91,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;createQuery&quot;,
+            &quot;desc&quot;: &quot;Creates a new EntityQuery.&quot;,
+            &quot;params&quot;: [],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;EntityQuery&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 100,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;addSystem&quot;,
+            &quot;desc&quot;: &quot;Adds a new System to the World.\n\nWhen passed as a ModuleScript:\n- Hot reloading will be enabled\n- The SystemDefinition will use the name of the ModuleScript if not provided.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;systemDefinition&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;SystemDefinition | ModuleScript&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 114,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;removeSystem&quot;,
+            &quot;desc&quot;: &quot;Removes a System from the World.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;systemResolvable&quot;,
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;SystemDefinition | ModuleScript&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 124,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;addComponent&quot;,
+            &quot;desc&quot;: &quot;Attaches a component to an entity with given data.\nIf no data is provided, the `.default` property of the ComponentDefinition will be used.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;the type of component to attach&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;the entity to attach the component to&quot;,
+                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;data&quot;,
+                    &quot;desc&quot;: &quot;the data to use for the component&quot;,
+                    &quot;lua_type&quot;: &quot;{}?&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The added component&quot;,
+                    &quot;lua_type&quot;: &quot;{}&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;errors&quot;: [
+                {
+                    &quot;lua_type&quot;: &quot;\&quot;Already exists\&quot;&quot;,
+                    &quot;desc&quot;: &quot;Thrown if the given component already exists on the entity.&quot;
+                }
+            ],
+            &quot;source&quot;: {
+                &quot;line&quot;: 138,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getComponent&quot;,
+            &quot;desc&quot;: &quot;Gets the component of the given type attached to the given entity.\n\nReturns `nil` if no such component is attached.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;the type of component to attach&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;the entity to get component from&quot;,
+                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The attached component&quot;,
+                    &quot;lua_type&quot;: &quot;{}?&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 151,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;getEntitiesWith&quot;,
+            &quot;desc&quot;: &quot;Gets all entities with the given component type.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;the type of component to get entities with&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;all entities in the world with the given component&quot;,
+                    &quot;lua_type&quot;: &quot;{any}&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 161,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;setComponent&quot;,
+            &quot;desc&quot;: &quot;Sets the data of the given component on the given entity.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;the type of component&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;the entity with the component&quot;,
+                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;data&quot;,
+                    &quot;desc&quot;: &quot;the data to set&quot;,
+                    &quot;lua_type&quot;: &quot;{}&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The newly set component&quot;,
+                    &quot;lua_type&quot;: &quot;{}&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 173,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;updateComponent&quot;,
+            &quot;desc&quot;: &quot;Updates (i.e. merges the keys) the data of the given component on the given entity.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;the type of component&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;the entity with the component&quot;,
+                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;data&quot;,
+                    &quot;desc&quot;: &quot;the data to merge into the existing data&quot;,
+                    &quot;lua_type&quot;: &quot;{}&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;The newly updated component&quot;,
+                    &quot;lua_type&quot;: &quot;{}&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 185,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        },
+        {
+            &quot;name&quot;: &quot;removeComponent&quot;,
+            &quot;desc&quot;: &quot;Removes the given component from the given entity.&quot;,
+            &quot;params&quot;: [
+                {
+                    &quot;name&quot;: &quot;componentResolvable&quot;,
+                    &quot;desc&quot;: &quot;the type of component&quot;,
+                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
+                },
+                {
+                    &quot;name&quot;: &quot;entity&quot;,
+                    &quot;desc&quot;: &quot;the entity with the component&quot;,
+                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
+                }
+            ],
+            &quot;returns&quot;: [
+                {
+                    &quot;desc&quot;: &quot;&quot;,
+                    &quot;lua_type&quot;: &quot;nil&quot;
+                }
+            ],
+            &quot;function_type&quot;: &quot;method&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 196,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        }
+    ],
+    &quot;properties&quot;: [
+        {
+            &quot;name&quot;: &quot;NONE&quot;,
+            &quot;desc&quot;: &quot;Used to set keys to `nil` on `world:addComponent` or `world:updateComponent` calls.\n```lua\nworld:updateComponent(\&quot;someComponent\&quot;, entity, {\n\tfoo = World.NONE\n})\nworld:getComponent(\&quot;someComponent\&quot;, entity).foo -- is nil\n```&quot;,
+            &quot;lua_type&quot;: &quot;UserData&quot;,
+            &quot;source&quot;: {
+                &quot;line&quot;: 30,
+                &quot;path&quot;: &quot;src/World/init.lua&quot;
+            }
+        }
+    ],
+    &quot;types&quot;: [],
+    &quot;name&quot;: &quot;World&quot;,
+    &quot;desc&quot;: &quot;The World class is a collection of entities, components, and systems.\nIt is the central class that ties all other parts of an ECS together.\nA game could have many worlds, but normally there is only one world per game.&quot;,
+    &quot;source&quot;: {
+        &quot;line&quot;: 16,
+        &quot;path&quot;: &quot;src/World/init.lua&quot;
+    }
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link">Types</a></li><li><a href="#properties" class="table-of-contents__link">Properties</a><ul><li><a href="#NONE" class="table-of-contents__link">NONE</a></li></ul></li><li><a href="#functions" class="table-of-contents__link">Functions</a><ul><li><a href="#addComponent" class="table-of-contents__link">:addComponent</a></li><li><a href="#addSystem" class="table-of-contents__link">:addSystem</a></li><li><a href="#createQuery" class="table-of-contents__link">:createQuery</a></li><li><a href="#destroy" class="table-of-contents__link">:destroy</a></li><li><a href="#getComponent" class="table-of-contents__link">:getComponent</a></li><li><a href="#getEntitiesWith" class="table-of-contents__link">:getEntitiesWith</a></li><li><a href="#registerComponent" class="table-of-contents__link">:registerComponent</a></li><li><a href="#removeComponent" class="table-of-contents__link">:removeComponent</a></li><li><a href="#removeSystem" class="table-of-contents__link">:removeSystem</a></li><li><a href="#setComponent" class="table-of-contents__link">:setComponent</a></li><li><a href="#unregisterComponent" class="table-of-contents__link">:unregisterComponent</a></li><li><a href="#updateComponent" class="table-of-contents__link">:updateComponent</a></li><li><a href="#new" class="table-of-contents__link">.new</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 sayhisam1. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+<script src="/Stitch/assets/js/runtime~main.e7cc5ee2.js"></script>
+<script src="/Stitch/assets/js/main.3a0efbc2.js"></script>
+</body>
+</html>
