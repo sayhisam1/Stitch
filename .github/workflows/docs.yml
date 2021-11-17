@@ -25,13 +25,12 @@ jobs:
       - name: Build docs
         run: |
           npx moonwave build
-          rm -rf !(build)
-          mv build/* .
 
       - name: Force push to gh-pages
-        uses: dfm/force-push-branch-action@v1
-        with:
-          path: "*"
-          target-branch: "gh-pages"
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          commit-message: "Automatic docs built with Github Actions"
+        run: |
+          rm -rf .git
+          cd build
+          git init .
+          git add -f *
+          git -c user.name='gh-actions' -c user.email='gh-actions' commit -m "Docs update"
+          git push --force https://x-access-token:${GITHUB_TOKEN}@github.com/${{GITHUB_REPOSITORY}} gh-pages
