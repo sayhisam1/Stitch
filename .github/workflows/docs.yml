@@ -25,7 +25,8 @@ jobs:
       - name: Build docs
         run: |
           npx moonwave build
-          cd build
+          rm -rf !(build)
+          mv build/* .
 
       - name: Force push to gh-pages
         uses: dfm/force-push-branch-action@v1
