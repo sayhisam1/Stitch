@@ -24,6 +24,8 @@ jobs:
 
       - name: Deploy with gh-pages
         run: |
+          git config --global user.email "docs-action@github.com"
+          git config --global user.name "Docs Action"
           npx moonwave build --publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
