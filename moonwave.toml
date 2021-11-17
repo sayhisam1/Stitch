@@ -6,6 +6,8 @@ classOrder = [
 
 title = "Stitch"
 gitRepoUrl = "https://github.com/sayhisam1/Stitch"
+gitSourceBranch = "master"
+changelog = true
 
 [home]
 enabled = true
@@ -13,3 +15,7 @@ includeReadme = false
 
 [docusaurus]
 favicon = "/logo.png"
+organizationName = "sayhisam1"
+projectName = "Stitch"
+url = "https://sayhisam1.github.io"
+baseUrl = "/Stitch/"
