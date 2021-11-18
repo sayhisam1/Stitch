@@ -1,6 +1,5 @@
 --!strict
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
-local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local SystemDefinition = require(script.Parent.SystemDefinition)
 
 local SystemGroup = {}
