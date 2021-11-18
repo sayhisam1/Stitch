@@ -1,5 +1,5 @@
 --!strict
-local Util = require(script.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 
 local EntityManager = {}
@@ -61,7 +61,7 @@ function EntityManager:getComponent(componentDefinition: string | {}, entity: In
 end
 
 function EntityManager:getEntitiesWith(componentDefinition: {})
-	local entities = Util.getValues(self.componentToEntity[componentDefinition.name] or {})
+	local entities = Immutable.getValues(self.componentToEntity[componentDefinition.name] or {})
 
 	return entities
 end

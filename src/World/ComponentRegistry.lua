@@ -1,6 +1,6 @@
 local ComponentDefinition = require(script.Parent.ComponentDefinition)
 local HotReloader = require(script.Parent.HotReloader)
-local Util = require(script.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 
 local ComponentRegistry = {}
 ComponentRegistry.__index = ComponentRegistry
@@ -38,7 +38,7 @@ function ComponentRegistry:register(componentSpec: {} | ModuleScript)
 		)
 	end
 
-	componentSpec = Util.shallowCopy(componentSpec)
+	componentSpec = Immutable.shallowCopy(componentSpec)
 	local componentName = componentSpec.name
 
 	if self.registeredComponents[componentName] then
@@ -46,7 +46,7 @@ function ComponentRegistry:register(componentSpec: {} | ModuleScript)
 	end
 
 	setmetatable(componentSpec, ComponentDefinition)
-	self.registeredComponents = Util.setKey(self.registeredComponents, componentName, componentSpec)
+	self.registeredComponents = Immutable.setKey(self.registeredComponents, componentName, componentSpec)
 
 	return componentSpec
 end
@@ -54,7 +54,7 @@ end
 function ComponentRegistry:unregister(componentResolvable)
 	local resolvedComponent = self:resolveOrError(componentResolvable)
 
-	self.registeredComponents = Util.removeKey(self.registeredComponents, resolvedComponent.name)
+	self.registeredComponents = Immutable.removeKey(self.registeredComponents, resolvedComponent.name)
 end
 
 function ComponentRegistry:resolve(componentResolvable)

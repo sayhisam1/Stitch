@@ -1,5 +1,5 @@
 --!strict
-local Util = require(script.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local Symbol = require(script.Parent.Parent.Shared.Symbol)
 local NONE = Symbol.named("NONE")
 
@@ -88,7 +88,7 @@ ComponentDefinition.replicate = nil
 ComponentDefinition.destructor = nil
 
 function ComponentDefinition:createFromData(data: {}?): {}
-	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {}, NONE)
+	data = Immutable.mergeTable(Immutable.deepCopy(self.defaults), data or {}, NONE)
 
 	self:validateOrErrorData(data)
 
@@ -96,7 +96,7 @@ function ComponentDefinition:createFromData(data: {}?): {}
 end
 
 function ComponentDefinition:setFromData(data: {}): {}
-	data = Util.shallowCopy(data)
+	data = Immutable.shallowCopy(data)
 
 	self:validateOrErrorData(data)
 
@@ -104,7 +104,7 @@ function ComponentDefinition:setFromData(data: {}): {}
 end
 
 function ComponentDefinition:updateFromData(old: {}, new: {}): {}
-	local data = Util.mergeTable(old, new, NONE)
+	local data = Immutable.mergeTable(old, new, NONE)
 
 	self:validateOrErrorData(data)
 
