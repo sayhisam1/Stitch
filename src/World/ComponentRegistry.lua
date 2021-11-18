@@ -31,14 +31,13 @@ function ComponentRegistry:register(componentSpec: {} | ModuleScript)
 		end)
 		return
 	end
-	if getmetatable(componentSpec) then
+	if getmetatable(componentSpec) and getmetatable(componentSpec) ~= ComponentDefinition then
 		error(
 			"Failed to register component %s: components should not have a metatable!",
 			tostring(componentSpec.name)
 		)
 	end
 
-	componentSpec = Immutable.shallowCopy(componentSpec)
 	local componentName = componentSpec.name
 
 	if self.registeredComponents[componentName] then

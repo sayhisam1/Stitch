@@ -44,7 +44,10 @@ SystemDefinition.updateEvent = RunService.Heartbeat
 
 function SystemDefinition:create(world)
 	if self.stateComponent then
-		world:registerComponent(Immutable.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
+		if not self.stateComponent.name then
+			self.stateComponent.name = self.name
+		end
+		world:registerComponent(self.stateComponent)
 	end
 	xpcall(self.onCreate, inlinedError, world)
 end
@@ -56,7 +59,10 @@ end
 function SystemDefinition:destroy(world)
 	xpcall(self.onDestroy, inlinedError, world)
 	if self.stateComponent then
-		world:unregisterComponent(Immutable.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
+		if not self.stateComponent.name then
+			self.stateComponent.name = self.name
+		end
+		world:unregisterComponent(self.stateComponent)
 	end
 end
 

@@ -1,64 +1,60 @@
 local Immutable = {}
 
-function Immutable.shallowCopy(dict)
-	debug.profilebegin("shallowCopy")
-	local copied = table.move(dict, 1, #dict, 1, {})
+local function shallowCopy(dict)
+	local copied = table.create(#dict)
 	for k, v in pairs(dict) do
 		copied[k] = v
 	end
-	debug.profileend()
+	return copied
+end
+
+function Immutable.shallowCopy(dict)
+	return table.freeze(shallowCopy(dict))
+end
+
+local function deepCopy(dict)
+	local copied = shallowCopy(dict)
+	for k, v in pairs(dict) do
+		if typeof(v) == "table" then
+			copied[k] = deepCopy(v)
+		end
+	end
 	return copied
 end
 
 function Immutable.deepCopy(dict)
-	local copied = table.move(dict, 1, #dict, 1, {})
-	for k, v in pairs(dict) do
-		if typeof(v) == "table" then
-			v = Immutable.deepCopy(v)
-		end
-		copied[k] = v
-	end
-	return copied
+	return table.freeze(deepCopy(dict))
 end
 
 function Immutable.removeKey(dict, key)
-	local copied = table.move(dict, 1, #dict, 1, {})
-	for k, v in pairs(dict) do
-		if k ~= key then
-			copied[k] = v
-		end
-	end
-	return copied
+	local copied = shallowCopy(dict)
+	copied[key] = nil
+	return table.freeze(copied)
 end
 
 function Immutable.setKey(dict, key, value)
-	local copied = table.move(dict, 1, #dict, 1, {})
-	for k, v in pairs(dict) do
-		copied[k] = v
-	end
+	local copied = shallowCopy(dict)
 	copied[key] = value
-	return copied
-end
-
-function Immutable.getValues(dict, sizeEstimate: number?)
-	debug.profilebegin("getValues")
-	local values = table.create(sizeEstimate or 8)
-	for k, v in pairs(dict) do
-		table.insert(values, v)
-	end
-	debug.profileend()
-	return values
+	return table.freeze(copied)
 end
 
 function Immutable.mergeTable(a: {}, b: {}, noneValue: any?)
-	local copied = Immutable.shallowCopy(a)
+	local copied = shallowCopy(a)
 	for k, v in pairs(b) do
 		if v == noneValue then
 			v = nil
 		end
 		copied[k] = v
 	end
-	return copied
+	return table.freeze(copied)
+end
+
+function Immutable.count(dict)
+	local count = 0
+	for _ in pairs(dict) do
+		count += 1
+	end
+	return count
 end
 
 return Immutable

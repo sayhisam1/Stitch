@@ -1,4 +1,5 @@
 local World = require(script.Parent)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 
 return function()
 	local bindableEvent
@@ -144,9 +145,9 @@ return function()
 			local data = world:addComponent("testComponent", testInstance)
 			local testEntity = {}
 			local data = world:addComponent("testComponent", testEntity)
-			expect(table.find(world:getEntitiesWith("testComponent"), testInstance)).to.be.ok()
-			expect(table.find(world:getEntitiesWith("testComponent"), testEntity)).to.be.ok()
-			expect(#world:getEntitiesWith("testComponent")).to.equal(2)
+			expect(world:getEntitiesWith("testComponent")[testInstance]).to.be.ok()
+			expect(world:getEntitiesWith("testComponent")[testEntity]).to.be.ok()
+			expect(Immutable.count(world:getEntitiesWith("testComponent"))).to.equal(2)
 		end)
 		it("should return nil for non-existing components", function()
 			local component = {

@@ -1,6 +1,7 @@
 local ComponentDefinition = require(script.Parent.ComponentDefinition)
 local EntityManager = require(script.Parent.EntityManager)
 local Symbol = require(script.Parent.Parent.Shared.Symbol)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local NONE = Symbol.named("NONE")
 
 return function()
@@ -254,9 +255,10 @@ return function()
 			local data = entityManager:addComponent(component, testInstance)
 			local testEntity = {}
 			local data = entityManager:addComponent(component, testEntity)
-			expect(table.find(entityManager:getEntitiesWith(component), testInstance)).to.be.ok()
-			expect(table.find(entityManager:getEntitiesWith(component), testEntity)).to.be.ok()
-			expect(#entityManager:getEntitiesWith(component)).to.equal(2)
+
+			expect(entityManager:getEntitiesWith(component)[testInstance]).to.be.ok()
+			expect(entityManager:getEntitiesWith(component)[testEntity]).to.be.ok()
+			expect(Immutable.count(entityManager:getEntitiesWith(component))).to.equal(2)
 		end)
 		it("should return nil for non-existing components", function()
 			local component = setmetatable({

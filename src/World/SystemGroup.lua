@@ -39,13 +39,21 @@ function SystemGroup:updateSystems(...)
 	end
 end
 
-function SystemGroup:addSystem(system: {})
-	if typeof(system.name) ~= "string" then
+function SystemGroup:addSystem(systemSpec: {})
+	if typeof(systemSpec.name) ~= "string" then
 		error("Tried to add a system without a name!")
 	end
-	system = setmetatable(Immutable.shallowCopy(system), SystemDefinition)
 
-	local priority = system.priority
+	if getmetatable(systemSpec) and getmetatable(systemSpec) ~= SystemDefinition then
+		error(
+			"Failed to add system %s: components should not have a metatable!",
+			tostring(systemSpec.name)
+		)
+	end
+
+	systemSpec = setmetatable(systemSpec, SystemDefinition)
+
+	local priority = systemSpec.priority
 	local insertPos = #self.systems + 1
 
 	for i, existing in ipairs(self.systems) do
@@ -55,8 +63,8 @@ function SystemGroup:addSystem(system: {})
 		end
 	end
 
-	system:create(self.world)
-	table.insert(self.systems, insertPos, system)
+	systemSpec:create(self.world)
+	table.insert(self.systems, insertPos, systemSpec)
 end
 
 function SystemGroup:removeSystem(system: {})

@@ -1,5 +1,4 @@
 --!strict
-local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
 
 local EntityManager = {}
@@ -21,7 +20,7 @@ function EntityManager:destroy()
 end
 
 function EntityManager:register(entity: Instance | {})
-	self.entityToComponent[entity] = self.entityToComponent[entity] or {}
+	self.entityToComponent[entity] = {}
 end
 
 function EntityManager:unregister(entity: Instance | {})
@@ -36,24 +35,25 @@ function EntityManager:isRegistered(entity: Instance | {})
 end
 
 function EntityManager:addComponent(componentDefinition: {}, entity: Instance | {}, data: {}?): {}
-	-- for convenience, we register the entity if needed
+	if self:isRegistered(entity) and self.entityToComponent[entity][componentDefinition.name] then
+		error(("%s already has a component of type %s!"):format(tostring(entity), componentDefinition.name))
+	end
+
+	data = componentDefinition:createFromData(data)
+
 	if not self:isRegistered(entity) then
 		self:register(entity)
 	end
 
-	if self.entityToComponent[entity][componentDefinition.name] then
-		error(("%s already has a component of type %s!"):format(tostring(entity), componentDefinition.name))
-	end
-
-	self.entityToComponent[entity][componentDefinition.name] = table.freeze(componentDefinition:createFromData(data))
+	self.entityToComponent[entity][componentDefinition.name] = data
 
 	if not self.componentToEntity[componentDefinition.name] then
 		self.componentToEntity[componentDefinition.name] = {}
 	end
 
-	self.componentToEntity[componentDefinition.name][entity] = entity
+	self.componentToEntity[componentDefinition.name][entity] = data
 
-	return self.entityToComponent[entity][componentDefinition.name]
+	return data
 end
 
 function EntityManager:getComponent(componentDefinition: string | {}, entity: Instance | {}): {}?
@@ -61,9 +61,7 @@ function EntityManager:getComponent(componentDefinition: string | {}, entity: In
 end
 
 function EntityManager:getEntitiesWith(componentDefinition: {})
-	local entities = Immutable.getValues(self.componentToEntity[componentDefinition.name] or {})
-
-	return entities
+	return self.componentToEntity[componentDefinition.name] or table.freeze({})
 end
 
 function EntityManager:setComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
@@ -71,9 +69,12 @@ function EntityManager:setComponent(componentDefinition: {}, entity: Instance | 
 		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entityToComponent[entity][componentDefinition.name] = table.freeze(componentDefinition:setFromData(data))
+	local newData = componentDefinition:setFromData(data)
 
-	return self.entityToComponent[entity][componentDefinition.name]
+	self.entityToComponent[entity][componentDefinition.name] = newData
+	self.componentToEntity[componentDefinition.name][entity] = newData
+
+	return newData
 end
 
 function EntityManager:updateComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
@@ -81,12 +82,12 @@ function EntityManager:updateComponent(componentDefinition: {}, entity: Instance
 		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
 
-	self.entityToComponent[entity][componentDefinition.name] = table.freeze(componentDefinition:updateFromData(
-		self.entityToComponent[entity][componentDefinition.name],
-		data
-	))
+	local newData = componentDefinition:updateFromData(self.entityToComponent[entity][componentDefinition.name], data)
 
-	return self.entityToComponent[entity][componentDefinition.name]
+	self.entityToComponent[entity][componentDefinition.name] = newData
+	self.componentToEntity[componentDefinition.name][entity] = newData
+
+	return newData
 end
 
 function EntityManager:removeComponent(componentDefinition: {}, entity: Instance | {})
@@ -101,12 +102,11 @@ function EntityManager:removeComponent(componentDefinition: {}, entity: Instance
 	end
 
 	self.entityToComponent[entity][componentDefinition.name] = nil
-
 	self.componentToEntity[componentDefinition.name][entity] = nil
 
 	if next(self.entityToComponent[entity]) == nil then
 		-- since the entity has no more components, we clear the ref to allow gc'ing
-		self.entityToComponent[entity] = nil
+		self:unregister(entity)
 	end
 end
 
