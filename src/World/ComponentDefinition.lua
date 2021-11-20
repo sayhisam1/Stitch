@@ -11,18 +11,25 @@ export type ComponentDefinition = {
 } | ModuleScript
 
 --[=[
-	@type ComponentResolvable ComponentDefinition | string
-	@within ComponentDefinition
-	Whenever an API refers to a `ComponentResolvable`,
-	either the definition or the name of the component can be used.
-]=]
-
---[=[
 	@class ComponentDefinition
 
 	A ComponentDefinition is a table that defines a Component.
-
+	
 	All ComponentDefinitions must be registered to a World before they can be used.
+	
+	Example usage:
+
+	```lua
+	local positionComponent = {
+		name = "position",
+		defaults = {
+			x = 0,
+			y = 0,
+			z = 0,
+		},
+	}
+	world:registerComponent(positionComponent)
+	```
 ]=]
 local ComponentDefinition = {}
 ComponentDefinition.__index = ComponentDefinition
