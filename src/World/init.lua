@@ -6,6 +6,12 @@ local SystemManager = require(script.SystemManager)
 local EntityQuery = require(script.EntityQuery)
 local Symbol = require(script.Parent.Shared.Symbol)
 
+--- @type ComponentResolvable {} | string
+--- @within World
+--- Used to resolve a component type in World apis. Anywhere you see a `ComponentResolvable`, you can either pass the `ComponentDefinition` table used
+--- while registering the component, or a string that is the name of the component.
+type ComponentResolvable = {} | string
+
 --[=[
 	@class World
 
@@ -85,10 +91,10 @@ end
 --[=[
 	Unregisters a ComponentDefinition from the World.
 
-	@param componentResolvable ComponentResolvable 
+	@param componentResolvable ComponentResolvable
 	@return nil
 ]=]
-function World:unregisterComponent(componentResolvable: {} | ModuleScript)
+function World:unregisterComponent(componentResolvable: ComponentResolvable)
 	self.componentRegistry:unregister(componentResolvable)
 end
 
@@ -135,7 +141,7 @@ end
 	@return {} -- The added component
 	@error "Already exists" -- Thrown if the given component already exists on the entity.
 ]=]
-function World:addComponent(componentResolvable: {} | string, entity: Instance | {}, data: {}?): {}
+function World:addComponent(componentResolvable: ComponentResolvable, entity: Instance | {}, data: {}?): {}
 	return self.entityManager:addComponent(self.componentRegistry:resolveOrError(componentResolvable), entity, data)
 end
 
@@ -148,7 +154,7 @@ end
 	@param entity Instance | {} -- the entity to get component from
 	@return {}? -- The attached component
 ]=]
-function World:getComponent(componentResolvable: {} | string, entity: Instance | {}): {}?
+function World:getComponent(componentResolvable: ComponentResolvable, entity: Instance | {}): {}?
 	return self.entityManager:getComponent(self.componentRegistry:resolveOrError(componentResolvable), entity)
 end
 
@@ -158,7 +164,7 @@ end
 	@param componentResolvable ComponentResolvable -- the type of component to get entities with
 	@return {any} -- all entities in the world with the given component
 ]=]
-function World:getEntitiesWith(componentResolvable: {} | string)
+function World:getEntitiesWith(componentResolvable: ComponentResolvable)
 	return self.entityManager:getEntitiesWith(self.componentRegistry:resolveOrError(componentResolvable))
 end
 
@@ -193,8 +199,81 @@ end
 	@param entity Instance | {} -- the entity with the component
 	@return nil
 ]=]
-function World:removeComponent(componentResolvable: {}, entity: Instance | {})
+function World:removeComponent(componentResolvable: ComponentResolvable, entity: Instance | {})
 	self.entityManager:removeComponent(self.componentRegistry:resolveOrError(componentResolvable), entity)
 end
+
+--[=[
+	Returns a Signal that fires with parameters `(componentName, data)`
+	whenever a component is added to the specified entity.
+	@tag signal
+
+	@param entity Instance | {} -- the entity to listen for
+	@return Signal -- The Signal
+]=]
+function World:getComponentAddedSignal(entity: Instance | {})
+	return self.entityManager:getComponentAddedSignal(entity)
+end
+
+--[=[
+	Returns a Signal that fires with parameters `(componentName, data, previousData)`
+	whenever a component is changed (i.e. updated or set) on the specified entity.
+	@tag signal
+
+	@param entity Instance | {} -- the entity to listen for
+	@return Signal -- The Signal
+]=]
+function World:getComponentChangedSignal(entity: Instance | {})
+	return self.entityManager:getComponentChangedSignal(entity)
+end
+
+--[=[
+	Returns a Signal that fires with parameters `(componentName, data)`
+	whenever a component is about to be removed from the specified entity.
+	@tag signal
+
+	@param entity Instance | {} -- the entity to listen for
+	@return Signal -- The Signal
+]=]
+function World:getComponentRemovingSignal(entity: Instance | {})
+	return self.entityManager:getComponentRemovingSignal(entity)
+end
+
+--[=[
+	Returns a Signal that fires with parameters `(entity, data)`
+	whenever the specified component is added to an entity.
+	@tag signal
+
+	@param componentResolvable ComponentResolvable -- the type of component to listen for
+	@return Signal -- The Signal
+]=]
+function World:getEntityAddedSignal(componentResolvable: ComponentResolvable)
+	return self.entityManager:getEntityAddedSignal(self.componentRegistry:resolveOrError(componentResolvable))
+end
+
+--[=[
+	Returns a Signal that fires with parameters `(entity, data, previousData)`
+	whenever an entity has a change (i.e. updated or set) on the specified component's data.
+	@tag signal
+
+	@param componentResolvable ComponentResolvable -- the type of component to listen for
+	@return Signal -- The Signal
+]=]
+function World:getEntityChangedSignal(componentResolvable: ComponentResolvable)
+	return self.entityManager:getEntityChangedSignal(self.componentRegistry:resolveOrError(componentResolvable))
+end
+
+--[=[
+	Returns a Signal that fires with parameters `(entity, data)`
+	whenever the specified component is about to be removed from an entity.
+	@tag signal
+
+	@param componentResolvable ComponentResolvable -- the type of component to listen for
+	@return Signal -- The Signal
+]=]
+function World:getEntityRemovingSignal(componentResolvable: ComponentResolvable)
+	return self.entityManager:getEntityRemovingSignal(self.componentRegistry:resolveOrError(componentResolvable))
+end
+
 
 return World
