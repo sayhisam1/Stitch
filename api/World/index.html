@@ -9,8 +9,8 @@ It is the central class that ties all other parts of an ECS together.
 A game could have many worlds, but normally there is only one world per game."><meta data-react-helmet="true" property="og:description" content="The World class is a collection of entities, components, and systems.
 It is the central class that ties all other parts of an ECS together.
 A game could have many worlds, but normally there is only one world per game."><meta data-react-helmet="true" property="og:url" content="https://sayhisam1.github.io/Stitch/api/World"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="shortcut icon" href="/Stitch/logo.png"><link data-react-helmet="true" rel="canonical" href="https://sayhisam1.github.io/Stitch/api/World"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/World" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/World" hreflang="x-default"><link rel="stylesheet" href="/Stitch/assets/css/styles.2ffb5e21.css">
-<link rel="preload" href="/Stitch/assets/js/runtime~main.02ebeccf.js" as="script">
-<link rel="preload" href="/Stitch/assets/js/main.3b80f0a9.js" as="script">
+<link rel="preload" href="/Stitch/assets/js/runtime~main.5182a567.js" as="script">
+<link rel="preload" href="/Stitch/assets/js/main.7d9fee95.js" as="script">
 </head>
 <body>
 <script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
@@ -20,48 +20,43 @@ A game could have many worlds, but normally there is only one world per game."><
   It is the central class that ties all other parts of an ECS together.
   A game could have many worlds, but normally there is only one world per game.
 </p>
-</div></header><h2 class="anchor anchorWithStickyNavbar_31ik" id="types">Types<a aria-hidden="true" class="hash-link" href="#types" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="ComponentResolvable"><code style="text-decoration:none">ComponentResolvable</code><a aria-hidden="true" class="hash-link" href="#ComponentResolvable" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L13"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code class="purple__nFc">type</code> <code>ComponentResolvable<!-- --> = </code> <code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="op_1JtD"> | </code><code class="blue_2Afy">string</code></div><div>
-<p>
-  Used to resolve a component type in World apis. Anywhere you see a <code>ComponentResolvable</code>, you can either pass the <code>ComponentDefinition</code> table used
-  while registering the component, or a string that is the name of the component.
-</p>
-</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="properties">Properties<a aria-hidden="true" class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="NONE"><code style="text-decoration:none">NONE</code><a aria-hidden="true" class="hash-link" href="#NONE" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L36"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->.<!-- -->NONE<!-- -->:<!-- --> </code> <code class="blue_2Afy">UserData</code></div><div>
+</div></header><h2 class="anchor anchorWithStickyNavbar_31ik" id="properties">Properties<a aria-hidden="true" class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="NONE"><code style="text-decoration:none">NONE</code><a aria-hidden="true" class="hash-link" href="#NONE" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L30"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->.<!-- -->NONE<!-- -->:<!-- --> </code> <code class="blue_2Afy">UserData</code></div><div>
 <p>Used to set keys to <code>nil</code> on <code>world:addComponent</code> or <code>world:updateComponent</code> calls.</p>
 <pre class="language-lua"><code class="language-lua">world<span class="token punctuation">:</span><span class="token function">updateComponent</span><span class="token punctuation">(</span><span class="token string">"someComponent"</span><span class="token punctuation">,</span> entity<span class="token punctuation">,</span> <span class="token punctuation">{</span>
 	foo <span class="token operator">=</span> World<span class="token punctuation">.</span>NONE
 <span class="token punctuation">}</span><span class="token punctuation">)</span>
 world<span class="token punctuation">:</span><span class="token function">getComponent</span><span class="token punctuation">(</span><span class="token string">"someComponent"</span><span class="token punctuation">,</span> entity<span class="token punctuation">)</span><span class="token punctuation">.</span>foo <span class="token comment">-- is nil</span>
 </code></pre>
-</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="functions">Functions<a aria-hidden="true" class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="new"><code style="text-decoration:none">new</code><a aria-hidden="true" class="hash-link" href="#new" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#70cc00;color:#70cc00">constructor</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L45"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->.</code><code class="green_3LnD">new</code><code>(</code><div class="inset_2cJr"><div><code>namespace<!-- -->: </code><code class="blue_2Afy">string?</code><span class="inlineDescription_17uy">-- <span>
+</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="functions">Functions<a aria-hidden="true" class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="new"><code style="text-decoration:none">new</code><a aria-hidden="true" class="hash-link" href="#new" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#70cc00;color:#70cc00">constructor</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L39"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->.</code><code class="green_3LnD">new</code><code>(</code><div class="inset_2cJr"><div><code>namespace<!-- -->: </code><code class="blue_2Afy">string?</code><span class="inlineDescription_17uy">-- <span>
 <p>The namespace to use for this world.</p>
 </span></span></div></div><code>) → </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code></div><div>
 <p>Creates a new World.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="destroy"><code style="text-decoration:none">destroy</code><a aria-hidden="true" class="hash-link" href="#destroy" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#218c74;color:#218c74">destructor</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L67"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">destroy</code><code>(</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="destroy"><code style="text-decoration:none">destroy</code><a aria-hidden="true" class="hash-link" href="#destroy" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#218c74;color:#218c74">destructor</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L61"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">destroy</code><code>(</code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>
   Destroys a World.
   Components are detached from entities and Systems are stopped.
 </p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="registerComponent"><code style="text-decoration:none">registerComponent</code><a aria-hidden="true" class="hash-link" href="#registerComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L87"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">registerComponent</code><code>(</code><code>componentDefinition<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition">ComponentDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/ModuleScript" target="_blank" rel="noopener noreferrer">ModuleScript<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="registerComponent"><code style="text-decoration:none">registerComponent</code><a aria-hidden="true" class="hash-link" href="#registerComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L81"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">registerComponent</code><code>(</code><code>componentDefinition<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition">ComponentDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/ModuleScript" target="_blank" rel="noopener noreferrer">ModuleScript<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>Registers a new ComponentDefintion to the World.</p>
 <p>When passed as a ModuleScript:</p>
 <ul>
   <li>Hot reloading will be enabled</li>
   <li>The ComponentDefinition will use the name of the ModuleScript if not provided.</li>
 </ul>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="unregisterComponent"><code style="text-decoration:none">unregisterComponent</code><a aria-hidden="true" class="hash-link" href="#unregisterComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L97"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">unregisterComponent</code><code>(</code><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="unregisterComponent"><code style="text-decoration:none">unregisterComponent</code><a aria-hidden="true" class="hash-link" href="#unregisterComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L91"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">unregisterComponent</code><code>(</code><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>Unregisters a ComponentDefinition from the World.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="createQuery"><code style="text-decoration:none">createQuery</code><a aria-hidden="true" class="hash-link" href="#createQuery" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L106"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">createQuery</code><code>(</code><code>) → </code><code class="blue_2Afy">EntityQuery</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="createQuery"><code style="text-decoration:none">createQuery</code><a aria-hidden="true" class="hash-link" href="#createQuery" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L100"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">createQuery</code><code>(</code><code>) → </code><code class="blue_2Afy">EntityQuery</code></div><div>
 <p>Creates a new EntityQuery.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="addSystem"><code style="text-decoration:none">addSystem</code><a aria-hidden="true" class="hash-link" href="#addSystem" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L120"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">addSystem</code><code>(</code><code>systemDefinition<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/SystemDefinition">SystemDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/ModuleScript" target="_blank" rel="noopener noreferrer">ModuleScript<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="addSystem"><code style="text-decoration:none">addSystem</code><a aria-hidden="true" class="hash-link" href="#addSystem" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L114"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">addSystem</code><code>(</code><code>systemDefinition<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/SystemDefinition">SystemDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/ModuleScript" target="_blank" rel="noopener noreferrer">ModuleScript<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>Adds a new System to the World.</p>
 <p>When passed as a ModuleScript:</p>
 <ul>
   <li>Hot reloading will be enabled</li>
   <li>The SystemDefinition will use the name of the ModuleScript if not provided.</li>
 </ul>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="removeSystem"><code style="text-decoration:none">removeSystem</code><a aria-hidden="true" class="hash-link" href="#removeSystem" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L130"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">removeSystem</code><code>(</code><code>systemResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/SystemDefinition">SystemDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/ModuleScript" target="_blank" rel="noopener noreferrer">ModuleScript<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="removeSystem"><code style="text-decoration:none">removeSystem</code><a aria-hidden="true" class="hash-link" href="#removeSystem" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L124"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">removeSystem</code><code>(</code><code>systemResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/SystemDefinition">SystemDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/class/ModuleScript" target="_blank" rel="noopener noreferrer">ModuleScript<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>Removes a System from the World.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="addComponent"><code style="text-decoration:none">addComponent</code><a aria-hidden="true" class="hash-link" href="#addComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L144"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">addComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="addComponent"><code style="text-decoration:none">addComponent</code><a aria-hidden="true" class="hash-link" href="#addComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L138"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">addComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the type of component to attach</p>
 </span></span></div><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the entity to attach the component to</p>
@@ -74,7 +69,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
   Attaches a component to an entity with given data.
   If no data is provided, the <code>.default</code> property of the ComponentDefinition will be used.
 </p>
-</div><h3>Errors</h3><table class="errorTable_25fH"><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>&quot;Already exists&quot;</td><td>Thrown if the given component already exists on the entity.</td></tr></tbody></table><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getComponent"><code style="text-decoration:none">getComponent</code><a aria-hidden="true" class="hash-link" href="#getComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L157"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
+</div><h3>Errors</h3><table class="errorTable_25fH"><thead><tr><th>Type</th><th>Description</th></tr></thead><tbody><tr><td>&quot;Already exists&quot;</td><td>Thrown if the given component already exists on the entity.</td></tr></tbody></table><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getComponent"><code style="text-decoration:none">getComponent</code><a aria-hidden="true" class="hash-link" href="#getComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L151"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the type of component to attach</p>
 </span></span></div><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
 <p>the entity to get component from</p>
@@ -83,13 +78,13 @@ world<span class="token punctuation">:</span><span class="token function">getCom
 </span></span></div><div>
 <p>Gets the component of the given type attached to the given entity.</p>
 <p>Returns <code>nil</code> if no such component is attached.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getEntitiesWith"><code style="text-decoration:none">getEntitiesWith</code><a aria-hidden="true" class="hash-link" href="#getEntitiesWith" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L167"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getEntitiesWith</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getEntitiesWith"><code style="text-decoration:none">getEntitiesWith</code><a aria-hidden="true" class="hash-link" href="#getEntitiesWith" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L161"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getEntitiesWith</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><span class="inlineDescription_17uy">-- <span>
 <p>the type of component to get entities with</p>
 </span></span></div></div><code>) → </code><code class="op_1JtD">{</code><code class="blue_2Afy">any</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
 <p>all entities in the world with the given component</p>
 </span></span></div><div>
 <p>Gets all entities with the given component type.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="setComponent"><code style="text-decoration:none">setComponent</code><a aria-hidden="true" class="hash-link" href="#setComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L179"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">setComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="setComponent"><code style="text-decoration:none">setComponent</code><a aria-hidden="true" class="hash-link" href="#setComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L173"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">setComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the type of component</p>
 </span></span></div><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the entity with the component</p>
@@ -99,7 +94,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
 <p>The newly set component</p>
 </span></span></div><div>
 <p>Sets the data of the given component on the given entity.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="updateComponent"><code style="text-decoration:none">updateComponent</code><a aria-hidden="true" class="hash-link" href="#updateComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L191"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">updateComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="updateComponent"><code style="text-decoration:none">updateComponent</code><a aria-hidden="true" class="hash-link" href="#updateComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L185"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">updateComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the type of component</p>
 </span></span></div><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the entity with the component</p>
@@ -109,66 +104,12 @@ world<span class="token punctuation">:</span><span class="token function">getCom
 <p>The newly updated component</p>
 </span></span></div><div>
 <p>Updates (i.e. merges the keys) the data of the given component on the given entity.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="removeComponent"><code style="text-decoration:none">removeComponent</code><a aria-hidden="true" class="hash-link" href="#removeComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L202"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">removeComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="removeComponent"><code style="text-decoration:none">removeComponent</code><a aria-hidden="true" class="hash-link" href="#removeComponent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L196"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">removeComponent</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition#ComponentResolvable">ComponentResolvable</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>the type of component</p>
 </span></span></div><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
 <p>the entity with the component</p>
 </span></span></div></div><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>Removes the given component from the given entity.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getComponentAddedSignal"><code style="text-decoration:none">getComponentAddedSignal</code><a aria-hidden="true" class="hash-link" href="#getComponentAddedSignal" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">signal</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L214"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getComponentAddedSignal</code><code>(</code><div class="inset_2cJr"><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
-<p>the entity to listen for</p>
-</span></span></div></div><code>) → </code><code class="blue_2Afy">Signal</code><span class="inlineDescription_17uy">-- <span>
-<p>The Signal</p>
-</span></span></div><div>
-<p>
-  Returns a Signal that fires with parameters <code>(componentName, data)</code>
-  whenever a component is added to the specified entity.
-</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getComponentChangedSignal"><code style="text-decoration:none">getComponentChangedSignal</code><a aria-hidden="true" class="hash-link" href="#getComponentChangedSignal" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">signal</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L226"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getComponentChangedSignal</code><code>(</code><div class="inset_2cJr"><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
-<p>the entity to listen for</p>
-</span></span></div></div><code>) → </code><code class="blue_2Afy">Signal</code><span class="inlineDescription_17uy">-- <span>
-<p>The Signal</p>
-</span></span></div><div>
-<p>
-  Returns a Signal that fires with parameters <code>(componentName, data, previousData)</code>
-  whenever a component is changed (i.e. updated or set) on the specified entity.
-</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getComponentRemovingSignal"><code style="text-decoration:none">getComponentRemovingSignal</code><a aria-hidden="true" class="hash-link" href="#getComponentRemovingSignal" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">signal</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L238"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getComponentRemovingSignal</code><code>(</code><div class="inset_2cJr"><div><code>entity<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/Instance" target="_blank" rel="noopener noreferrer">Instance<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code><code class="op_1JtD"> | </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><span class="inlineDescription_17uy">-- <span>
-<p>the entity to listen for</p>
-</span></span></div></div><code>) → </code><code class="blue_2Afy">Signal</code><span class="inlineDescription_17uy">-- <span>
-<p>The Signal</p>
-</span></span></div><div>
-<p>
-  Returns a Signal that fires with parameters <code>(componentName, data)</code>
-  whenever a component is about to be removed from the specified entity.
-</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getEntityAddedSignal"><code style="text-decoration:none">getEntityAddedSignal</code><a aria-hidden="true" class="hash-link" href="#getEntityAddedSignal" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">signal</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L250"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getEntityAddedSignal</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><span class="inlineDescription_17uy">-- <span>
-<p>the type of component to listen for</p>
-</span></span></div></div><code>) → </code><code class="blue_2Afy">Signal</code><span class="inlineDescription_17uy">-- <span>
-<p>The Signal</p>
-</span></span></div><div>
-<p>
-  Returns a Signal that fires with parameters <code>(entity, data)</code>
-  whenever the specified component is added to an entity.
-</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getEntityChangedSignal"><code style="text-decoration:none">getEntityChangedSignal</code><a aria-hidden="true" class="hash-link" href="#getEntityChangedSignal" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">signal</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L262"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getEntityChangedSignal</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><span class="inlineDescription_17uy">-- <span>
-<p>the type of component to listen for</p>
-</span></span></div></div><code>) → </code><code class="blue_2Afy">Signal</code><span class="inlineDescription_17uy">-- <span>
-<p>The Signal</p>
-</span></span></div><div>
-<p>
-  Returns a Signal that fires with parameters <code>(entity, data, previousData)</code>
-  whenever an entity has a change (i.e. updated or set) on the specified component's data.
-</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="getEntityRemovingSignal"><code style="text-decoration:none">getEntityRemovingSignal</code><a aria-hidden="true" class="hash-link" href="#getEntityRemovingSignal" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">signal</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/init.lua#L274"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>World<!-- -->:</code><code class="green_3LnD">getEntityRemovingSignal</code><code>(</code><div class="inset_2cJr"><div><code>componentResolvable<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World#ComponentResolvable">ComponentResolvable</a></code><span class="inlineDescription_17uy">-- <span>
-<p>the type of component to listen for</p>
-</span></span></div></div><code>) → </code><code class="blue_2Afy">Signal</code><span class="inlineDescription_17uy">-- <span>
-<p>The Signal</p>
-</span></span></div><div>
-<p>
-  Returns a Signal that fires with parameters <code>(entity, data)</code>
-  whenever the specified component is about to be removed from an entity.
-</p>
 </div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
     &quot;functions&quot;: [
         {
@@ -192,7 +133,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
                 &quot;constructor&quot;
             ],
             &quot;source&quot;: {
-                &quot;line&quot;: 45,
+                &quot;line&quot;: 39,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -211,7 +152,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
                 &quot;destructor&quot;
             ],
             &quot;source&quot;: {
-                &quot;line&quot;: 67,
+                &quot;line&quot;: 61,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -233,7 +174,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 87,
+                &quot;line&quot;: 81,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -255,7 +196,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 97,
+                &quot;line&quot;: 91,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -271,7 +212,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 106,
+                &quot;line&quot;: 100,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -293,7 +234,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 120,
+                &quot;line&quot;: 114,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -315,7 +256,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 130,
+                &quot;line&quot;: 124,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -353,7 +294,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
                 }
             ],
             &quot;source&quot;: {
-                &quot;line&quot;: 144,
+                &quot;line&quot;: 138,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -380,7 +321,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 157,
+                &quot;line&quot;: 151,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -402,7 +343,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 167,
+                &quot;line&quot;: 161,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -434,7 +375,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 179,
+                &quot;line&quot;: 173,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -466,7 +407,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 191,
+                &quot;line&quot;: 185,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         },
@@ -493,157 +434,7 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 202,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getComponentAddedSignal&quot;,
-            &quot;desc&quot;: &quot;Returns a Signal that fires with parameters `(componentName, data)`\nwhenever a component is added to the specified entity.&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;entity&quot;,
-                    &quot;desc&quot;: &quot;the entity to listen for&quot;,
-                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;The Signal&quot;,
-                    &quot;lua_type&quot;: &quot;Signal&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;signal&quot;
-            ],
-            &quot;source&quot;: {
-                &quot;line&quot;: 214,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getComponentChangedSignal&quot;,
-            &quot;desc&quot;: &quot;Returns a Signal that fires with parameters `(componentName, data, previousData)`\nwhenever a component is changed (i.e. updated or set) on the specified entity.&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;entity&quot;,
-                    &quot;desc&quot;: &quot;the entity to listen for&quot;,
-                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;The Signal&quot;,
-                    &quot;lua_type&quot;: &quot;Signal&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;signal&quot;
-            ],
-            &quot;source&quot;: {
-                &quot;line&quot;: 226,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getComponentRemovingSignal&quot;,
-            &quot;desc&quot;: &quot;Returns a Signal that fires with parameters `(componentName, data)`\nwhenever a component is about to be removed from the specified entity.&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;entity&quot;,
-                    &quot;desc&quot;: &quot;the entity to listen for&quot;,
-                    &quot;lua_type&quot;: &quot;Instance | {}&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;The Signal&quot;,
-                    &quot;lua_type&quot;: &quot;Signal&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;signal&quot;
-            ],
-            &quot;source&quot;: {
-                &quot;line&quot;: 238,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getEntityAddedSignal&quot;,
-            &quot;desc&quot;: &quot;Returns a Signal that fires with parameters `(entity, data)`\nwhenever the specified component is added to an entity.&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;componentResolvable&quot;,
-                    &quot;desc&quot;: &quot;the type of component to listen for&quot;,
-                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;The Signal&quot;,
-                    &quot;lua_type&quot;: &quot;Signal&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;signal&quot;
-            ],
-            &quot;source&quot;: {
-                &quot;line&quot;: 250,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getEntityChangedSignal&quot;,
-            &quot;desc&quot;: &quot;Returns a Signal that fires with parameters `(entity, data, previousData)`\nwhenever an entity has a change (i.e. updated or set) on the specified component&#x27;s data.&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;componentResolvable&quot;,
-                    &quot;desc&quot;: &quot;the type of component to listen for&quot;,
-                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;The Signal&quot;,
-                    &quot;lua_type&quot;: &quot;Signal&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;signal&quot;
-            ],
-            &quot;source&quot;: {
-                &quot;line&quot;: 262,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        },
-        {
-            &quot;name&quot;: &quot;getEntityRemovingSignal&quot;,
-            &quot;desc&quot;: &quot;Returns a Signal that fires with parameters `(entity, data)`\nwhenever the specified component is about to be removed from an entity.&quot;,
-            &quot;params&quot;: [
-                {
-                    &quot;name&quot;: &quot;componentResolvable&quot;,
-                    &quot;desc&quot;: &quot;the type of component to listen for&quot;,
-                    &quot;lua_type&quot;: &quot;ComponentResolvable&quot;
-                }
-            ],
-            &quot;returns&quot;: [
-                {
-                    &quot;desc&quot;: &quot;The Signal&quot;,
-                    &quot;lua_type&quot;: &quot;Signal&quot;
-                }
-            ],
-            &quot;function_type&quot;: &quot;method&quot;,
-            &quot;tags&quot;: [
-                &quot;signal&quot;
-            ],
-            &quot;source&quot;: {
-                &quot;line&quot;: 274,
+                &quot;line&quot;: 196,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         }
@@ -654,30 +445,20 @@ world<span class="token punctuation">:</span><span class="token function">getCom
             &quot;desc&quot;: &quot;Used to set keys to `nil` on `world:addComponent` or `world:updateComponent` calls.\n```lua\nworld:updateComponent(\&quot;someComponent\&quot;, entity, {\n\tfoo = World.NONE\n})\nworld:getComponent(\&quot;someComponent\&quot;, entity).foo -- is nil\n```&quot;,
             &quot;lua_type&quot;: &quot;UserData&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 36,
+                &quot;line&quot;: 30,
                 &quot;path&quot;: &quot;src/World/init.lua&quot;
             }
         }
     ],
-    &quot;types&quot;: [
-        {
-            &quot;name&quot;: &quot;ComponentResolvable&quot;,
-            &quot;desc&quot;: &quot;Used to resolve a component type in World apis. Anywhere you see a `ComponentResolvable`, you can either pass the `ComponentDefinition` table used\nwhile registering the component, or a string that is the name of the component.&quot;,
-            &quot;lua_type&quot;: &quot;{} | string&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 13,
-                &quot;path&quot;: &quot;src/World/init.lua&quot;
-            }
-        }
-    ],
+    &quot;types&quot;: [],
     &quot;name&quot;: &quot;World&quot;,
     &quot;desc&quot;: &quot;The World class is a collection of entities, components, and systems.\nIt is the central class that ties all other parts of an ECS together.\nA game could have many worlds, but normally there is only one world per game.&quot;,
     &quot;source&quot;: {
-        &quot;line&quot;: 22,
+        &quot;line&quot;: 16,
         &quot;path&quot;: &quot;src/World/init.lua&quot;
     }
-}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#ComponentResolvable" class="table-of-contents__link toc-highlight">ComponentResolvable</a></li></ul></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#NONE" class="table-of-contents__link toc-highlight">NONE</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#getComponentAddedSignal" class="table-of-contents__link toc-highlight">:getComponentAddedSignal</a></li><li><a href="#getComponentChangedSignal" class="table-of-contents__link toc-highlight">:getComponentChangedSignal</a></li><li><a href="#getComponentRemovingSignal" class="table-of-contents__link toc-highlight">:getComponentRemovingSignal</a></li><li><a href="#getEntityAddedSignal" class="table-of-contents__link toc-highlight">:getEntityAddedSignal</a></li><li><a href="#getEntityChangedSignal" class="table-of-contents__link toc-highlight">:getEntityChangedSignal</a></li><li><a href="#getEntityRemovingSignal" class="table-of-contents__link toc-highlight">:getEntityRemovingSignal</a></li><li><a href="#addComponent" class="table-of-contents__link toc-highlight">:addComponent</a></li><li><a href="#addSystem" class="table-of-contents__link toc-highlight">:addSystem</a></li><li><a href="#createQuery" class="table-of-contents__link toc-highlight">:createQuery</a></li><li><a href="#destroy" class="table-of-contents__link toc-highlight">:destroy</a></li><li><a href="#getComponent" class="table-of-contents__link toc-highlight">:getComponent</a></li><li><a href="#getEntitiesWith" class="table-of-contents__link toc-highlight">:getEntitiesWith</a></li><li><a href="#registerComponent" class="table-of-contents__link toc-highlight">:registerComponent</a></li><li><a href="#removeComponent" class="table-of-contents__link toc-highlight">:removeComponent</a></li><li><a href="#removeSystem" class="table-of-contents__link toc-highlight">:removeSystem</a></li><li><a href="#setComponent" class="table-of-contents__link toc-highlight">:setComponent</a></li><li><a href="#unregisterComponent" class="table-of-contents__link toc-highlight">:unregisterComponent</a></li><li><a href="#updateComponent" class="table-of-contents__link toc-highlight">:updateComponent</a></li><li><a href="#new" class="table-of-contents__link toc-highlight">.new</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 sayhisam1. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
-<script src="/Stitch/assets/js/runtime~main.02ebeccf.js"></script>
-<script src="/Stitch/assets/js/main.3b80f0a9.js"></script>
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#NONE" class="table-of-contents__link toc-highlight">NONE</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#addComponent" class="table-of-contents__link toc-highlight">:addComponent</a></li><li><a href="#addSystem" class="table-of-contents__link toc-highlight">:addSystem</a></li><li><a href="#createQuery" class="table-of-contents__link toc-highlight">:createQuery</a></li><li><a href="#destroy" class="table-of-contents__link toc-highlight">:destroy</a></li><li><a href="#getComponent" class="table-of-contents__link toc-highlight">:getComponent</a></li><li><a href="#getEntitiesWith" class="table-of-contents__link toc-highlight">:getEntitiesWith</a></li><li><a href="#registerComponent" class="table-of-contents__link toc-highlight">:registerComponent</a></li><li><a href="#removeComponent" class="table-of-contents__link toc-highlight">:removeComponent</a></li><li><a href="#removeSystem" class="table-of-contents__link toc-highlight">:removeSystem</a></li><li><a href="#setComponent" class="table-of-contents__link toc-highlight">:setComponent</a></li><li><a href="#unregisterComponent" class="table-of-contents__link toc-highlight">:unregisterComponent</a></li><li><a href="#updateComponent" class="table-of-contents__link toc-highlight">:updateComponent</a></li><li><a href="#new" class="table-of-contents__link toc-highlight">.new</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 sayhisam1. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+<script src="/Stitch/assets/js/runtime~main.5182a567.js"></script>
+<script src="/Stitch/assets/js/main.7d9fee95.js"></script>
 </body>
 </html>
