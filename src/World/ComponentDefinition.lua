@@ -1,5 +1,5 @@
 --!strict
-local Util = require(script.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local Symbol = require(script.Parent.Parent.Shared.Symbol)
 local NONE = Symbol.named("NONE")
 
@@ -11,18 +11,25 @@ export type ComponentDefinition = {
 } | ModuleScript
 
 --[=[
-	@type ComponentResolvable ComponentDefinition | string
-	@within ComponentDefinition
-	Whenever an API refers to a `ComponentResolvable`,
-	either the definition or the name of the component can be used.
-]=]
-
---[=[
 	@class ComponentDefinition
 
 	A ComponentDefinition is a table that defines a Component.
-
+	
 	All ComponentDefinitions must be registered to a World before they can be used.
+	
+	Example usage:
+
+	```lua
+	local positionComponent = {
+		name = "position",
+		defaults = {
+			x = 0,
+			y = 0,
+			z = 0,
+		},
+	}
+	world:registerComponent(positionComponent)
+	```
 ]=]
 local ComponentDefinition = {}
 ComponentDefinition.__index = ComponentDefinition
@@ -56,8 +63,11 @@ ComponentDefinition.validator = nil
 --[=[
 	@prop tag boolean? | string?
 	@within ComponentDefinition
-	| ❕ This property only has an effect when `TagSystem` is added to the World. |
-	| --------------------------------------------------------------------------------- |
+	@tag special
+
+	:::info
+	This property only has an effect when `TagSystem` is added to the World.
+	:::
 
 	Used to apply CollectionService tags to the entity the component is attached to
 	(see: `TagSystem` for more details).
@@ -69,8 +79,12 @@ ComponentDefinition.tag = nil
 --[=[
 	@prop replicate boolean?
 	@within ComponentDefinition
-	| ❕ This property only has an effect when `ReplicationSystem` is added to the World. |
-	| --------------------------------------------------------------------------------- |
+	@tag special
+
+	:::info
+	This property only has an effect when `ReplicationSystem` is added to the World.
+	:::
+
 	Enables replication of the component (see: `ReplicationSystem` for more details).
 ]=]
 ComponentDefinition.replicate = nil
@@ -82,13 +96,14 @@ ComponentDefinition.replicate = nil
 	You should use this to clean up any resources that were allocated when adding the component (e.g. any event connections).
 	The function will be passed the entity and the data of the component.
 
-	| ❗ Component destructors should not yield - this will lead to undefined behavior. |
-	| --------------------------------------------------------------------------------- |
+	:::danger
+	Component destructors should not yield - this will lead to undefined behavior!
+	:::
 ]=]
 ComponentDefinition.destructor = nil
 
 function ComponentDefinition:createFromData(data: {}?): {}
-	data = Util.mergeTable(Util.deepCopy(self.defaults), data or {}, NONE)
+	data = Immutable.mergeTable(Immutable.deepCopy(self.defaults), data or {}, NONE)
 
 	self:validateOrErrorData(data)
 
@@ -96,7 +111,7 @@ function ComponentDefinition:createFromData(data: {}?): {}
 end
 
 function ComponentDefinition:setFromData(data: {}): {}
-	data = Util.shallowCopy(data)
+	data = Immutable.shallowCopy(data)
 
 	self:validateOrErrorData(data)
 
@@ -104,7 +119,7 @@ function ComponentDefinition:setFromData(data: {}): {}
 end
 
 function ComponentDefinition:updateFromData(old: {}, new: {}): {}
-	local data = Util.mergeTable(old, new, NONE)
+	local data = Immutable.mergeTable(old, new, NONE)
 
 	self:validateOrErrorData(data)
 

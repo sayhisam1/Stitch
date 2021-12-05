@@ -1,5 +1,5 @@
 local ReplicationWatcher = require(script.Parent.ReplicationWatcher)
-local Util = require(script.Parent.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Parent.Shared.Immutable)
 local ReplicationSystem = {}
 
 ReplicationSystem.name = "ReplicationSystem"
@@ -33,7 +33,7 @@ function ReplicationSystem.createWatchers(world, componentName: string)
 
 		local watcher = ReplicationWatcher.new(entity, ("%s:%s:replicated"):format(world.namespace, componentName))
 		world:updateComponent(ReplicationSystem.stateComponent, entity, {
-			watchers = Util.setKey(state.watchers, componentName, watcher),
+			watchers = Immutable.setKey(state.watchers, componentName, watcher),
 		})
 		world:updateComponent(componentName, entity, watcher:read())
 	end)
@@ -52,7 +52,7 @@ function ReplicationSystem.removeWatchers(world, componentName: string)
 
 		state.watchers[componentName.name]:destroy()
 		world:updateComponent(ReplicationSystem.stateComponent, entity, {
-			watchers = Util.removeKey(state.watchers, componentName),
+			watchers = Immutable.removeKey(state.watchers, componentName),
 		})
 	end)
 end
@@ -97,7 +97,7 @@ function ReplicationSystem.onUpdate(world)
 			local newData = world:getComponent(componentName, entity)
 			if not newData then
 				watcher:destroy()
-				newWatchers = Util.removeKey(newWatchers, componentName)
+				newWatchers = Immutable.removeKey(newWatchers, componentName)
 			end
 		end
 

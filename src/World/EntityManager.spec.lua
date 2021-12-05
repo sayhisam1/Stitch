@@ -1,19 +1,20 @@
 local ComponentDefinition = require(script.Parent.ComponentDefinition)
 local EntityManager = require(script.Parent.EntityManager)
 local Symbol = require(script.Parent.Parent.Shared.Symbol)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local NONE = Symbol.named("NONE")
 
 return function()
 	local entityManager
 	local testInstance
 	beforeEach(function()
-		entityManager = EntityManager.new("test")
+		entityManager = EntityManager.new()
 		testInstance = Instance.new("Part")
 	end)
 
 	afterEach(function()
-		entityManager:destroy()
 		testInstance:Destroy()
+		entityManager:destroy()
 	end)
 
 	describe("EntityManager.new", function()
@@ -68,7 +69,7 @@ return function()
 
 			local data = entityManager:addComponent(component, testInstance, {
 				baz = "qux",
-				foo = NONE
+				foo = NONE,
 			})
 			expect(data.foo).to.never.be.ok()
 			expect(data.baz).to.equal("qux")
@@ -81,7 +82,7 @@ return function()
 				},
 				validator = function(data)
 					return data.foo == "bar"
-				end
+				end,
 			}, ComponentDefinition)
 
 			expect(function()
@@ -146,6 +147,69 @@ return function()
 		end)
 	end)
 
+	describe("EntityManager:getComponentAddedSignal", function()
+		it("should fire signal on component set", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentAddedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local data = entityManager:addComponent(component, testInstance)
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(data)
+		end)
+		it("should clear signal on entity unregister", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentAddedSignal(testInstance)
+
+			entityManager:addComponent(component, testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			entityManager:unregister(testInstance)
+			entityManager:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+		end)
+	end)
+
+	describe("EntityManager:getEntityAddedSignal", function()
+		it("should fire signal on component set", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getEntityAddedSignal(component)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local data = entityManager:addComponent(component, testInstance)
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal(testInstance)
+			expect(args[2]).to.equal(data)
+		end)
+	end)
+
 	describe("EntityManager:removeComponent", function()
 		it("should remove a component", function()
 			local component = setmetatable({
@@ -154,7 +218,6 @@ return function()
 					foo = "bar",
 				},
 			}, ComponentDefinition)
-
 
 			local data = entityManager:addComponent(component, testInstance)
 			entityManager:removeComponent(component, testInstance)
@@ -171,7 +234,6 @@ return function()
 					called += 1
 				end,
 			}, ComponentDefinition)
-
 
 			local data = entityManager:addComponent(component, testInstance)
 			entityManager:removeComponent(component, testInstance)
@@ -198,7 +260,6 @@ return function()
 			expect(entityManager.entityToComponent[testInstance]).to.be.ok()
 			expect(entityManager.componentToEntity[component.name][testInstance]).to.never.be.ok()
 			entityManager:removeComponent(component2, testInstance)
-			expect(entityManager.entityToComponent[testInstance]).to.never.be.ok()
 			expect(entityManager.componentToEntity[component2.name][testInstance]).to.never.be.ok()
 			entityManager:addComponent(component, testInstance)
 			expect(entityManager.entityToComponent[testInstance]).to.be.ok()
@@ -215,6 +276,74 @@ return function()
 			entityManager:removeComponent(component, testInstance)
 
 			expect(entityManager:getComponent(component, testInstance)).to.never.be.ok()
+		end)
+	end)
+
+	describe("EntityManager:getComponentRemovingSignal", function()
+		it("should fire signal on component set", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentRemovingSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = entityManager:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			entityManager:removeComponent(component, testInstance)
+
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(prevData)
+		end)
+		it("should clear signal on entity unregister", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentRemovingSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			entityManager:addComponent(component, testInstance)
+			entityManager:unregister(testInstance)
+			entityManager:addComponent(component, testInstance)
+			entityManager:removeComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+		end)
+	end)
+
+	describe("EntityManager:getEntityRemovingSignal", function()
+		it("should fire signal on component set", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getEntityRemovingSignal(component)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local data = entityManager:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			entityManager:removeComponent(component, testInstance)
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal(testInstance)
+			expect(args[2]).to.equal(data)
 		end)
 	end)
 
@@ -254,9 +383,10 @@ return function()
 			local data = entityManager:addComponent(component, testInstance)
 			local testEntity = {}
 			local data = entityManager:addComponent(component, testEntity)
-			expect(table.find(entityManager:getEntitiesWith(component), testInstance)).to.be.ok()
-			expect(table.find(entityManager:getEntitiesWith(component), testEntity)).to.be.ok()
-			expect(#entityManager:getEntitiesWith(component)).to.equal(2)
+
+			expect(entityManager:getEntitiesWith(component)[testInstance]).to.be.ok()
+			expect(entityManager:getEntitiesWith(component)[testEntity]).to.be.ok()
+			expect(Immutable.count(entityManager:getEntitiesWith(component))).to.equal(2)
 		end)
 		it("should return nil for non-existing components", function()
 			local component = setmetatable({
@@ -265,7 +395,6 @@ return function()
 					foo = "bar",
 				},
 			}, ComponentDefinition)
-
 
 			expect(next(entityManager:getEntitiesWith(component))).to.never.be.ok()
 		end)
@@ -293,7 +422,7 @@ return function()
 				},
 				validator = function(data)
 					return data.foo == "bar"
-				end
+				end,
 			}, ComponentDefinition)
 			entityManager:addComponent(component, testInstance)
 
@@ -349,7 +478,7 @@ return function()
 			local data = entityManager:addComponent(component, testInstance)
 			entityManager:updateComponent(component, testInstance, {
 				baz = "qux",
-				foo = NONE
+				foo = NONE,
 			})
 			expect(entityManager:getComponent(component, testInstance).foo).to.never.be.ok()
 			expect(entityManager:getComponent(component, testInstance).baz).to.equal("qux")
@@ -362,7 +491,7 @@ return function()
 				},
 				validator = function(data)
 					return data.foo == "bar"
-				end
+				end,
 			}, ComponentDefinition)
 			entityManager:addComponent(component, testInstance)
 
@@ -389,6 +518,105 @@ return function()
 					foo = "baz",
 				})
 			end).to.throw()
+		end)
+	end)
+
+	describe("EntityManager:getComponentChangedSignal", function()
+		it("should fire signal on component set", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentChangedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = entityManager:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			local newData = entityManager:setComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.be.ok()
+			expect(#args).to.equal(3)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(newData)
+			expect(args[3]).to.equal(prevData)
+		end)
+		it("should fire signal on component update", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentChangedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = entityManager:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			local newData = entityManager:updateComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.be.ok()
+			expect(#args).to.equal(3)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(newData)
+			expect(args[3]).to.equal(prevData)
+		end)
+		it("should clear signal on entity unregister", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getComponentChangedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			entityManager:addComponent(component, testInstance)
+			entityManager:unregister(testInstance)
+			entityManager:addComponent(component, testInstance)
+			entityManager:setComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.never.be.ok()
+		end)
+	end)
+
+	describe("EntityManager:getEntityChangedSignal", function()
+		it("should fire signal on component change", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			local signal = entityManager:getEntityChangedSignal(component)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = entityManager:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			local newData = entityManager:setComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.be.ok()
+			expect(#args).to.equal(3)
+			expect(args[1]).to.equal(testInstance)
+			expect(args[2]).to.equal(newData)
+			expect(args[3]).to.equal(prevData)
 		end)
 	end)
 end

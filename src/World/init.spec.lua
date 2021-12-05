@@ -1,4 +1,5 @@
 local World = require(script.Parent)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 
 return function()
 	local bindableEvent
@@ -144,9 +145,9 @@ return function()
 			local data = world:addComponent("testComponent", testInstance)
 			local testEntity = {}
 			local data = world:addComponent("testComponent", testEntity)
-			expect(table.find(world:getEntitiesWith("testComponent"), testInstance)).to.be.ok()
-			expect(table.find(world:getEntitiesWith("testComponent"), testEntity)).to.be.ok()
-			expect(#world:getEntitiesWith("testComponent")).to.equal(2)
+			expect(world:getEntitiesWith("testComponent")[testInstance]).to.be.ok()
+			expect(world:getEntitiesWith("testComponent")[testEntity]).to.be.ok()
+			expect(Immutable.count(world:getEntitiesWith("testComponent"))).to.equal(2)
 		end)
 		it("should return nil for non-existing components", function()
 			local component = {
@@ -227,6 +228,191 @@ return function()
 					foo = "baz",
 				})
 			end).to.throw()
+		end)
+	end)
+
+	describe("EntityManager:getComponentAddedSignal", function()
+		it("should fire signal on component set", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getComponentAddedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local data = world:addComponent(component, testInstance)
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(data)
+		end)
+	end)
+
+	describe("EntityManager:getEntityAddedSignal", function()
+		it("should fire signal on component set", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getEntityAddedSignal(component)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local data = world:addComponent(component, testInstance)
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal(testInstance)
+			expect(args[2]).to.equal(data)
+		end)
+	end)
+
+	describe("World:getComponentChangedSignal", function()
+		it("should fire signal on component set", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getComponentChangedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = world:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			local newData = world:setComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.be.ok()
+			expect(#args).to.equal(3)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(newData)
+			expect(args[3]).to.equal(prevData)
+		end)
+		it("should fire signal on component update", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getComponentChangedSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = world:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			local newData = world:updateComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.be.ok()
+			expect(#args).to.equal(3)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(newData)
+			expect(args[3]).to.equal(prevData)
+		end)
+	end)
+
+	describe("World:getEntityChangedSignal", function()
+		it("should fire signal on component change", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getEntityChangedSignal(component)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = world:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			local newData = world:setComponent(component, testInstance, {
+				foo = "baz",
+			})
+			expect(args).to.be.ok()
+			expect(#args).to.equal(3)
+			expect(args[1]).to.equal(testInstance)
+			expect(args[2]).to.equal(newData)
+			expect(args[3]).to.equal(prevData)
+		end)
+	end)
+
+	describe("EntityManager:getComponentRemovingSignal", function()
+		it("should fire signal on component set", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getComponentRemovingSignal(testInstance)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local prevData = world:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			world:removeComponent(component, testInstance)
+
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal("testComponent")
+			expect(args[2]).to.equal(prevData)
+		end)
+	end)
+
+	describe("EntityManager:getEntityRemovingSignal", function()
+		it("should fire signal on component set", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local signal = world:getEntityRemovingSignal(component)
+			local args
+			signal:connect(function(...)
+				args = { ... }
+			end)
+			local data = world:addComponent(component, testInstance)
+			expect(args).to.never.be.ok()
+			world:removeComponent(component, testInstance)
+			expect(args).to.be.ok()
+			expect(#args).to.equal(2)
+			expect(args[1]).to.equal(testInstance)
+			expect(args[2]).to.equal(data)
 		end)
 	end)
 end

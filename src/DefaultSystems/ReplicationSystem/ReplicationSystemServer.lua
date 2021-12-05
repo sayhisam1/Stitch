@@ -1,4 +1,4 @@
-local Util = require(script.Parent.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Parent.Shared.Immutable)
 local Serialization = require(script.Parent.Serialization)
 
 local ReplicationSystem = {}
@@ -37,7 +37,7 @@ function ReplicationSystem.replicate(world, componentName: string)
 		Serialization.write(data, folder)
 
 		world:updateComponent(ReplicationSystem.stateComponent, entity,{
-			lastComponentData = Util.setKey(state.lastComponentData, componentName, data)
+			lastComponentData = Immutable.setKey(state.lastComponentData, componentName, data)
 		})
 	end)
 end
@@ -99,7 +99,7 @@ function ReplicationSystem.onUpdate(world)
 				if folder then
 					folder:Destroy()
 				end
-				newComponentDatas = Util.removeKey(newComponentDatas, componentName)
+				newComponentDatas = Immutable.removeKey(newComponentDatas, componentName)
 			end
 		end
 

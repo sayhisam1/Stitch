@@ -29,7 +29,7 @@ end
 function EntityQuery:get()
 	local entities = self.world:getEntitiesWith(self.withComponents[1])
 	local validEntities = {}
-	for _, entity in ipairs(entities) do
+	for entity, _ in pairs(entities) do
 		local valid = true
 		for _, withComponent in ipairs(self.withComponents) do
 			if not self.world:getComponent(withComponent, entity) then
@@ -52,7 +52,7 @@ end
 
 function EntityQuery:forEach(callback: ({},...{}) -> nil)
 	local entities = self.world:getEntitiesWith(self.withComponents[1])
-	for _, entity in ipairs(entities) do
+	for entity, _ in pairs(entities) do
 		local obtainedComponents = table.create(#self.withComponents)
 
 		local valid = true

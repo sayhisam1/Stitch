@@ -4,6 +4,8 @@ classOrder = [
     "ComponentDefinition",
 ]
 
+apiCategories = ["signal"]
+
 title = "Stitch"
 gitRepoUrl = "https://github.com/sayhisam1/Stitch"
 gitSourceBranch = "master"

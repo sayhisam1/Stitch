@@ -1,6 +1,6 @@
 local RunService = game:GetService("RunService")
 local inlinedError = require(script.Parent.Parent.Shared.inlinedError)
-local Util = require(script.Parent.Parent.Shared.Util)
+local Immutable = require(script.Parent.Parent.Shared.Immutable)
 
 --[=[
 	@class SystemDefinition
@@ -44,7 +44,10 @@ SystemDefinition.updateEvent = RunService.Heartbeat
 
 function SystemDefinition:create(world)
 	if self.stateComponent then
-		world:registerComponent(Util.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
+		if not self.stateComponent.name then
+			self.stateComponent.name = self.name
+		end
+		world:registerComponent(self.stateComponent)
 	end
 	xpcall(self.onCreate, inlinedError, world)
 end
@@ -56,7 +59,10 @@ end
 function SystemDefinition:destroy(world)
 	xpcall(self.onDestroy, inlinedError, world)
 	if self.stateComponent then
-		world:unregisterComponent(Util.setKey(self.stateComponent, "name", self.stateComponent.name or self.name))
+		if not self.stateComponent.name then
+			self.stateComponent.name = self.name
+		end
+		world:unregisterComponent(self.stateComponent)
 	end
 end
 
