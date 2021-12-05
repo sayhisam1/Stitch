@@ -63,8 +63,11 @@ ComponentDefinition.validator = nil
 --[=[
 	@prop tag boolean? | string?
 	@within ComponentDefinition
-	| ❕ This property only has an effect when `TagSystem` is added to the World. |
-	| --------------------------------------------------------------------------------- |
+	@tag special
+
+	:::info
+	This property only has an effect when `TagSystem` is added to the World.
+	:::
 
 	Used to apply CollectionService tags to the entity the component is attached to
 	(see: `TagSystem` for more details).
@@ -76,8 +79,12 @@ ComponentDefinition.tag = nil
 --[=[
 	@prop replicate boolean?
 	@within ComponentDefinition
-	| ❕ This property only has an effect when `ReplicationSystem` is added to the World. |
-	| --------------------------------------------------------------------------------- |
+	@tag special
+
+	:::info
+	This property only has an effect when `ReplicationSystem` is added to the World.
+	:::
+
 	Enables replication of the component (see: `ReplicationSystem` for more details).
 ]=]
 ComponentDefinition.replicate = nil
@@ -89,8 +96,9 @@ ComponentDefinition.replicate = nil
 	You should use this to clean up any resources that were allocated when adding the component (e.g. any event connections).
 	The function will be passed the entity and the data of the component.
 
-	| ❗ Component destructors should not yield - this will lead to undefined behavior. |
-	| --------------------------------------------------------------------------------- |
+	:::danger
+	Component destructors should not yield - this will lead to undefined behavior!
+	:::
 ]=]
 ComponentDefinition.destructor = nil
 
