@@ -8,37 +8,34 @@ TagSystem.priority = -1E10
 TagSystem.stateComponent = {
 	name = "TagSystemState",
 	defaults = {
-		tagAddedListeners = {},
-		tagRemovedListeners = {},
+		listeners = {},
 		lastComponents = {},
 	},
 	destructor = function(_, data)
-		for _, listener in pairs(data.tagAddedListeners) do
+		for _, listener in pairs(data.listeners) do
 			listener:disconnect()
 		end
-		for _, listener in pairs(data.tagRemovedListeners) do
-			listener:disconnect()
-		end
-	end
+	end,
 }
 
-function TagSystem.onUpdate(world)
-	local function addComponentIfNotExists(componentDefinition, instance)
-		if not world:getComponent(componentDefinition, instance) then
-			world:addComponent(componentDefinition, instance)
-		end
+local function addComponentIfNotExists(world, componentDefinition, instance)
+	if not world:getComponent(componentDefinition, instance) then
+		world:addComponent(componentDefinition, instance)
 	end
+end
+
+function TagSystem.onUpdate(world)
 	local registeredComponents = world.componentRegistry:getAll()
-	addComponentIfNotExists(TagSystem.stateComponent, workspace)
+	addComponentIfNotExists(world, TagSystem.stateComponent, workspace)
 	local state = world:getComponent(TagSystem.stateComponent, workspace)
 
 	if state.lastComponents == registeredComponents then
 		return
 	end
 
-	-- handle new additions
-	local newTagAddedListeners = {}
-	local newTagRemovedListeners = {}
+	world:removeComponent(TagSystem.stateComponent, workspace)
+
+	local listeners = {}
 	for _, componentDefinition in pairs(registeredComponents) do
 		local tag = componentDefinition.tag
 		if not tag then
@@ -49,41 +46,45 @@ function TagSystem.onUpdate(world)
 			tag = componentDefinition.name
 		end
 
-		if state.tagAddedListeners[tag] then
-			newTagAddedListeners[tag] = state.tagAddedListeners[tag]
-			newTagRemovedListeners[tag] = state.tagRemovedListeners[tag]
-			continue
-		end
+		table.insert(
+			listeners,
+			CollectionService:GetInstanceAddedSignal(tag):Connect(function(instance)
+				addComponentIfNotExists(world, componentDefinition, instance)
+			end)
+		)
 
-		newTagAddedListeners[componentDefinition.name] = CollectionService:GetInstanceAddedSignal(tag):Connect(function(instance)
-			addComponentIfNotExists(componentDefinition, instance)
-		end)
 		for _, instance in pairs(CollectionService:GetTagged(tag)) do
-			addComponentIfNotExists(componentDefinition, instance)
+			addComponentIfNotExists(world, componentDefinition, instance)
 		end
 
-		newTagRemovedListeners[componentDefinition.name] = CollectionService:GetInstanceRemovedSignal(tag):Connect(function(instance)
-			world:removeComponent(componentDefinition, instance)
-		end)
+		table.insert(
+			listeners,
+			CollectionService:GetInstanceRemovedSignal(tag):Connect(function(instance)
+				world:removeComponent(componentDefinition, instance)
+			end)
+		)
+
+		table.insert(
+			listeners,
+			world:getEntityAddedSignal(componentDefinition):Connect(function(entity)
+				if typeof(entity) == "Instance" then
+					CollectionService:AddTag(entity, tag)
+				end
+			end)
+		)
+
+		table.insert(
+			listeners,
+			world:getEntityRemovingSignal(componentDefinition):Connect(function(entity)
+				if typeof(entity) == "Instance" then
+					CollectionService:RemoveTag(entity, tag)
+				end
+			end)
+		)
 	end
 
-	-- check for removed components
-	for name, listener in pairs(state.tagAddedListeners) do
-		if not registeredComponents[name] then
-			listener:disconnect()
-			newTagAddedListeners[name] = nil
-		end
-	end
-	for name, listener in pairs(state.tagRemovedListeners) do
-		if not registeredComponents[name] then
-			listener:disconnect()
-			newTagRemovedListeners[name] = nil
-		end
-	end
-
-	world:updateComponent(TagSystem.stateComponent, workspace, {
-		tagAddedListeners = newTagAddedListeners,
-		tagRemovedListeners = newTagRemovedListeners,
+	world:addComponent(TagSystem.stateComponent, workspace, {
+		listeners = listeners,
 		lastComponents = registeredComponents,
 	})
 end
