@@ -6,73 +6,116 @@
 <meta name="generator" content="Docusaurus v2.0.0-beta.9">
 <title data-react-helmet="true">ComponentDefinition | Stitch</title><meta data-react-helmet="true" property="og:title" content="ComponentDefinition | Stitch"><meta data-react-helmet="true" name="twitter:card" content="summary_large_image"><meta data-react-helmet="true" name="description" content="A ComponentDefinition is a table that defines a Component.
 
-All ComponentDefinitions must be registered to a World before they can be used."><meta data-react-helmet="true" property="og:description" content="A ComponentDefinition is a table that defines a Component.
+All ComponentDefinitions must be registered to a World before they can be used.
 
-All ComponentDefinitions must be registered to a World before they can be used."><meta data-react-helmet="true" property="og:url" content="https://sayhisam1.github.io/Stitch/api/ComponentDefinition"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="shortcut icon" href="/Stitch/logo.png"><link data-react-helmet="true" rel="canonical" href="https://sayhisam1.github.io/Stitch/api/ComponentDefinition"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/ComponentDefinition" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/ComponentDefinition" hreflang="x-default"><link rel="stylesheet" href="/Stitch/assets/css/styles.2ffb5e21.css">
-<link rel="preload" href="/Stitch/assets/js/runtime~main.5182a567.js" as="script">
-<link rel="preload" href="/Stitch/assets/js/main.7d9fee95.js" as="script">
+Example usage:
+
+```lua
+local positionComponent = {
+	name = &quot;position&quot;,
+	defaults = {
+		x = 0,
+		y = 0,
+		z = 0,
+	},
+}
+world:registerComponent(positionComponent)
+```"><meta data-react-helmet="true" property="og:description" content="A ComponentDefinition is a table that defines a Component.
+
+All ComponentDefinitions must be registered to a World before they can be used.
+
+Example usage:
+
+```lua
+local positionComponent = {
+	name = &quot;position&quot;,
+	defaults = {
+		x = 0,
+		y = 0,
+		z = 0,
+	},
+}
+world:registerComponent(positionComponent)
+```"><meta data-react-helmet="true" property="og:url" content="https://sayhisam1.github.io/Stitch/api/ComponentDefinition"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="shortcut icon" href="/Stitch/logo.png"><link data-react-helmet="true" rel="canonical" href="https://sayhisam1.github.io/Stitch/api/ComponentDefinition"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/ComponentDefinition" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/ComponentDefinition" hreflang="x-default"><link rel="stylesheet" href="/Stitch/assets/css/styles.2ffb5e21.css">
+<link rel="preload" href="/Stitch/assets/js/runtime~main.02ebeccf.js" as="script">
+<link rel="preload" href="/Stitch/assets/js/main.86d3b8c8.js" as="script">
 </head>
 <body>
 <script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
 <div><a href="#" class="skipToContent_1oUP">Skip to main content</a></div><nav class="navbar navbar--fixed-top"><div class="navbar__inner"><div class="navbar__items"><button aria-label="Navigation bar toggle" class="navbar__toggle clean-btn" type="button" tabindex="0"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/Stitch/"><b class="navbar__title">Stitch</b></a><a class="navbar__item navbar__link" href="/Stitch/docs/intro">Docs</a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/Stitch/api/">API</a></div><div class="navbar__items navbar__items--right"><a href="https://github.com/sayhisam1/Stitch" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link"><span>GitHub<svg width="13.5" height="13.5" aria-hidden="true" viewBox="0 0 24 24" class="iconExternalLink_3J9K"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"></path></svg></span></a><div class="toggle_71bT toggle_3Zt9 toggleDisabled_3cF-"><div class="toggleTrack_32Fl" role="button" tabindex="-1"><div class="toggleTrackCheck_3lV7"><span class="toggleIcon_O4iE">🌜</span></div><div class="toggleTrackX_S2yS"><span class="toggleIcon_O4iE">🌞</span></div><div class="toggleTrackThumb_xI_Z"></div></div><input type="checkbox" class="toggleScreenReader_28Tw" aria-label="Switch between dark and light mode"></div><div class="navbar__search"><span aria-label="expand searchbar" role="button" class="search-icon" tabindex="0"></span><input type="search" id="search_input_react" placeholder="Press S to Search..." aria-label="Search" class="navbar__search-input search-bar"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div class="main-wrapper docPageContainer_2Kz0"><div class="docPage_1bdk"><div class="docSidebarContainer_1ykS"><div class="sidebar_15mo"><nav class="menu thin-scrollbar menu_Bmed"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Stitch/api/World">​World</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/Stitch/api/SystemDefinition">​System​Definition</a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" href="/Stitch/api/ComponentDefinition">​Component​Definition</a></li></ul></nav><button type="button" title="Collapse sidebar" aria-label="Collapse sidebar" class="button button--secondary button--outline collapseSidebarButton_1CGd"><svg width="20" height="20" aria-hidden="true" class="collapseSidebarButtonIcon_3E-R"><g fill="#7a7a7a"><path d="M9.992 10.023c0 .2-.062.399-.172.547l-4.996 7.492a.982.982 0 01-.828.454H1c-.55 0-1-.453-1-1 0-.2.059-.403.168-.551l4.629-6.942L.168 3.078A.939.939 0 010 2.528c0-.548.45-.997 1-.997h2.996c.352 0 .649.18.828.45L9.82 9.472c.11.148.172.347.172.55zm0 0"></path><path d="M19.98 10.023c0 .2-.058.399-.168.547l-4.996 7.492a.987.987 0 01-.828.454h-3c-.547 0-.996-.453-.996-1 0-.2.059-.403.168-.551l4.625-6.942-4.625-6.945a.939.939 0 01-.168-.55 1 1 0 01.996-.997h3c.348 0 .649.18.828.45l4.996 7.492c.11.148.168.347.168.55zm0 0"></path></g></svg></button></div></div><main class="docMainContainer_28N5"><div class="container padding-vert--lg"><div class="row"><div class="col docItemCol_3WPG"><div class="docItemContainer_3XDu"><article><div class="member_qHIL markdown"><div class="tocCollapsible_1PrD theme-doc-toc-mobile tocMobile_3ryM"><button type="button" class="clean-btn tocCollapsibleButton_2O1e">On this page</button></div><header><h1 class="docTitle_1ddc" style="text-decoration:none"><span style="display:inline-block">Component</span><span style="display:inline-block">Definition</span></h1><div class="luaClassTags_2Zrs"></div><div>
 <p>A ComponentDefinition is a table that defines a Component.</p>
 <p>All ComponentDefinitions must be registered to a World before they can be used.</p>
-</div></header><h2 class="anchor anchorWithStickyNavbar_31ik" id="types">Types<a aria-hidden="true" class="hash-link" href="#types" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="ComponentResolvable"><code style="text-decoration:none">ComponentResolvable</code><a aria-hidden="true" class="hash-link" href="#ComponentResolvable" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L19"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code class="purple__nFc">type</code> <code>ComponentResolvable<!-- --> = </code> <code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/ComponentDefinition">ComponentDefinition</a></code><code class="op_1JtD"> | </code><code class="blue_2Afy">string</code></div><div>
-<p>
-  Whenever an API refers to a <code>ComponentResolvable</code>,
-  either the definition or the name of the component can be used.
-</p>
-</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="properties">Properties<a aria-hidden="true" class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="name"><code style="text-decoration:none">name</code><a aria-hidden="true" class="hash-link" href="#name" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L38"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->name<!-- -->:<!-- --> </code> <code class="blue_2Afy">string?</code></div><div>
+<p>Example usage:</p>
+<pre class="language-lua"><code class="language-lua"><span class="token keyword">local</span> positionComponent <span class="token operator">=</span> <span class="token punctuation">{</span>
+	name <span class="token operator">=</span> <span class="token string">"position"</span><span class="token punctuation">,</span>
+	defaults <span class="token operator">=</span> <span class="token punctuation">{</span>
+		x <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
+		y <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
+		z <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span>
+	<span class="token punctuation">}</span><span class="token punctuation">,</span>
+<span class="token punctuation">}</span>
+world<span class="token punctuation">:</span><span class="token function">registerComponent</span><span class="token punctuation">(</span>positionComponent<span class="token punctuation">)</span>
+</code></pre>
+</div></header><h2 class="anchor anchorWithStickyNavbar_31ik" id="properties">Properties<a aria-hidden="true" class="hash-link" href="#properties" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="name"><code style="text-decoration:none">name</code><a aria-hidden="true" class="hash-link" href="#name" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L45"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->name<!-- -->:<!-- --> </code> <code class="blue_2Afy">string?</code></div><div>
 <p>Used to identify the Component in the World (should be unique).</p>
 <p>
   If <code>name</code> is not defined and the ComponentDefinition is returned by a ModuleScript,
   then registering the ModuleScript will use the name of the ModuleScript.
 </p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="defaults"><code style="text-decoration:none">defaults</code><a aria-hidden="true" class="hash-link" href="#defaults" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L46"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->defaults<!-- -->:<!-- --> </code> <code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="blue_2Afy">?</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="defaults"><code style="text-decoration:none">defaults</code><a aria-hidden="true" class="hash-link" href="#defaults" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L53"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->defaults<!-- -->:<!-- --> </code> <code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="blue_2Afy">?</code></div><div>
 <p>
   The default data to use when adding a component. If data is provided to <code>World.addComponent</code>,
   then the data will be merged with the defaults.
 </p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="validator"><code style="text-decoration:none">validator</code><a aria-hidden="true" class="hash-link" href="#validator" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L54"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->validator<!-- -->:<!-- --> </code> <code class="green_3LnD">(</code><code class="purple__nFc">(</code><code>data<!-- -->: </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="purple__nFc">)</code><code class="purple__nFc"> → </code><code class="blue_2Afy">boolean</code><code class="green_3LnD">)</code><code class="blue_2Afy">?</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="validator"><code style="text-decoration:none">validator</code><a aria-hidden="true" class="hash-link" href="#validator" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L61"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->validator<!-- -->:<!-- --> </code> <code class="green_3LnD">(</code><code class="purple__nFc">(</code><code>data<!-- -->: </code><code class="op_1JtD">{</code><code class="op_1JtD">}</code><code class="purple__nFc">)</code><code class="purple__nFc"> → </code><code class="blue_2Afy">boolean</code><code class="green_3LnD">)</code><code class="blue_2Afy">?</code></div><div>
 <p>
   A function that will be called to validate the data when adding or changing a component.
   Should return true if the data is valid, false otherwise.
 </p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="tag"><code style="text-decoration:none">tag</code><a aria-hidden="true" class="hash-link" href="#tag" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L67"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->tag<!-- -->:<!-- --> </code> <code class="blue_2Afy">boolean?</code><code class="op_1JtD"> | </code><code class="blue_2Afy">string?</code></div><div>
-<table>
-  <thead>
-    <tr>
-      <th>❕ This property only has an effect when <code>TagSystem</code> is added to the World.</th>
-    </tr>
-  </thead>
-</table>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="tag"><code style="text-decoration:none">tag</code><a aria-hidden="true" class="hash-link" href="#tag" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">special</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L77"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->tag<!-- -->:<!-- --> </code> <code class="blue_2Afy">boolean?</code><code class="op_1JtD"> | </code><code class="blue_2Afy">string?</code></div><div>
+<div class="admonition admonition-info alert alert--info">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+          <path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path>
+        </svg></span>info</h5>
+  </div>
+  <div class="admonition-content">
+    <p>This property only has an effect when <code>TagSystem</code> is added to the World.</p>
+  </div>
+</div>
 <p>
   Used to apply CollectionService tags to the entity the component is attached to
   (see: <code>TagSystem</code> for more details).
 </p>
 <p>If tag is <code>true</code>, the tag will be the same as the name of the ComponentDefinition.</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="replicate"><code style="text-decoration:none">replicate</code><a aria-hidden="true" class="hash-link" href="#replicate" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L76"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->replicate<!-- -->:<!-- --> </code> <code class="blue_2Afy">boolean?</code></div><div>
-<table>
-  <thead>
-    <tr>
-      <th>❕ This property only has an effect when <code>ReplicationSystem</code> is added to the World.</th>
-    </tr>
-  </thead>
-</table>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="replicate"><code style="text-decoration:none">replicate</code><a aria-hidden="true" class="hash-link" href="#replicate" title="Direct link to heading">​</a></h3><span class="docTag_3qMS" style="border-color:#925FB9;color:#925FB9">special</span><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L90"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->replicate<!-- -->:<!-- --> </code> <code class="blue_2Afy">boolean?</code></div><div>
+<div class="admonition admonition-info alert alert--info">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16">
+          <path d="M7 2.3c3.14 0 5.7 2.56 5.7 5.7s-2.56 5.7-5.7 5.7A5.71 5.71 0 0 1 1.3 8c0-3.14 2.56-5.7 5.7-5.7zM7 1C3.14 1 0 4.14 0 8s3.14 7 7 7 7-3.14 7-7-3.14-7-7-7zm1 3H6v5h2V4zm0 6H6v2h2v-2z"></path>
+        </svg></span>info</h5>
+  </div>
+  <div class="admonition-content">
+    <p>This property only has an effect when <code>ReplicationSystem</code> is added to the World.</p>
+  </div>
+</div>
 <p>Enables replication of the component (see: <code>ReplicationSystem</code> for more details).</p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="destructor"><code style="text-decoration:none">destructor</code><a aria-hidden="true" class="hash-link" href="#destructor" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L88"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->destructor<!-- -->:<!-- --> </code> <code class="green_3LnD">(</code><div class="inset_2cJr"><code class="blue_2Afy">entity</code><code class="green_3LnD">,</code></div><div class="inset_2cJr"><code class="blue_2Afy">data</code></div><code class="green_3LnD">)</code><code class="green_3LnD"> → </code><code class="blue_2Afy">nil?</code></div><div>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="destructor"><code style="text-decoration:none">destructor</code><a aria-hidden="true" class="hash-link" href="#destructor" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/ComponentDefinition.lua#L103"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>ComponentDefinition<!-- -->.<!-- -->destructor<!-- -->:<!-- --> </code> <code class="green_3LnD">(</code><div class="inset_2cJr"><code class="blue_2Afy">entity</code><code class="green_3LnD">,</code></div><div class="inset_2cJr"><code class="blue_2Afy">data</code></div><code class="green_3LnD">)</code><code class="green_3LnD"> → </code><code class="blue_2Afy">nil?</code></div><div>
 <p>
   If set, this function will be called when the component is removed.
   You should use this to clean up any resources that were allocated when adding the component (e.g. any event connections).
   The function will be passed the entity and the data of the component.
 </p>
-<table>
-  <thead>
-    <tr>
-      <th>❗ Component destructors should not yield - this will lead to undefined behavior.</th>
-    </tr>
-  </thead>
-</table>
+<div class="admonition admonition-danger alert alert--danger">
+  <div class="admonition-heading">
+    <h5><span class="admonition-icon"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="16" viewBox="0 0 12 16">
+          <path d="M5.05.31c.81 2.17.41 3.38-.52 4.31C3.55 5.67 1.98 6.45.9 7.98c-1.45 2.05-1.7 6.53 3.53 7.7-2.2-1.16-2.67-4.52-.3-6.61-.61 2.03.53 3.33 1.94 2.86 1.39-.47 2.3.53 2.27 1.67-.02.78-.31 1.44-1.13 1.81 3.42-.59 4.78-3.42 4.78-5.56 0-2.84-2.53-3.22-1.25-5.61-1.52.13-2.03 1.13-1.89 2.75.09 1.08-1.02 1.8-1.86 1.33-.67-.41-.66-1.19-.06-1.78C8.18 5.31 8.68 2.45 5.05.32L5.03.3l.02.01z"></path>
+        </svg></span>danger</h5>
+  </div>
+  <div class="admonition-content">
+    <p>Component destructors should not yield - this will lead to undefined behavior!</p>
+  </div>
+</div>
 </div></div></article></div><details><summary>Show raw api</summary><pre style="max-width:100%;white-space:pre-wrap">{
     &quot;functions&quot;: [],
     &quot;properties&quot;: [
@@ -81,7 +124,7 @@ All ComponentDefinitions must be registered to a World before they can be used."
             &quot;desc&quot;: &quot;Used to identify the Component in the World (should be unique).\n\nIf `name` is not defined and the ComponentDefinition is returned by a ModuleScript,\nthen registering the ModuleScript will use the name of the ModuleScript.&quot;,
             &quot;lua_type&quot;: &quot;string?&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 38,
+                &quot;line&quot;: 45,
                 &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
             }
         },
@@ -90,7 +133,7 @@ All ComponentDefinitions must be registered to a World before they can be used."
             &quot;desc&quot;: &quot;The default data to use when adding a component. If data is provided to `World.addComponent`,\nthen the data will be merged with the defaults.&quot;,
             &quot;lua_type&quot;: &quot;{}?&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 46,
+                &quot;line&quot;: 53,
                 &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
             }
         },
@@ -99,57 +142,53 @@ All ComponentDefinitions must be registered to a World before they can be used."
             &quot;desc&quot;: &quot;A function that will be called to validate the data when adding or changing a component.\nShould return true if the data is valid, false otherwise.&quot;,
             &quot;lua_type&quot;: &quot;((data: {}) -&gt; boolean)?&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 54,
+                &quot;line&quot;: 61,
                 &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
             }
         },
         {
             &quot;name&quot;: &quot;tag&quot;,
-            &quot;desc&quot;: &quot;| ❕ This property only has an effect when `TagSystem` is added to the World. |\n| --------------------------------------------------------------------------------- |\n\nUsed to apply CollectionService tags to the entity the component is attached to\n(see: `TagSystem` for more details).\n\nIf tag is `true`, the tag will be the same as the name of the ComponentDefinition.&quot;,
+            &quot;desc&quot;: &quot;:::info\nThis property only has an effect when `TagSystem` is added to the World.\n:::\n\nUsed to apply CollectionService tags to the entity the component is attached to\n(see: `TagSystem` for more details).\n\nIf tag is `true`, the tag will be the same as the name of the ComponentDefinition.&quot;,
             &quot;lua_type&quot;: &quot;boolean? | string?&quot;,
+            &quot;tags&quot;: [
+                &quot;special&quot;
+            ],
             &quot;source&quot;: {
-                &quot;line&quot;: 67,
+                &quot;line&quot;: 77,
                 &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
             }
         },
         {
             &quot;name&quot;: &quot;replicate&quot;,
-            &quot;desc&quot;: &quot;| ❕ This property only has an effect when `ReplicationSystem` is added to the World. |\n| --------------------------------------------------------------------------------- |\nEnables replication of the component (see: `ReplicationSystem` for more details).&quot;,
+            &quot;desc&quot;: &quot;:::info\nThis property only has an effect when `ReplicationSystem` is added to the World.\n:::\n\nEnables replication of the component (see: `ReplicationSystem` for more details).&quot;,
             &quot;lua_type&quot;: &quot;boolean?&quot;,
+            &quot;tags&quot;: [
+                &quot;special&quot;
+            ],
             &quot;source&quot;: {
-                &quot;line&quot;: 76,
+                &quot;line&quot;: 90,
                 &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
             }
         },
         {
             &quot;name&quot;: &quot;destructor&quot;,
-            &quot;desc&quot;: &quot;If set, this function will be called when the component is removed.\nYou should use this to clean up any resources that were allocated when adding the component (e.g. any event connections).\nThe function will be passed the entity and the data of the component.\n\n| ❗ Component destructors should not yield - this will lead to undefined behavior. |\n| --------------------------------------------------------------------------------- |&quot;,
+            &quot;desc&quot;: &quot;If set, this function will be called when the component is removed.\nYou should use this to clean up any resources that were allocated when adding the component (e.g. any event connections).\nThe function will be passed the entity and the data of the component.\n\n:::danger\nComponent destructors should not yield - this will lead to undefined behavior!\n:::&quot;,
             &quot;lua_type&quot;: &quot;(entity, data) -&gt; nil?&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 88,
+                &quot;line&quot;: 103,
                 &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
             }
         }
     ],
-    &quot;types&quot;: [
-        {
-            &quot;name&quot;: &quot;ComponentResolvable&quot;,
-            &quot;desc&quot;: &quot;Whenever an API refers to a `ComponentResolvable`,\neither the definition or the name of the component can be used.&quot;,
-            &quot;lua_type&quot;: &quot;ComponentDefinition | string&quot;,
-            &quot;source&quot;: {
-                &quot;line&quot;: 19,
-                &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
-            }
-        }
-    ],
+    &quot;types&quot;: [],
     &quot;name&quot;: &quot;ComponentDefinition&quot;,
-    &quot;desc&quot;: &quot;A ComponentDefinition is a table that defines a Component.\n\nAll ComponentDefinitions must be registered to a World before they can be used.&quot;,
+    &quot;desc&quot;: &quot;A ComponentDefinition is a table that defines a Component.\n\nAll ComponentDefinitions must be registered to a World before they can be used.\n\nExample usage:\n\n```lua\nlocal positionComponent = {\n\tname = \&quot;position\&quot;,\n\tdefaults = {\n\t\tx = 0,\n\t\ty = 0,\n\t\tz = 0,\n\t},\n}\nworld:registerComponent(positionComponent)\n```&quot;,
     &quot;source&quot;: {
-        &quot;line&quot;: 27,
+        &quot;line&quot;: 34,
         &quot;path&quot;: &quot;src/World/ComponentDefinition.lua&quot;
     }
-}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a><ul><li><a href="#ComponentResolvable" class="table-of-contents__link toc-highlight">ComponentResolvable</a></li></ul></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#defaults" class="table-of-contents__link toc-highlight">defaults</a></li><li><a href="#destructor" class="table-of-contents__link toc-highlight">destructor</a></li><li><a href="#name" class="table-of-contents__link toc-highlight">name</a></li><li><a href="#replicate" class="table-of-contents__link toc-highlight">replicate</a></li><li><a href="#tag" class="table-of-contents__link toc-highlight">tag</a></li><li><a href="#validator" class="table-of-contents__link toc-highlight">validator</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 sayhisam1. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
-<script src="/Stitch/assets/js/runtime~main.5182a567.js"></script>
-<script src="/Stitch/assets/js/main.7d9fee95.js"></script>
+}</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#defaults" class="table-of-contents__link toc-highlight">defaults</a></li><li><a href="#destructor" class="table-of-contents__link toc-highlight">destructor</a></li><li><a href="#name" class="table-of-contents__link toc-highlight">name</a></li><li><a href="#replicate" class="table-of-contents__link toc-highlight">replicate</a></li><li><a href="#tag" class="table-of-contents__link toc-highlight">tag</a></li><li><a href="#validator" class="table-of-contents__link toc-highlight">validator</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 sayhisam1. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
+<script src="/Stitch/assets/js/runtime~main.02ebeccf.js"></script>
+<script src="/Stitch/assets/js/main.86d3b8c8.js"></script>
 </body>
 </html>

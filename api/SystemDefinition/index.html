@@ -9,8 +9,8 @@
 All SystemDefinition must be added to a World to be used."><meta data-react-helmet="true" property="og:description" content="A SystemDefinition is a table that defines a System. 
 
 All SystemDefinition must be added to a World to be used."><meta data-react-helmet="true" property="og:url" content="https://sayhisam1.github.io/Stitch/api/SystemDefinition"><meta data-react-helmet="true" name="docusaurus_locale" content="en"><meta data-react-helmet="true" name="docusaurus_tag" content="default"><link data-react-helmet="true" rel="shortcut icon" href="/Stitch/logo.png"><link data-react-helmet="true" rel="canonical" href="https://sayhisam1.github.io/Stitch/api/SystemDefinition"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/SystemDefinition" hreflang="en"><link data-react-helmet="true" rel="alternate" href="https://sayhisam1.github.io/Stitch/api/SystemDefinition" hreflang="x-default"><link rel="stylesheet" href="/Stitch/assets/css/styles.2ffb5e21.css">
-<link rel="preload" href="/Stitch/assets/js/runtime~main.5182a567.js" as="script">
-<link rel="preload" href="/Stitch/assets/js/main.7d9fee95.js" as="script">
+<link rel="preload" href="/Stitch/assets/js/runtime~main.02ebeccf.js" as="script">
+<link rel="preload" href="/Stitch/assets/js/main.86d3b8c8.js" as="script">
 </head>
 <body>
 <script>!function(){function e(e){document.documentElement.setAttribute("data-theme",e)}var t=function(){var e=null;try{e=localStorage.getItem("theme")}catch(e){}return e}();null!==t?e(t):window.matchMedia("(prefers-color-scheme: dark)").matches?e("dark"):(window.matchMedia("(prefers-color-scheme: light)").matches,e("light"))}()</script><div id="__docusaurus">
@@ -30,14 +30,14 @@ All SystemDefinition must be added to a World to be used."><meta data-react-helm
 </div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="updateEvent"><code style="text-decoration:none">updateEvent</code><a aria-hidden="true" class="hash-link" href="#updateEvent" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L43"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->.<!-- -->updateEvent<!-- -->:<!-- --> </code> <code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="https://developer.roblox.com/en-us/api-reference/datatype/RBXScriptSignal" target="_blank" rel="noopener noreferrer">RBXScriptSignal?<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound" style="color:gray;vertical-align:middle;margin-left:2px"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg></a></code></div><div>
 <p>The event that the System should listen to for updates. Each time the event fires, the System is updated.</p>
 <p>By default, the event is <code>RunService.Heartbeat</code>.</p>
-</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="functions">Functions<a aria-hidden="true" class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="onCreate"><code style="text-decoration:none">onCreate</code><a aria-hidden="true" class="hash-link" href="#onCreate" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L72"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->:</code><code class="green_3LnD">onCreate</code><code>(</code><div class="inset_2cJr"><div><code>world<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code><span class="inlineDescription_17uy">-- <span>
+</div><h2 class="anchor anchorWithStickyNavbar_31ik" id="functions">Functions<a aria-hidden="true" class="hash-link" href="#functions" title="Direct link to heading">​</a></h2><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="onCreate"><code style="text-decoration:none">onCreate</code><a aria-hidden="true" class="hash-link" href="#onCreate" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L78"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->:</code><code class="green_3LnD">onCreate</code><code>(</code><div class="inset_2cJr"><div><code>world<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code><span class="inlineDescription_17uy">-- <span>
 <p>The World the System was added to.</p>
 </span></span></div></div><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>
   Called when the System is added to a World.
   You should override this function if you wanted to do some manual setup for the System.
 </p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="onUpdate"><code style="text-decoration:none">onUpdate</code><a aria-hidden="true" class="hash-link" href="#onUpdate" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L82"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->:</code><code class="green_3LnD">onUpdate</code><code>(</code><div class="inset_2cJr"><div><code>world<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="onUpdate"><code style="text-decoration:none">onUpdate</code><a aria-hidden="true" class="hash-link" href="#onUpdate" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L88"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->:</code><code class="green_3LnD">onUpdate</code><code>(</code><div class="inset_2cJr"><div><code>world<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code><code>,</code><span class="inlineDescription_17uy">-- <span>
 <p>The World the System belongs to.</p>
 </span></span></div><div><code>...<!-- -->: </code><code class="blue_2Afy">any</code><span class="inlineDescription_17uy">-- <span>
 <p>The arguments passed to the updateEvent. By default, this is just the time since last update.</p>
@@ -46,7 +46,7 @@ All SystemDefinition must be added to a World to be used."><meta data-react-helm
   Called when the System is updated.
   You should override this function to control what happens on each update.
 </p>
-</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="onDestroy"><code style="text-decoration:none">onDestroy</code><a aria-hidden="true" class="hash-link" href="#onDestroy" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L91"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->:</code><code class="green_3LnD">onDestroy</code><code>(</code><div class="inset_2cJr"><div><code>world<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code><span class="inlineDescription_17uy">-- <span>
+</div><div class="divider_3z1R"></div><h3 class="anchor anchorWithStickyNavbar_31ik" id="onDestroy"><code style="text-decoration:none">onDestroy</code><a aria-hidden="true" class="hash-link" href="#onDestroy" title="Direct link to heading">​</a></h3><div class="repositoryDetailsContainer_1UH0"><a class="sourceButton_2aE5" href="https://github.com/sayhisam1/Stitch/blob/master/src/World/SystemDefinition.lua#L97"><div class="sourceButtonText_monK">&lt;/&gt;</div></a></div><div class="memberString_P8-X"><code>SystemDefinition<!-- -->:</code><code class="green_3LnD">onDestroy</code><code>(</code><div class="inset_2cJr"><div><code>world<!-- -->: </code><code class="blue_2Afy"><a style="text-decoration:underline;color:inherit" href="/Stitch/api/World">World</a></code><span class="inlineDescription_17uy">-- <span>
 <p>The World the System belonged to.</p>
 </span></span></div></div><code>) → </code><code class="blue_2Afy">nil</code></div><div>
 <p>
@@ -73,7 +73,7 @@ All SystemDefinition must be added to a World to be used."><meta data-react-helm
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 72,
+                &quot;line&quot;: 78,
                 &quot;path&quot;: &quot;src/World/SystemDefinition.lua&quot;
             }
         },
@@ -100,7 +100,7 @@ All SystemDefinition must be added to a World to be used."><meta data-react-helm
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 82,
+                &quot;line&quot;: 88,
                 &quot;path&quot;: &quot;src/World/SystemDefinition.lua&quot;
             }
         },
@@ -122,7 +122,7 @@ All SystemDefinition must be added to a World to be used."><meta data-react-helm
             ],
             &quot;function_type&quot;: &quot;method&quot;,
             &quot;source&quot;: {
-                &quot;line&quot;: 91,
+                &quot;line&quot;: 97,
                 &quot;path&quot;: &quot;src/World/SystemDefinition.lua&quot;
             }
         }
@@ -164,7 +164,7 @@ All SystemDefinition must be added to a World to be used."><meta data-react-helm
         &quot;path&quot;: &quot;src/World/SystemDefinition.lua&quot;
     }
 }</pre></details></div><div class="col col--3"><div class="tableOfContents_35-E thin-scrollbar"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#types" class="table-of-contents__link toc-highlight">Types</a></li><li><a href="#properties" class="table-of-contents__link toc-highlight">Properties</a><ul><li><a href="#name" class="table-of-contents__link toc-highlight">name</a></li><li><a href="#priority" class="table-of-contents__link toc-highlight">priority</a></li><li><a href="#updateEvent" class="table-of-contents__link toc-highlight">updateEvent</a></li></ul></li><li><a href="#functions" class="table-of-contents__link toc-highlight">Functions</a><ul><li><a href="#onCreate" class="table-of-contents__link toc-highlight">:onCreate</a></li><li><a href="#onDestroy" class="table-of-contents__link toc-highlight">:onDestroy</a></li><li><a href="#onUpdate" class="table-of-contents__link toc-highlight">:onUpdate</a></li></ul></li></ul></div></div></div></div></main></div></div><footer class="footer footer--dark"><div class="container"><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2021 sayhisam1. Built with Moonwave and Docusaurus.</div></div></div></footer></div>
-<script src="/Stitch/assets/js/runtime~main.5182a567.js"></script>
-<script src="/Stitch/assets/js/main.7d9fee95.js"></script>
+<script src="/Stitch/assets/js/runtime~main.02ebeccf.js"></script>
+<script src="/Stitch/assets/js/main.86d3b8c8.js"></script>
 </body>
 </html>
