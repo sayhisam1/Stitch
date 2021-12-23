@@ -399,6 +399,7 @@ return function()
 			expect(next(entityManager:getEntitiesWith(component))).to.never.be.ok()
 		end)
 	end)
+
 	describe("EntityManager:setComponent", function()
 		it("should set data on an existing component", function()
 			local component = setmetatable({
@@ -518,6 +519,29 @@ return function()
 					foo = "baz",
 				})
 			end).to.throw()
+		end)
+	end)
+
+	describe("EntityManager:getComponents", function()
+		it("should return all components of a given entity", function()
+			local component = setmetatable({
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}, ComponentDefinition)
+
+			entityManager:addComponent(component, testInstance)
+
+			expect(entityManager:getComponents(testInstance)).to.be.ok()
+			
+			for _,componentName in ipairs(entityManager:getComponents(testInstance)) do
+				expect(componentName).to.equal(component.name)
+			end
+		end)
+
+		it("should return empty table for entities with no components", function()
+			expect(#entityManager:getComponents(testInstance)).to.equal(0)
 		end)
 	end)
 
