@@ -203,6 +203,18 @@ function World:removeComponent(componentResolvable: ComponentResolvable, entity:
 	self.entityManager:removeComponent(self.componentRegistry:resolveOrError(componentResolvable), entity)
 end
 
+
+--[=[
+	Returns all component names of a given entity.
+
+	@param entity Instance | {} -- the entity to pull components from
+	@return {} -- all component names of the given entity
+]=]
+
+function World:getComponents(entity: Instance | {})
+	return self.entityManager:getComponents(entity)
+end
+
 --[=[
 	Returns a Signal that fires with parameters `(componentName, data)`
 	whenever a component is added to the specified entity.
@@ -237,6 +249,16 @@ end
 ]=]
 function World:getComponentRemovingSignal(entity: Instance | {})
 	return self.entityManager:getComponentRemovingSignal(entity)
+end
+
+--[=[
+	Returns a table of all components attached to the given entity
+
+	@param entity Instance | {} -- the entity to get components from
+	@return {} -- The components attached to the entity
+]=]
+function World:getComponents(entity: Instance | {})
+	return self.entityManager:getComponents(entity)
 end
 
 --[=[
