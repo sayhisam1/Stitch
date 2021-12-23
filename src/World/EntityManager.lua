@@ -254,4 +254,13 @@ function EntityManager:getAll()
 	return entites
 end
 
+function EntityManager:getComponents(entity: Instance | {})
+	if self.entityToComponent[entity] == nil then return {} end
+	local entityNames = {}
+	for component, _ in pairs(self.entityToComponent[entity]) do
+		table.insert(entityNames, component)
+	end
+	return entityNames
+end
+
 return EntityManager

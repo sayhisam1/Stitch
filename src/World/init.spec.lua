@@ -132,6 +132,29 @@ return function()
 		end)
 	end)
 
+	describe("World:getComponents", function()
+		it("should return a table of all components attached to an entity", function()
+			local component = {
+				name = "testComponent",
+				defaults = {
+					foo = "bar",
+				},
+			}
+
+			world:registerComponent(component)
+
+			local testEntity = {}
+
+			world:addComponent("testComponent", testEntity)
+
+			expect(world:getComponents(testEntity)).to.be.ok()
+			
+			for _,componentName in ipairs(world:getComponents(testEntity)) do
+				expect(componentName).to.equal(component.name)
+			end
+		end)
+	end)	
+
 	describe("World:getEntitiesWith", function()
 		it("should get entities with a component", function()
 			local component = {
