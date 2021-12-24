@@ -3,13 +3,6 @@ local Immutable = require(script.Parent.Parent.Shared.Immutable)
 local Symbol = require(script.Parent.Parent.Shared.Symbol)
 local NONE = Symbol.named("NONE")
 
-export type ComponentDefinition = {
-	name: string,
-	defaults: {}?,
-	validators: {}?,
-	destructor: (any, any) -> nil,
-} | ModuleScript
-
 --[=[
 	@class ComponentDefinition
 

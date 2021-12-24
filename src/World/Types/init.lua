@@ -1,10 +1,16 @@
-local World = require(script.Parent.World)
 
 local Types = {}
 
+local World
+
+local function setWorld(world)
+    World = world
+end
+
 export type World = typeof(World.new())
-export type Enity = Instance | {}
-export type Component = string | {}
+export type Entity = Instance | {}
+export type ComponentResolvable = {} | string
+export type SystemResolvable = {} | ModuleScript
 
 export type ComponentDefinition = {
 	name: string,
@@ -22,4 +28,4 @@ export type SystemDefinition = {
     onDestroy: (World) -> nil,
 } | ModuleScript
 
-return Types
+return {Types = Types, setWorld = setWorld}

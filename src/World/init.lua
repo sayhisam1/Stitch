@@ -10,7 +10,6 @@ local Symbol = require(script.Parent.Shared.Symbol)
 --- @within World
 --- Used to resolve a component type in World apis. Anywhere you see a `ComponentResolvable`, you can either pass the `ComponentDefinition` table used
 --- while registering the component, or a string that is the name of the component.
-type ComponentResolvable = {} | string
 
 --[=[
 	@class World
@@ -34,6 +33,14 @@ World.__index = World
 	```
 ]=]
 World.NONE = Symbol.named("NONE")
+
+
+--This requires the types but to prevent a circular dependency, we have to
+--set the World object manually so we dont require it from the Types script
+local TypeReturn = require(script.Types)
+TypeReturn.setWorld(World)
+
+World.Types = TypeReturn.Types
 
 --[=[
 	Creates a new World.
@@ -84,7 +91,7 @@ end
 	@param componentDefinition ComponentDefinition | ModuleScript
 	@return nil
 ]=]
-function World:registerComponent(componentDefinition: {} | ModuleScript)
+function World:registerComponent(componentDefinition: Types.ComponentDefinition)
 	self.componentRegistry:register(componentDefinition)
 end
 
@@ -94,7 +101,7 @@ end
 	@param componentResolvable ComponentResolvable
 	@return nil
 ]=]
-function World:unregisterComponent(componentResolvable: ComponentResolvable)
+function World:unregisterComponent(componentResolvable: Types.ComponentResolvable)
 	self.componentRegistry:unregister(componentResolvable)
 end
 
@@ -117,7 +124,7 @@ end
 	@param systemDefinition SystemDefinition | ModuleScript
 	@return nil
 ]=]
-function World:addSystem(systemDefinition: {} | ModuleScript)
+function World:addSystem(systemDefinition: Types.SystemDefinition)
 	return self.systemManager:addSystem(systemDefinition)
 end
 
@@ -127,7 +134,7 @@ end
 	@param systemResolvable SystemDefinition | ModuleScript
 	@return nil
 ]=]
-function World:removeSystem(systemResolvable: {} | ModuleScript)
+function World:removeSystem(systemResolvable: Types.SystemResolvable)
 	return self.systemManager:removeSystem(systemResolvable)
 end
 
@@ -141,7 +148,7 @@ end
 	@return {} -- The added component
 	@error "Already exists" -- Thrown if the given component already exists on the entity.
 ]=]
-function World:addComponent(componentResolvable: ComponentResolvable, entity: Instance | {}, data: {}?): {}
+function World:addComponent(componentResolvable:Types.ComponentResolvable, entity: Types.Entity, data: {}?): {}
 	return self.entityManager:addComponent(self.componentRegistry:resolveOrError(componentResolvable), entity, data)
 end
 
@@ -154,7 +161,7 @@ end
 	@param entity Instance | {} -- the entity to get component from
 	@return {}? -- The attached component
 ]=]
-function World:getComponent(componentResolvable: ComponentResolvable, entity: Instance | {}): {}?
+function World:getComponent(componentResolvable: Types.ComponentResolvable, entity: Types.Entity): {}?
 	return self.entityManager:getComponent(self.componentRegistry:resolveOrError(componentResolvable), entity)
 end
 
@@ -164,7 +171,7 @@ end
 	@param componentResolvable ComponentResolvable -- the type of component to get entities with
 	@return {any} -- all entities in the world with the given component
 ]=]
-function World:getEntitiesWith(componentResolvable: ComponentResolvable)
+function World:getEntitiesWith(componentResolvable: Types.ComponentResolvable)
 	return self.entityManager:getEntitiesWith(self.componentRegistry:resolveOrError(componentResolvable))
 end
 
@@ -176,7 +183,7 @@ end
 	@param data {} -- the data to set
 	@return {} -- The newly set component
 ]=]
-function World:setComponent(componentResolvable: {}, entity: Instance | {}, data: {}): {}
+function World:setComponent(componentResolvable: Types.ComponentResolvable, entity: Types.Entity, data: {}): {}
 	return self.entityManager:setComponent(self.componentRegistry:resolveOrError(componentResolvable), entity, data)
 end
 
@@ -188,7 +195,7 @@ end
 	@param data {} -- the data to merge into the existing data
 	@return {} -- The newly updated component
 ]=]
-function World:updateComponent(componentResolvable: {}, entity: Instance | {}, data: {}): {}
+function World:updateComponent(componentResolvable: Types.ComponentResolvable, entity: Types.Entity, data: {}): {}
 	return self.entityManager:updateComponent(self.componentRegistry:resolveOrError(componentResolvable), entity, data)
 end
 
@@ -199,20 +206,8 @@ end
 	@param entity Instance | {} -- the entity with the component
 	@return nil
 ]=]
-function World:removeComponent(componentResolvable: ComponentResolvable, entity: Instance | {})
+function World:removeComponent(componentResolvable: Types.ComponentResolvable, entity: Types.Entity)
 	self.entityManager:removeComponent(self.componentRegistry:resolveOrError(componentResolvable), entity)
-end
-
-
---[=[
-	Returns all component names of a given entity.
-
-	@param entity Instance | {} -- the entity to pull components from
-	@return {} -- all component names of the given entity
-]=]
-
-function World:getComponents(entity: Instance | {})
-	return self.entityManager:getComponents(entity)
 end
 
 --[=[
@@ -223,7 +218,7 @@ end
 	@param entity Instance | {} -- the entity to listen for
 	@return Signal -- The Signal
 ]=]
-function World:getComponentAddedSignal(entity: Instance | {})
+function World:getComponentAddedSignal(entity: Types.Entity)
 	return self.entityManager:getComponentAddedSignal(entity)
 end
 
@@ -235,7 +230,7 @@ end
 	@param entity Instance | {} -- the entity to listen for
 	@return Signal -- The Signal
 ]=]
-function World:getComponentChangedSignal(entity: Instance | {})
+function World:getComponentChangedSignal(entity: Types.Entity)
 	return self.entityManager:getComponentChangedSignal(entity)
 end
 
@@ -247,7 +242,7 @@ end
 	@param entity Instance | {} -- the entity to listen for
 	@return Signal -- The Signal
 ]=]
-function World:getComponentRemovingSignal(entity: Instance | {})
+function World:getComponentRemovingSignal(entity: Types.Entity)
 	return self.entityManager:getComponentRemovingSignal(entity)
 end
 
@@ -257,7 +252,7 @@ end
 	@param entity Instance | {} -- the entity to get components from
 	@return {} -- The components attached to the entity
 ]=]
-function World:getComponents(entity: Instance | {})
+function World:getComponents(entity: Types.Entity)
 	return self.entityManager:getComponents(entity)
 end
 
@@ -269,7 +264,7 @@ end
 	@param componentResolvable ComponentResolvable -- the type of component to listen for
 	@return Signal -- The Signal
 ]=]
-function World:getEntityAddedSignal(componentResolvable: ComponentResolvable)
+function World:getEntityAddedSignal(componentResolvable: Types.ComponentResolvable)
 	return self.entityManager:getEntityAddedSignal(self.componentRegistry:resolveOrError(componentResolvable))
 end
 
@@ -281,7 +276,7 @@ end
 	@param componentResolvable ComponentResolvable -- the type of component to listen for
 	@return Signal -- The Signal
 ]=]
-function World:getEntityChangedSignal(componentResolvable: ComponentResolvable)
+function World:getEntityChangedSignal(componentResolvable: Types.ComponentResolvable)
 	return self.entityManager:getEntityChangedSignal(self.componentRegistry:resolveOrError(componentResolvable))
 end
 
@@ -293,7 +288,7 @@ end
 	@param componentResolvable ComponentResolvable -- the type of component to listen for
 	@return Signal -- The Signal
 ]=]
-function World:getEntityRemovingSignal(componentResolvable: ComponentResolvable)
+function World:getEntityRemovingSignal(componentResolvable: Types.ComponentResolvable)
 	return self.entityManager:getEntityRemovingSignal(self.componentRegistry:resolveOrError(componentResolvable))
 end
 
