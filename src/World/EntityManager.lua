@@ -5,6 +5,8 @@ local Signal = require(script.Parent.Parent.Shared.Signal)
 local EntityManager = {}
 EntityManager.__index = EntityManager
 
+local Types = require(script.Parent.Types)
+
 function EntityManager.new()
 	local self = setmetatable({
 		entityToComponent = {},
@@ -44,7 +46,7 @@ function EntityManager:destroy()
 	end
 end
 
-function EntityManager:register(entity: Instance | {})
+function EntityManager:register(entity: Types.Entity)
 	self.entityToComponent[entity] = {}
 	-- listen to entity destroying event if is instance
 	if typeof(entity) == "Instance" then
@@ -58,7 +60,7 @@ function EntityManager:register(entity: Instance | {})
 	end
 end
 
-function EntityManager:unregister(entity: Instance | {})
+function EntityManager:unregister(entity: Types.Entity)
 	for componentName, data in pairs(self.entityToComponent[entity] or {}) do
 		self:removeComponent(componentName, entity)
 	end
@@ -75,11 +77,11 @@ function EntityManager:unregister(entity: Instance | {})
 	self.entityToComponent[entity] = nil
 end
 
-function EntityManager:isRegistered(entity: Instance | {})
+function EntityManager:isRegistered(entity: Types.Entity)
 	return self.entityToComponent[entity] ~= nil
 end
 
-function EntityManager:addComponent(componentDefinition: {}, entity: Instance | {}, data: {}?): {}
+function EntityManager:addComponent(componentDefinition: {}, entity: Types.Entity, data: {}?): {}
 	if self:isRegistered(entity) and self.entityToComponent[entity][componentDefinition.name] then
 		error(("%s already has a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
@@ -109,7 +111,7 @@ function EntityManager:addComponent(componentDefinition: {}, entity: Instance | 
 	return data
 end
 
-function EntityManager:getComponentAddedSignal(entity: Instance | {})
+function EntityManager:getComponentAddedSignal(entity: Types.Entity)
 	if not self:isRegistered(entity) then
 		self:register(entity)
 	end
@@ -127,7 +129,7 @@ function EntityManager:getEntityAddedSignal(componentDefinition: {})
 	return self.signals.components.entityAdded[componentDefinition.name]
 end
 
-function EntityManager:getComponent(componentDefinition: string | {}, entity: Instance | {}): {}?
+function EntityManager:getComponent(componentDefinition: string | {}, entity: Types.Entity): {}?
 	return self.entityToComponent[entity] and self.entityToComponent[entity][componentDefinition.name] or nil
 end
 
@@ -135,7 +137,7 @@ function EntityManager:getEntitiesWith(componentDefinition: {})
 	return self.componentToEntity[componentDefinition.name] or table.freeze({})
 end
 
-function EntityManager:setComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
+function EntityManager:setComponent(componentDefinition: {}, entity: Types.Entity, data: {}): {}
 	if not self.entityToComponent[entity] or not self.entityToComponent[entity][componentDefinition.name] then
 		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
@@ -158,7 +160,7 @@ function EntityManager:setComponent(componentDefinition: {}, entity: Instance | 
 	return data
 end
 
-function EntityManager:updateComponent(componentDefinition: {}, entity: Instance | {}, data: {}): {}
+function EntityManager:updateComponent(componentDefinition: {}, entity: Types.Entity, data: {}): {}
 	if not self.entityToComponent[entity] or not self.entityToComponent[entity][componentDefinition.name] then
 		error(("%s does not have a component of type %s!"):format(tostring(entity), componentDefinition.name))
 	end
@@ -181,7 +183,7 @@ function EntityManager:updateComponent(componentDefinition: {}, entity: Instance
 	return data
 end
 
-function EntityManager:getComponentChangedSignal(entity: Instance | {})
+function EntityManager:getComponentChangedSignal(entity: Types.Entity)
 	if not self:isRegistered(entity) then
 		self:register(entity)
 	end
@@ -200,7 +202,7 @@ function EntityManager:getEntityChangedSignal(componentDefinition: {})
 	return self.signals.components.entityChanged[componentDefinition.name]
 end
 
-function EntityManager:removeComponent(componentDefinition: {}, entity: Instance | {})
+function EntityManager:removeComponent(componentDefinition: {}, entity: Types.Entity)
 	if not self.entityToComponent[entity] or not self.entityToComponent[entity][componentDefinition.name] then
 		return
 	end
@@ -228,7 +230,7 @@ function EntityManager:removeComponent(componentDefinition: {}, entity: Instance
 	end
 end
 
-function EntityManager:getComponentRemovingSignal(entity: Instance | {})
+function EntityManager:getComponentRemovingSignal(entity: Types.Entity)
 	if not self:isRegistered(entity) then
 		self:register(entity)
 	end
@@ -254,7 +256,7 @@ function EntityManager:getAll()
 	return entites
 end
 
-function EntityManager:getComponents(entity: Instance | {})
+function EntityManager:getComponents(entity: Types.Entity)
 	if self.entityToComponent[entity] == nil then return {} end
 	local entityNames = {}
 	for component, _ in pairs(self.entityToComponent[entity]) do
