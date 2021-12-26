@@ -37,10 +37,8 @@ World.NONE = Symbol.named("NONE")
 
 --This requires the types but to prevent a circular dependency, we have to
 --set the World object manually so we dont require it from the Types script
-local TypeReturn = require(script.Types)
-TypeReturn.setWorld(World)
-
-World.Types = TypeReturn.Types
+local Types = require(script.Types)
+World.Types = Types
 
 --[=[
 	Creates a new World.
